@@ -5020,6 +5020,7 @@ public final class Main extends JFrame {
 				repaint = true;
 			}
 
+			@SuppressWarnings("DataFlowIssue")
 			final var newValue = -input.getAxes().getOrDefault(virtualAxis, 0) - minimum
 					- (negativeMinAxisValue ? 1 : 0);
 			if (progressBar.getValue() != newValue) {
