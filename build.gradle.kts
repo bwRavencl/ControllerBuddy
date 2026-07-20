@@ -112,7 +112,7 @@ java { toolchain(javaToolchainSpec) }
 
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.50.0")
-  errorprone("com.uber.nullaway:nullaway:0.13.8")
+  errorprone("com.uber.nullaway:nullaway:0.13.7")
   spotbugs("com.github.spotbugs:spotbugs:4.10.3")
 
   val dbusJavaVersion = "5.2.0"
