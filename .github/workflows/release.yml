@@ -3,10 +3,6 @@ on:
     branches:
       - master
 
-env:
-  JAVA_VERSION: 26.0.1+8
-  GRADLE_OPTS: -Dorg.gradle.daemon=false
-
 permissions:
   contents: write
 
@@ -37,6 +33,7 @@ jobs:
                 echo dist_os=windows >> "$GITHUB_OUTPUT"
                 echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
                 echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
+                echo gradle_task=distZip >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-latest)
                 echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
@@ -45,6 +42,7 @@ jobs:
                 echo dist_os=linux >> "$GITHUB_OUTPUT"
                 echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
                 echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
+                echo gradle_task=distTar >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-24.04-arm)
                 echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
@@ -53,27 +51,12 @@ jobs:
                 echo dist_os=linux >> "$GITHUB_OUTPUT"
                 echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
                 echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
+                echo gradle_task=distTar >> "$GITHUB_OUTPUT"
                 ;;
             *)
                 exit 1
                 ;;
           esac
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Install JDK
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
-        with:
-          distribution: zulu
-          java-version: ${{ env.JAVA_VERSION }}
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
-        with:
-          cache-disabled: true
-          dependency-graph: generate-and-submit
       - name: Setup Gradle Init Script
         run: |
           mkdir -p $HOME/.gradle
@@ -117,28 +100,21 @@ jobs:
                   username = user
                   password = pass
                 }
-              mavenContent { snapshotsOnly() }
+                mavenContent { snapshotsOnly() }
               }
             }
           }
           EOF
-      - name: Build ZIP
-        id: build_zip
-        if: runner.os == 'Windows'
-        run: ./gradlew distZip --info --non-interactive
-      - name: Build TGZ
-        id: build_tgz
-        if: runner.os == 'Linux'
-        run: ./gradlew distTar --info --non-interactive
-      - name: Upload Build-Reports Artifact
-        if: failure() && (steps.build_zip.outcome == 'failure' || steps.build_tgz.outcome == 'failure')
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
-          name: spotbugs-reports
-          path: |
-            build/reports/spotbugs
-            build/tests/test
-          if-no-files-found: ignore
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Build Distribution Archive
+        uses: ./.github/actions/run-gradle-task
+        with:
+          task: ${{ steps.platform_variables.outputs.gradle_task }}
       - name: Setup Release Variables
         id: release_variables
         run: |
