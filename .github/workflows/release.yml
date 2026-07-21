@@ -71,7 +71,7 @@ jobs:
           jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=$JAVA_VERSION&os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" -H  'accept: application/json' | jq -r '.[0].download_url')")
           echo "jdk_archive_filename=$jdk_archive_filename" >> "$GITHUB_OUTPUT"
       - name: Install JDK
-        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
         with:
           distribution: jdkfile
           jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
@@ -210,7 +210,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.build.outputs.tag_name }}
       - name: Release
-        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
         with:
           name: ControllerBuddy-${{ needs.build.outputs.tag_name }}
           tag_name: ${{ needs.build.outputs.tag_name }}
