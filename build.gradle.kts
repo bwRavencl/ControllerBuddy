@@ -628,7 +628,7 @@ tasks.withType<JavaCompile>().configureEach {
   options.encoding = StandardCharsets.UTF_8.displayName()
 
   gradle.taskGraph.whenReady {
-    if (allTasks.any { it.name == "jpackage" }) {
+    if (allTasks.any { it.name == "check" }) {
       options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-preview", "-Werror"))
       options.isDeprecation = true
 
