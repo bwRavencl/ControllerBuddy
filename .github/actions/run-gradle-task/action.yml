@@ -1,0 +1,42 @@
+name: Run Gradle Task
+description: Runs a Gradle build task and captures build report artifacts on failure
+
+inputs:
+  task:
+    description: The Gradle task to execute
+    required: true
+  working-directory:
+    description: The working directory to run the Gradle task in
+    default: .
+  upload-artifacts:
+    description: Whether to upload build report artifacts on failure
+    default: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install JDK
+      uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+      with:
+        distribution: zulu
+        java-version: 26.0.1+8
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+      with:
+        cache-disabled: true
+    - name: Execute Gradle Task
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: ./gradlew ${{ inputs.task }} --info --non-interactive
+      env:
+        GRADLE_OPTS: -Dorg.gradle.daemon=false
+    - name: Upload Build-Reports Artifact
+      if: failure() && inputs.upload-artifacts == 'true'
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      with:
+        name: build-reports-${{ runner.os }}-${{ runner.arch }}
+        path: |
+          ${{ inputs.working-directory }}/build/reports/spotbugs
+          ${{ inputs.working-directory }}/build/reports/tests
+          ${{ inputs.working-directory }}/build/test-results
+        if-no-files-found: ignore
