@@ -1601,7 +1601,7 @@ public final class Main extends JFrame {
 
 		final var donateButton = new JButton(new DonateAction());
 		donateButton.setPreferredSize(
-				new Dimension(donateButton.getPreferredSize().width, statusLabel.getPreferredSize().height));
+				new Dimension(donateButton.getPreferredSize().width + 2, statusLabel.getPreferredSize().height));
 		donateButton.setContentAreaFilled(false);
 		donateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		donateButton.setVisible(showDonateButton);
