@@ -219,10 +219,10 @@ public abstract class OutputRunMode extends RunMode {
 		return new UnsupportedOperationException("Not implemented");
 	}
 
-	/// Sends a single Windows `INPUT` structure via `SendInput` and throws an
+	/// Sends a single Windows [INPUT] structure via `SendInput` and throws an
 	/// [IOException] if the call fails.
 	///
-	/// @param input the `INPUT` memory segment to send
+	/// @param input the [INPUT] memory segment to send
 	/// @throws IOException if `SendInput` returns 0 indicating failure
 	private static void sendInputChecked(final MemorySegment input) throws IOException {
 		if (User32.SendInput(1, MemorySegment.ofAddress(input.address()), (int) INPUT.LAYOUT.byteSize()) == 0) {
