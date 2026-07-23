@@ -249,27 +249,16 @@ public abstract class OutputRunMode extends RunMode {
 		newUpSet.clear();
 		newDownSet.clear();
 
-		final var oldDownSetIterator = oldDownSet.iterator();
-		while (oldDownSetIterator.hasNext()) {
-			final var oldDownElement = oldDownSetIterator.next();
-			final var stillDown = sourceSet.contains(oldDownElement);
+		newUpSet.addAll(oldDownSet);
+		newUpSet.removeAll(sourceSet);
 
-			if (stillDown) {
-				if (keepStillDown) {
-					newDownSet.add(oldDownElement);
-				}
-			} else {
-				newUpSet.add(oldDownElement);
-				oldDownSetIterator.remove();
-			}
-		}
+		oldDownSet.removeAll(newUpSet);
 
-		for (final var sourceElement : sourceSet) {
-			final var alreadyDown = oldDownSet.contains(sourceElement);
+		newDownSet.addAll(sourceSet);
+		newDownSet.removeAll(oldDownSet);
 
-			if (!alreadyDown) {
-				newDownSet.add(sourceElement);
-			}
+		if (keepStillDown) {
+			newDownSet.addAll(oldDownSet);
 		}
 
 		oldDownSet.addAll(newDownSet);
