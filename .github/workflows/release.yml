@@ -20,10 +20,10 @@ jobs:
       run:
         shell: bash
     outputs:
-      tag_name: ${{ steps.release_variables.outputs.tag_name }}
+      tag_name: ${{ steps.release-variables.outputs.tag_name }}
     steps:
       - name: Setup Platform Variables
-        id: platform_variables
+        id: platform-variables
         run: |
           case ${{ matrix.os }} in
             windows-latest)
@@ -114,19 +114,19 @@ jobs:
       - name: Build Distribution Archive
         uses: ./.github/actions/run-gradle-task
         with:
-          task: ${{ steps.platform_variables.outputs.gradle_task }}
+          task: ${{ steps.platform-variables.outputs.gradle_task }}
       - name: Setup Release Variables
-        id: release_variables
+        id: release-variables
         run: |
-          archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -type f -print0)
+          archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform-variables.outputs.dist_archive_extension }} -maxdepth 1 -type f -print0)
           echo "archive_path=$archive_path" >> "$GITHUB_OUTPUT"
           echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
-          echo "tag_name=$(basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$(basename -s .${{ steps.platform-variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform-variables.outputs.dist_os }}-${{ steps.platform-variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
       - name: Upload Archive Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: ${{ steps.release_variables.outputs.archive_filename }}
-          path: ${{ steps.release_variables.outputs.archive_path }}
+          name: ${{ steps.release-variables.outputs.archive_filename }}
+          path: ${{ steps.release-variables.outputs.archive_path }}
           if-no-files-found: error
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
@@ -134,26 +134,26 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
       - name: Sign Archive
-        id: sign_archive
+        id: sign-archive
         run: |
-          signature_path="${{ steps.release_variables.outputs.archive_path }}.sig"
-          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release_variables.outputs.archive_path }}
+          signature_path="${{ steps.release-variables.outputs.archive_path }}.sig"
+          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release-variables.outputs.archive_path }}
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
           echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
       - name: Upload Signature Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: ${{ steps.sign_archive.outputs.signature_filename }}
-          path: ${{ steps.sign_archive.outputs.signature_path }}
+          name: ${{ steps.sign-archive.outputs.signature_filename }}
+          path: ${{ steps.sign-archive.outputs.signature_path }}
 
   release:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Download artifacts
+      - name: Download Artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
       - name: Collect Artifact Files
-        id: collect_files
+        id: collect-files
         run: |
           files=$(find . -iname 'ControllerBuddy-*' -mindepth 2 -maxdepth 2 -type f)
           if [ -z "$files" ]
@@ -169,11 +169,11 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: Check Tag
         uses: action-pack/tag-exists@1466626d5e0263063b314d09d032be2daa603a6a # v1
-        id: check_tag
+        id: check-tag
         with:
           tag: ${{ needs.build.outputs.tag_name }}
       - name: Tag Commit
-        if: steps.check_tag.outputs.exists == 'false'
+        if: steps.check-tag.outputs.exists == 'false'
         uses: tvdias/github-tagger@ed7350546e3e503b5e942dffd65bc8751a95e49d # v0.0.2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -185,7 +185,7 @@ jobs:
           tag_name: ${{ needs.build.outputs.tag_name }}
           draft: false
           prerelease: false
-          files: ${{ steps.collect_files.outputs.files }}
+          files: ${{ steps.collect-files.outputs.files }}
       - name: Trigger Release Monitoring Check
         run: |
           sleep 20
