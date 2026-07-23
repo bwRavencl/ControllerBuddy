@@ -234,8 +234,7 @@ public abstract class OutputRunMode extends RunMode {
 	/// elements.
 	///
 	/// Compares the current source set against the previous down set to determine
-	/// which
-	/// elements are newly down, still down, or newly up.
+	/// which elements are newly down, still down, or newly up.
 	///
 	/// @param sourceSet the current set of active elements
 	/// @param oldDownSet the set of elements that were down in the previous cycle
