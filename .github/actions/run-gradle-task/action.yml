@@ -10,7 +10,7 @@ inputs:
     default: .
   upload-artifacts:
     description: Whether to upload build report artifacts on failure
-    default: true
+    default: 'true'
 
 runs:
   using: composite
