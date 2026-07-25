@@ -5808,8 +5808,8 @@ public final class Main extends JFrame {
 		}
 	}
 
-	/// Immutable record representing a connected gamepad controller, identified by
-	/// SDL instance ID, name, and GUID.
+	/// Record representing a connected gamepad controller, identified by SDL
+	/// instance ID, name, and GUID.
 	///
 	/// Instances are created when SDL reports a gamepad connection event. The GUID
 	/// is derived from the SDL gamepad GUID and uniquely identifies the controller
