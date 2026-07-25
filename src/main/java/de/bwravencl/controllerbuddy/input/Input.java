@@ -82,9 +82,8 @@ public final class Input {
 	/// Current integer values for all virtual axes.
 	private final Map<VirtualAxis, Integer> axes;
 
-	/// Map from axis index to the time in nanoseconds when its suspension shall
-	/// end.
-	private final Map<Integer, Long> axisToEndSuspensionTimeNanosMap = new HashMap<>();
+	/// Map from axis index to the [SuspensionInfo] details.
+	private final Map<Integer, SuspensionInfo> axisToSuspensionInfoMap = new HashMap<>();
 
 	/// Keystrokes currently held down continuously.
 	private final Set<Keystroke> downKeystrokes = new HashSet<>();
@@ -478,7 +477,7 @@ public final class Input {
 	/// @param axis the axis index to check
 	/// @return `true` if the axis is suspended
 	public boolean isAxisSuspended(final int axis) {
-		return axisToEndSuspensionTimeNanosMap.containsKey(axis);
+		return axisToSuspensionInfoMap.containsKey(axis);
 	}
 
 	/// Returns whether this input instance has been initialized.
@@ -556,8 +555,11 @@ public final class Input {
 		Objects.requireNonNull(selectedController, "Field selectedController must not be null");
 
 		final var currentNanoTime = System.nanoTime();
+		final var activeMode = profile.getActiveMode();
 
-		axisToEndSuspensionTimeNanosMap.values().removeIf(timestamp -> timestamp < currentNanoTime);
+		axisToSuspensionInfoMap.values()
+				.removeIf(suspensionInfo -> suspensionInfo.endSuspensionTimeNanos < currentNanoTime
+						|| suspensionInfo.activeMode.equals(activeMode));
 
 		final long elapsedNanoTime;
 		if (lastPollNanoTime > 0L) {
@@ -665,7 +667,6 @@ public final class Input {
 		});
 
 		final var modes = profile.getModes();
-		final var activeMode = profile.getActiveMode();
 		final var axisToActionMap = activeMode.getAxisToActionsMap();
 		final var buttonToActionMap = activeMode.getButtonToActionsMap();
 		final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
@@ -674,7 +675,7 @@ public final class Input {
 			final var axisValue = gamepadState.axes[axis];
 
 			if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-				axisToEndSuspensionTimeNanosMap.remove(axis);
+				axisToSuspensionInfoMap.remove(axis);
 			}
 
 			var actions = axisToActionMap.get(axis);
@@ -774,7 +775,7 @@ public final class Input {
 		buttons = new boolean[0];
 		sdlGamepadToGamepadStateMap.clear();
 		virtualAxisToTargetValueMap.clear();
-		axisToEndSuspensionTimeNanosMap.clear();
+		axisToSuspensionInfoMap.clear();
 		hotSwappingButtonDownInstanceIds.clear();
 		hotSwappingButtonId = HotSwappingButton.NONE.id;
 
@@ -970,8 +971,9 @@ public final class Input {
 	/// Temporarily suspends processing of the specified axis.
 	///
 	/// @param axis the axis index to suspend
-	public void suspendAxis(final int axis) {
-		axisToEndSuspensionTimeNanosMap.put(axis, System.nanoTime() + SUSPENSION_TIME_NS);
+	/// @param activeMode the currently active [Mode]
+	public void suspendAxis(final int axis, final Mode activeMode) {
+		axisToSuspensionInfoMap.put(axis, new SuspensionInfo(System.nanoTime() + SUSPENSION_TIME_NS, activeMode));
 	}
 
 	/// Updates the active hot-swapping button ID based on whether multiple
@@ -1021,6 +1023,14 @@ public final class Input {
 			this.highFrequencyRumble = highFrequencyRumble;
 			this.duration = duration;
 		}
+	}
+
+	/// Internal record storing details regarding axis suspension.
+	///
+	/// @param endSuspensionTimeNanos the time in nanoseconds when the suspension
+	/// shall end
+	/// @param activeMode the mode that was active when the axis was suspended
+	private record SuspensionInfo(long endSuspensionTimeNanos, Mode activeMode) {
 	}
 
 	/// Holds the most recently polled axis and button state for a single SDL

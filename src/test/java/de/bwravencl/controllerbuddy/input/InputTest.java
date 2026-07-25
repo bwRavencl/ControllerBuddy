@@ -51,11 +51,7 @@ final class InputTest {
 	RunMode mockRunMode;
 
 	private Input createInput() {
-		return new Input(mockMain, mockController, null);
-	}
-
-	private Input createInputWithRunMode() {
-		final var input = createInput();
+		final var input = new Input(mockMain, mockController, null);
 		input.setRunMode(mockRunMode);
 		return input;
 	}
@@ -69,7 +65,7 @@ final class InputTest {
 		@Test
 		@DisplayName("axis is reported as suspended immediately after suspendAxis()")
 		void axisIsSuspendedAfterSuspendCall() {
-			input.suspendAxis(0);
+			input.suspendAxis(0, input.getProfile().getActiveMode());
 			Assertions.assertTrue(input.isAxisSuspended(0));
 		}
 
@@ -81,24 +77,52 @@ final class InputTest {
 		@Test
 		@DisplayName("suspending one axis does not affect the suspension state of another")
 		void suspendingOneAxisDoesNotAffectAnother() {
-			input.suspendAxis(0);
+			input.suspendAxis(0, input.getProfile().getActiveMode());
 			Assertions.assertFalse(input.isAxisSuspended(1));
+		}
+
+		@Test
+		@DisplayName("suspension ends once the suspending mode becomes active again")
+		void suspensionEndsWhenSuspendingModeBecomesActiveAgain() {
+			final var activeMode = input.getProfile().getActiveMode();
+
+			input.suspendAxis(0, activeMode);
+			Assertions.assertTrue(input.isAxisSuspended(0));
+
+			input.poll();
+
+			Assertions.assertFalse(input.isAxisSuspended(0),
+					"Suspension should be cleared once the mode active at suspension time is active again");
 		}
 
 		@Test
 		@DisplayName("suspension expires once the timeout has elapsed")
 		void suspensionExpiresAfterTimeout() throws Exception {
-			// Force an already-expired timestamp via reflection
-			input.suspendAxis(0);
-			final var field = input.getClass().getDeclaredField("axisToEndSuspensionTimeNanosMap");
+			input.suspendAxis(0, input.getProfile().getActiveMode());
+
+			final var field = input.getClass().getDeclaredField("axisToSuspensionInfoMap");
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (Map<Integer, Long>) field.get(input);
-			map.put(0, System.currentTimeMillis() - 1); // set timestamp to the past
+			final var map = (Map<Integer, Object>) field.get(input);
 
-			// poll() clears expired suspensions, but we can verify the map state directly
-			Assertions.assertFalse(map.get(0) > System.currentTimeMillis(),
-					"Timestamp should be in the past, i.e. the suspension has expired");
+			final var suspensionInfo = map.get(0);
+			Assertions.assertNotNull(suspensionInfo);
+			final var suspensionInfoClass = suspensionInfo.getClass();
+
+			final var activeModeField = suspensionInfoClass.getDeclaredField("activeMode");
+			activeModeField.setAccessible(true);
+			final var activeMode = (Mode) activeModeField.get(suspensionInfo);
+
+			final var constructor = suspensionInfoClass.getDeclaredConstructor(long.class, Mode.class);
+			constructor.setAccessible(true);
+			final var expiredSuspensionInfo = constructor.newInstance(System.nanoTime() - 1, activeMode);
+
+			map.put(0, expiredSuspensionInfo);
+
+			input.poll();
+
+			Assertions.assertFalse(input.isAxisSuspended(0),
+					"Suspension should have been cleared once the timeout elapsed");
 		}
 	}
 
@@ -183,7 +207,7 @@ final class InputTest {
 
 		@BeforeEach
 		void setUp() {
-			input = createInputWithRunMode();
+			input = createInput();
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_768);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 		}
@@ -217,7 +241,7 @@ final class InputTest {
 
 		@BeforeEach
 		void setUp() {
-			input = createInputWithRunMode();
+			input = createInput();
 		}
 	}
 
@@ -233,7 +257,7 @@ final class InputTest {
 			Mockito.when(mockMain.getControllers()).thenReturn(Set.of(mockController));
 			Mockito.when(mockController.instanceId()).thenReturn(1);
 
-			final var input = createInputWithRunMode();
+			final var input = createInput();
 
 			try (final var sdlMock = Mockito.mockStatic(SDLGamepad.class)) {
 				sdlMock.when(() -> SDLGamepad.SDL_OpenGamepad(1)).thenReturn(0L);
@@ -246,7 +270,7 @@ final class InputTest {
 		@Test
 		@DisplayName("throws IllegalStateException when called on an already-initialised Input")
 		void throwsWhenCalledWhileAlreadyInitialized() throws Exception {
-			final var input = createInputWithRunMode();
+			final var input = createInput();
 			final var field = Input.class.getDeclaredField("initialized");
 			field.setAccessible(true);
 			field.set(input, true);
@@ -293,7 +317,7 @@ final class InputTest {
 
 		@BeforeEach
 		void setUp() {
-			input = createInputWithRunMode();
+			input = createInput();
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_768);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 		}
@@ -383,14 +407,23 @@ final class InputTest {
 		@Test
 		@DisplayName("removes expired axis suspensions on each poll")
 		void removesExpiredAxisSuspensionsOnPoll() throws Exception {
-			final var input = createInputWithRunMode();
-			input.suspendAxis(0);
+			final var input = createInput();
+			final var activeMode = input.getProfile().getActiveMode();
+			input.suspendAxis(0, activeMode);
 
-			final var field = Input.class.getDeclaredField("axisToEndSuspensionTimeNanosMap");
+			final var field = Input.class.getDeclaredField("axisToSuspensionInfoMap");
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (Map<Integer, Long>) field.get(input);
-			map.put(0, System.nanoTime() - 1);
+			final var map = (Map<Integer, Object>) field.get(input);
+
+			final var suspensionInfo = map.get(0);
+			Assertions.assertNotNull(suspensionInfo);
+			final var suspensionInfoClass = suspensionInfo.getClass();
+			final var constructor = suspensionInfoClass.getDeclaredConstructor(long.class, Mode.class);
+			constructor.setAccessible(true);
+			final var endSuspensionTimeNanos = System.nanoTime() - 1; // set timestamp to the past
+			final var expiredSuspensionInfo = constructor.newInstance(endSuspensionTimeNanos, activeMode);
+			map.put(0, expiredSuspensionInfo);
 
 			input.poll();
 
@@ -400,7 +433,7 @@ final class InputTest {
 		@Test
 		@DisplayName("returns false when no gamepad state exists for the selected gamepad")
 		void returnsFalseWhenNoGamepadStateForSelectedGamepad() {
-			final var input = createInputWithRunMode();
+			final var input = createInput();
 			Assertions.assertFalse(input.poll());
 		}
 
@@ -410,7 +443,7 @@ final class InputTest {
 			final var pollingPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
 			Mockito.when(mockRunMode.getPollingPeriodNanos()).thenReturn(pollingPeriodNanos);
 
-			final var input = createInputWithRunMode();
+			final var input = createInput();
 			input.poll(); // first call - seeds lastPollNanoTime
 
 			// Wind lastPollNanoTime back by 100 ms to simulate elapsed time
@@ -430,7 +463,7 @@ final class InputTest {
 			final var pollingPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
 			Mockito.when(mockRunMode.getPollingPeriodNanos()).thenReturn(pollingPeriodNanos);
 
-			final var input = createInputWithRunMode();
+			final var input = createInput();
 			input.poll();
 
 			Assertions.assertEquals((float) pollingPeriodNanos / Input.NANOS_PER_SECOND, input.getRateMultiplier(),
@@ -476,8 +509,9 @@ final class InputTest {
 		@Test
 		@DisplayName("clears axis suspensions that were set before the reset")
 		void clearsAxisSuspensions() {
-			input.suspendAxis(0);
-			input.suspendAxis(1);
+			final var activeMode = input.getProfile().getActiveMode();
+			input.suspendAxis(0, activeMode);
+			input.suspendAxis(1, activeMode);
 
 			input.reset();
 
@@ -662,7 +696,7 @@ final class InputTest {
 
 		@BeforeEach
 		void setUp() {
-			input = createInputWithRunMode();
+			input = createInput();
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_768);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 		}
