@@ -27,7 +27,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.util.Set;
 import javax.swing.JProgressBar;
 
 /// Custom progress bar used as an overlay axis indicator, supporting solid and
@@ -51,9 +50,8 @@ final class IndicatorProgressBar extends JProgressBar {
 	@Serial
 	private static final long serialVersionUID = 8167193907929992395L;
 
-	/// Set of normalized axis values at which detent tick marks are drawn.
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Set<Float> detentValues;
+	/// Array of normalized axis values at which detent tick marks are drawn.
+	private final float[] detentValues;
 
 	/// Whether axis values should be inverted before rendering.
 	private final boolean inverted;
@@ -76,7 +74,7 @@ final class IndicatorProgressBar extends JProgressBar {
 	/// style, color, and inversion
 	/// @param detentValues the set of normalized axis values at which detent tick
 	/// marks should be drawn
-	IndicatorProgressBar(final Main main, final OverlayAxis overlayAxis, final Set<Float> detentValues) {
+	IndicatorProgressBar(final Main main, final OverlayAxis overlayAxis, final float[] detentValues) {
 		final var overlayAxisOrientation = overlayAxis.getOrientation();
 		super(overlayAxisOrientation.toSwingConstant());
 

@@ -3371,19 +3371,17 @@ public final class Main extends JFrame {
 			EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
 				final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 				if (overlayAxis != null) {
-					final var detentValues = new HashSet<Float>();
-
-					modes.forEach(
-							mode -> mode.getAxisToActionsMap().values().forEach(actions -> actions.forEach(action -> {
-								if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
-										&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
-									final var detentValue = axisToRelativeAxisAction.getDetentValue();
-
-									if (detentValue != null) {
-										detentValues.add(detentValue);
-									}
-								}
-							})));
+					final var detentValuesList = modes.stream()
+							.flatMap(mode -> mode.getAxisToActionsMap().values().stream()).flatMap(Collection::stream)
+							.filter(AxisToRelativeAxisAction.class::isInstance)
+							.map(AxisToRelativeAxisAction.class::cast)
+							.filter(action -> action.getVirtualAxis() == virtualAxis)
+							.map(AxisToRelativeAxisAction::getDetentValue).filter(Objects::nonNull).distinct().toList();
+					final var detentValues = new float[detentValuesList.size()];
+					var index = 0;
+					for (final var detentValue : detentValuesList) {
+						detentValues[index++] = detentValue;
+					}
 
 					final var indicatorPanel = switch (overlayAxis.getOrientation()) {
 					case HORIZONTAL -> horizontalIndicatorPanel;
