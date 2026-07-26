@@ -2229,26 +2229,24 @@ public final class Main extends JFrame {
 							printStream.println(SINGLE_INSTANCE_EOF);
 							printStream.flush();
 
-							for (var i = 0; i < 5; i++) {
-								final var str = socketBufferedReader.readLine();
-
-								if (str == null) {
-									break;
-								}
-
-								if (SINGLE_INSTANCE_ACK.equals(str)) {
-									continueLaunch = false;
-									break;
-								}
+							String responseLine = null;
+							try {
+								responseLine = socketBufferedReader.readLine();
+							} catch (final IOException e) {
+								logger.log(Level.WARNING, "Other " + Constants.APPLICATION_NAME
+										+ " instance did not acknowledge invocation in time", e);
 							}
 
-							if (continueLaunch) {
-								logger.warning("Other " + Constants.APPLICATION_NAME
-										+ " instance did not acknowledge invocation");
+							if (!SINGLE_INSTANCE_ACK.equals(responseLine)) {
+								if (responseLine != null) {
+									logger.warning("Other " + Constants.APPLICATION_NAME
+											+ " instance sent unexpected response: " + responseLine);
+								}
 								terminate(1, null);
-
 								return;
 							}
+
+							continueLaunch = false;
 						}
 					} catch (final IOException | NumberFormatException e) {
 						logger.log(Level.WARNING, e.getMessage(), e);
