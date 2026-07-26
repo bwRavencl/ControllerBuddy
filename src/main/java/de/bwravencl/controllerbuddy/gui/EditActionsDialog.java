@@ -70,6 +70,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.function.IntConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -549,14 +550,13 @@ public final class EditActionsDialog extends JDialog {
 			buttonToModeAction.setMode(defaultMode);
 		}
 		case final ToAxisAction<?> toAxisAction -> {
-			final var virtualAxisIndex = findFirstMissingOrNext(
-					unsavedProfile.getModes().stream().flatMapToInt(mode -> mode.getAxisToActionsMap().values().stream()
-							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
-								if (action1 instanceof final ToAxisAction<?> toAxisAction1) {
-									downstream.accept(toAxisAction1.getVirtualAxis().ordinal());
-								}
-							}))),
-					VirtualAxis.values().length - 1);
+			final var virtualAxisIndex = findFirstMissingOrNext(unsavedProfile.getModes().stream()
+					.flatMap(mode -> mode.getAxisToActionsMap().values().stream()).flatMap(List::stream)
+					.mapMultiToInt((final Object action1, final IntConsumer downstream) -> {
+						if (action1 instanceof final ToAxisAction<?> toAxisAction1) {
+							downstream.accept(toAxisAction1.getVirtualAxis().ordinal());
+						}
+					}), VirtualAxis.values().length - 1);
 
 			toAxisAction.setVirtualAxis(VirtualAxis.values()[virtualAxisIndex]);
 		}
