@@ -186,8 +186,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		final var previousModeAxisToActionsMap = previousMode.getAxisToActionsMap();
 		axes.stream().filter(previousModeAxisToActionsMap::containsKey)
 				.forEach(axis -> previousModeAxisToActionsMap.getOrDefault(axis, List.of()).stream()
-						.filter(action -> action instanceof IAxisToAction)
-						.forEach(_ -> input.suspendAxis(axis, activeMode)));
+						.filter(IAxisToAction.class::isInstance).forEach(_ -> input.suspendAxis(axis, activeMode)));
 
 		IAxisToDelayableAction.onModeDeactivated(activeMode);
 		IButtonToDelayableAction.onModeDeactivated(activeMode);

@@ -507,8 +507,7 @@ public final class EditActionsDialog extends JDialog {
 		updateAvailableActions();
 		updateAssignedActions();
 
-		final var hasModeAction = Arrays.stream(getAssignedActions())
-				.anyMatch(assignedAction -> assignedAction instanceof ButtonToModeAction);
+		final var hasModeAction = Arrays.stream(getAssignedActions()).anyMatch(ButtonToModeAction.class::isInstance);
 
 		assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
 				- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
