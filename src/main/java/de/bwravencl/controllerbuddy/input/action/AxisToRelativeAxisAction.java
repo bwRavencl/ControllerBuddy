@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	/// Default dead zone threshold below which axis values are treated as zero.
-	private static final float DEFAULT_DEAD_ZONE = 0.25f;
+	private static final float DEFAULT_DEAD_ZONE = 0.3f;
 
 	/// Default exponent used for the response curve (quadratic).
 	private static final float DEFAULT_EXPONENT = 2f;
