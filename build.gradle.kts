@@ -30,7 +30,7 @@ plugins {
   application
   jacoco
   id("com.diffplug.spotless") version "8.9.0"
-  id("com.github.spotbugs") version "6.5.9"
+  id("com.github.spotbugs") version "6.5.10"
   id("net.ltgt.errorprone") version "5.1.0"
 }
 
