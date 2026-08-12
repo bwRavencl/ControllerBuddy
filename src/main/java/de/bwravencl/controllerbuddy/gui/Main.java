@@ -1672,10 +1672,11 @@ public final class Main extends JFrame {
 									"/org/gnome/Shell/Extensions", Extensions.class);
 
 							final var gnomeShellVersion = extensions.getShellVersion();
-							final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
+							final var matcher = Pattern.compile("(?<major>\\d+)\\.(?<minor>\\d+).*")
+									.matcher(gnomeShellVersion);
 							if (matcher.matches()) {
-								final var majorVersion = Integer.parseInt(matcher.group(1));
-								final var minorVersion = Integer.parseInt(matcher.group(2));
+								final var majorVersion = Integer.parseInt(matcher.group("major"));
+								final var minorVersion = Integer.parseInt(matcher.group("minor"));
 
 								if ((majorVersion == 3 && minorVersion <= 25)) {
 									hasSystemTray = true;

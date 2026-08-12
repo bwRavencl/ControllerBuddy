@@ -373,7 +373,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
 
 		/// Pattern matching a wildcard filter string starting with `*`.
-		private static final Pattern WILDCARD_FILTER_PATTERN = Pattern.compile("^\\*(.+)");
+		private static final Pattern WILDCARD_FILTER_PATTERN = Pattern.compile("^\\*(?<term>.+)");
 
 		@Serial
 		private static final long serialVersionUID = -7958791166718006570L;
@@ -402,7 +402,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				final var wildcardMatcher = WILDCARD_FILTER_PATTERN.matcher(filter);
 				if (wildcardMatcher.matches()) {
-					match = valueString.contains(wildcardMatcher.group(1));
+					match = valueString.contains(wildcardMatcher.group("term"));
 				} else {
 					match = valueString.startsWith(filter);
 				}
