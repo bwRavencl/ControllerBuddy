@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StructuralSearch">
+    <searchConfiguration name="Methods without Javadoc comment" text="$Method$" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Method" script="&quot;__context__ instanceof com.intellij.psi.PsiMethod &amp;&amp;&#10;&#9;!__context__.docComment &amp;&amp;&#10;&#9;__context__.findSuperMethods().length == 0&quot;" target="true" within="" contains="" />
+    </searchConfiguration>
+    <searchConfiguration name="Classes, interfaces &amp; enums without Javadoc comment" text="class $ClassInterfaceEnum$ {}" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+      <constraint name="__context__" script="&quot;!__context__.docComment &amp;&amp; !(__context__ instanceof com.intellij.psi.PsiAnonymousClass)&quot;" within="" contains="" />
+      <constraint name="ClassInterfaceEnum" target="true" within="" contains="" />
+    </searchConfiguration>
+  </component>
+</project>
