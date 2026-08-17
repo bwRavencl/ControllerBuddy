@@ -185,6 +185,7 @@ spotless {
     removeUnusedImports()
     forbidWildcardImports()
     forbidModuleImports()
+    shortenFullyQualifiedTypes()
     licenseHeader(
         $$"""
         /*
