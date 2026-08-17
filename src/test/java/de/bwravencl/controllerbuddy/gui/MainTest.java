@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -54,8 +56,7 @@ final class MainTest {
 
 	private static int invokeGetExtendedKeyCodeForMenu(final JButton button, final Set<Integer> alreadyAssigned)
 			throws ReflectiveOperationException {
-		final var method = Main.class.getDeclaredMethod("getExtendedKeyCodeForMenu", javax.swing.AbstractButton.class,
-				Set.class);
+		final var method = Main.class.getDeclaredMethod("getExtendedKeyCodeForMenu", AbstractButton.class, Set.class);
 		method.setAccessible(true);
 		return (int) method.invoke(null, button, alreadyAssigned);
 	}
@@ -104,7 +105,7 @@ final class MainTest {
 			final var mapField = Main.class.getDeclaredField("SYMBOL_TO_DESCRIPTION_MAP");
 			mapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (java.util.Map<String, String>) mapField.get(null);
+			final var map = (Map<String, String>) mapField.get(null);
 			final var allSymbols = new LinkedHashSet<>(map.keySet());
 
 			final var result = invokeCreateVisualizationLegendHtml(allSymbols);

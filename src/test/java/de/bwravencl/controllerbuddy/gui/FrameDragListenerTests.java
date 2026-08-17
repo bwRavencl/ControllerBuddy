@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +45,7 @@ final class FrameDragListenerTests {
 	@Test
 	@DisplayName("isDragging() returns true after mousePressed()")
 	void isDraggingAfterMousePressed() {
-		final var mockEvent = Mockito.mock(java.awt.event.MouseEvent.class);
+		final var mockEvent = Mockito.mock(MouseEvent.class);
 		Mockito.when(mockEvent.getPoint()).thenReturn(new Point(10, 20));
 		listener.mousePressed(mockEvent);
 		Assertions.assertTrue(listener.isDragging());

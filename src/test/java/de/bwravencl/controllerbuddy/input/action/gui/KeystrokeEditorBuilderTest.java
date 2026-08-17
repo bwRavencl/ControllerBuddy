@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
@@ -69,7 +70,7 @@ final class KeystrokeEditorBuilderTest {
 			final ListModel<String> model = new ListModel<>() {
 
 				@Override
-				public void addListDataListener(final javax.swing.event.ListDataListener l) {
+				public void addListDataListener(final ListDataListener l) {
 				}
 
 				@Override
@@ -83,7 +84,7 @@ final class KeystrokeEditorBuilderTest {
 				}
 
 				@Override
-				public void removeListDataListener(final javax.swing.event.ListDataListener l) {
+				public void removeListDataListener(final ListDataListener l) {
 				}
 			};
 			Assertions.assertEquals(2, getListModelIndex(model, "Z"));

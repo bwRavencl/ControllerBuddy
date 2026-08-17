@@ -17,6 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
@@ -38,8 +41,7 @@ final class ActivationEditorBuilderTest {
 	@DisplayName("getValues()")
 	final class GetValuesTests {
 
-		private ActivationEditorBuilder createBuilderWithAction(
-				final de.bwravencl.controllerbuddy.input.action.IAction<?> action) throws Exception {
+		private ActivationEditorBuilder createBuilderWithAction(final IAction<?> action) throws Exception {
 			// Use Mockito to create a mock that bypasses the constructor
 			final var builder = Mockito.mock(ActivationEditorBuilder.class, Mockito.CALLS_REAL_METHODS);
 
@@ -54,7 +56,7 @@ final class ActivationEditorBuilderTest {
 		@Test
 		@DisplayName("returns all Activation values for non-cycle actions")
 		void returnsAllValuesForNonCycleAction() throws Exception {
-			final var action = new de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction();
+			final var action = new ButtonToButtonAction();
 
 			final var builder = createBuilderWithAction(action);
 
@@ -68,7 +70,7 @@ final class ActivationEditorBuilderTest {
 		@Test
 		@DisplayName("returns only ON_PRESS and ON_RELEASE for ButtonToCycleAction")
 		void returnsLimitedValuesForCycleAction() throws Exception {
-			final var action = new de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction();
+			final var action = new ButtonToCycleAction();
 
 			// Create a minimal ActivationEditorBuilder via reflection, bypassing the
 			// constructor
