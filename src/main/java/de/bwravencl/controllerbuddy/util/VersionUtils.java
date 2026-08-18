@@ -70,7 +70,7 @@ public final class VersionUtils {
 	}
 
 	/// Returns the major and minor version of the current application as a string
-	/// (e.g. "1.8").
+	/// (e.g., "1.8").
 	///
 	/// @return the major.minor version string
 	public static String getMajorAndMinorVersion() {
@@ -81,8 +81,8 @@ public final class VersionUtils {
 	/// Parses a version string into its integer components, stripping any hash
 	/// suffix.
 	///
-	/// @param version the version string to parse (e.g. "1.8.24-ecce3da")
-	/// @return an array of integer version parts (e.g. [1, 8, 24])
+	/// @param version the version string to parse (e.g., "1.8.24-ecce3da")
+	/// @return an array of integer version parts (e.g., [1, 8, 24])
 	public static int[] getVersionIntegerParts(final String version) {
 		final var versionWithoutSuffix = stripHashSuffix(version);
 		return Arrays.stream(versionWithoutSuffix.split("\\.")).mapToInt(Integer::parseInt).toArray();
@@ -90,7 +90,7 @@ public final class VersionUtils {
 
 	/// Strips a hash suffix from a version string.
 	///
-	/// If the string contains a hyphen (e.g. `"1.8.24-ecce3da"`) everything from
+	/// If the string contains a hyphen (e.g., `"1.8.24-ecce3da"`) everything from
 	/// the hyphen onward is removed. Strings without a hyphen are returned
 	/// unchanged.
 	///

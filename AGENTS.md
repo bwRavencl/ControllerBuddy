@@ -74,7 +74,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Apply the `final` keyword to all method parameters, local variables, and catch-block variables without exception.
 - Use `var` for local variables.
 - Use `_` for unused local variables and patterns.
-- Use `this.` only for disambiguation (e.g. in constructors and setters), not for field reads.
+- Use `this.` only for disambiguation (e.g., in constructors and setters), not for field reads.
 - Constants are static final fields with deeply immutable contents and side-effect-free methods - if any observable state can change, it's not a constant.
 - Constant naming: `UPPER_SNAKE_CASE`. Use semantic prefixes like `DEFAULT_` and `INITIAL_` for related groups of constants.
 - Non-constant naming: `lowerCamelCase`
@@ -99,20 +99,20 @@ The conventions below are **not** auto-enforced and must be followed manually:
     - The module is null-marked by default for `src/main` via `package-info.java`; never add `@NullMarked` to individual main classes.
     - Test classes are not covered by that module-level marking, so annotate every test class with `@NullMarked` individually.
     - Use `@Nullable` explicitly on any parameter, field, or return type that may hold `null`.
-    - Place `@Nullable` immediately before the type name, after modifiers like `final` (e.g. `private final @Nullable String name;`).
+    - Place `@Nullable` immediately before the type name, after modifiers like `final` (e.g., `private final @Nullable String name;`).
 - Documentation comments: follow the rules below for all Javadoc comments.
     - **Language** use American English, not British English.
     - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.
     - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a doc comment. The only exceptions are `serialVersionUID` fields and `Logger` fields named `LOGGER`, which must not be documented.
-    - **Summary line:** starts with a third-person verb (e.g. "Returns", "Sets", "Creates"). Use "Returns the/whether..." for getters and "Sets the/whether..." for setters.
+    - **Summary line:** starts with a third-person verb (e.g., "Returns", "Sets", "Creates"). Use "Returns the/whether..." for getters and "Sets the/whether..." for setters.
     - **Structure:** doc comments for classes, interfaces, records, and enums must have both a short summary sentence and a separate extended description providing additional detail. Separate the summary from the extended description with a blank `///` line.
-    - **Periods:** full sentences end with a period. Short label-style descriptions for enum constants or similar identifiers (e.g. `/// 'A' key`) may omit the period.
+    - **Periods:** full sentences end with a period. Short label-style descriptions for enum constants or similar identifiers (e.g., `/// 'A' key`) may omit the period.
     - **Inline code:** use backticks (`` `null` ``, `` `true` ``, `` `false` ``), not `{@code ...}`.
     - **Cross-references:** use Markdown links (`[ClassName]`, `[#methodName]`), not `{@link ...}`.
-    - **Line wrapping:** do not manually wrap lines within continuous text - write each sentence or clause as a single long line and let Spotless re-wrap to the correct width. Only insert explicit line breaks where they serve a structural formatting purpose (e.g. between paragraphs, before tags, or to separate list items). When editing an existing doc comment, first unwrap all lines back into continuous text, re-add only the intentional formatting breaks, and then let Spotless re-wrap to the correct width.
+    - **Line wrapping:** do not manually wrap lines within continuous text - write each sentence or clause as a single long line and let Spotless re-wrap to the correct width. Only insert explicit line breaks where they serve a structural formatting purpose (e.g., between paragraphs, before tags, or to separate list items). When editing an existing doc comment, first unwrap all lines back into continuous text, re-add only the intentional formatting breaks, and then let Spotless re-wrap to the correct width.
     - **Tags:** include `@param`, `@return`, and `@throws` tags where applicable. Tag descriptions start lowercase. Separate the summary from tags with a blank `///` line. For overridden methods, do not repeat tags that are already documented in the superclass or interface with the same meaning - only include tags whose function differs from the inherited documentation.
     - **Records:** document `@param` tags for record components on the record's own doc comment, not on the accessor methods.
-    - **`@param <V>`:** include a type parameter tag on generic classes and interfaces (e.g. `/// @param <V> the input value type`).
+    - **`@param <V>`:** include a type parameter tag on generic classes and interfaces (e.g., `/// @param <V> the input value type`).
 
 ## Test Conventions
 
@@ -130,7 +130,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
     - `ArrayEditorBuilder` subclasses for enums
     - `BooleanEditorBuilder` for booleans
     - A custom `EditorBuilder` implementation is needed when the property requires non-standard UI
-- Override `clone()` - use deep cloning for mutable fields (e.g. `KeyStroke`)
+- Override `clone()` - use deep cloning for mutable fields (e.g., `KeyStroke`)
 - If the action implements `IInitializationAction`, ensure `init()` initializes transient fields to the same defaults as the field declarations
 
 ## Commit Messages
@@ -145,7 +145,7 @@ Format: `<prefix>: <lowercase description>` - no period at end, single line.
 ## Versioning
 
 Version is derived automatically from git tags at build time (see `versionProvider` in `build.gradle.kts`).  
-If a change affects the profile serialization format (i.e. what gets serialized/deserialized via Gson) the minor version must be bumped by creating an annotated tag:
+If a change affects the profile serialization format (i.e., what gets serialized/deserialized via Gson) the minor version must be bumped by creating an annotated tag:
 
 ```sh
 git tag -a "X.Y" -m "X.Y"

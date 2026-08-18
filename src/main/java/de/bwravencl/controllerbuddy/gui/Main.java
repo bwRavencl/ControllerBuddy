@@ -1951,7 +1951,7 @@ public final class Main extends JFrame {
 	/// Returns a file suffix string by prepending a dot to the given extension.
 	///
 	/// @param extension the file extension without a leading dot
-	/// @return the extension prefixed with a dot (e.g. `".json"`)
+	/// @return the extension prefixed with a dot (e.g., `".json"`)
 	private static String fileSuffix(final String extension) {
 		return "." + extension;
 	}
@@ -2338,7 +2338,7 @@ public final class Main extends JFrame {
 	///
 	/// @param parentComponent the parent component for any fallback dialog may be
 	/// `null`
-	/// @param path the path component of the URL to open (e.g. `"/donate"`)
+	/// @param path the path component of the URL to open (e.g., `"/donate"`)
 	private static void openWebsite(final @Nullable Component parentComponent, final @Nullable String path) {
 		try {
 			openBrowser(parentComponent, new URI("https", "controllerbuddy.org", path, null));
@@ -5760,7 +5760,7 @@ public final class Main extends JFrame {
 
 		/// Returns the version string of the running GNOME Shell.
 		///
-		/// @return the GNOME Shell version, e.g. `"45.0"`
+		/// @return the GNOME Shell version, e.g., `"45.0"`
 		@DBusBoundProperty(access = Access.READ, name = "ShellVersion")
 		String getShellVersion();
 	}
@@ -7154,7 +7154,7 @@ public final class Main extends JFrame {
 	/// Abstract action that checks for unsaved profile changes before proceeding.
 	///
 	/// Overrides `actionPerformed` to call `handleUnsavedChanges` first; the
-	/// abstract [#doAction] method is only invoked when the check passes (i.e. the
+	/// abstract [#doAction] method is only invoked when the check passes (i.e., the
 	/// user chose to save or discard changes, or there were none).
 	private abstract class UnsavedChangesAwareAction extends AbstractAction {
 

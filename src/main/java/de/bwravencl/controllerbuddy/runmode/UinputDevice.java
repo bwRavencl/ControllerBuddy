@@ -189,7 +189,7 @@ public final class UinputDevice implements Closeable {
 	/// synchronization report.
 	///
 	/// @param event the event type and code to emit
-	/// @param value the event value (e.g. 1 for key-down, 0 for key-up)
+	/// @param value the event value (e.g., 1 for key-down, 0 for key-up)
 	/// @param syn `true` to follow the event with a `SYN_REPORT`
 	/// @throws IOException if the write fails
 	void emit(final Event event, final int value, final boolean syn) throws IOException {
@@ -841,13 +841,13 @@ public final class UinputDevice implements Closeable {
 		/// Linux input event code identifying this event within its type.
 		private final short code;
 
-		/// Linux input event type (e.g. `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`).
+		/// Linux input event type (e.g., `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`).
 		private final short type;
 
 		/// Constructs an [Event] constant with its Linux input subsystem code and type.
 		///
-		/// @param code the event code (e.g. key code or axis index)
-		/// @param type the event type (e.g. `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`)
+		/// @param code the event code (e.g., key code or axis index)
+		/// @param type the event type (e.g., `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`)
 		Event(final short code, final short type) {
 			this.code = code;
 			this.type = type;

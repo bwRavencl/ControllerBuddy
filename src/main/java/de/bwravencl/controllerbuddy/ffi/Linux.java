@@ -222,7 +222,7 @@ public final class Linux {
 	/// Opens a file path with the specified flags.
 	///
 	/// @param pathname the null-terminated file path as a memory segment
-	/// @param flags the open flags (e.g. [#O_WRONLY], [#O_NONBLOCK])
+	/// @param flags the open flags (e.g., [#O_WRONLY], [#O_NONBLOCK])
 	/// @return a non-negative file descriptor on success, or `-1` on error
 	public static int open(final MemorySegment pathname, final int flags) {
 		try {

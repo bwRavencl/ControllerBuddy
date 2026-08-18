@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
 /// A [SpinnerNumberModel] that clamps out-of-range values to the nearest bound
 /// instead of throwing an [IllegalArgumentException].
 ///
-/// This is useful when a value bound to the model - e.g. one loaded from a
+/// This is useful when a value bound to the model - e.g., one loaded from a
 /// file - may fall outside the configured minimum/maximum range. Rather than
 /// failing construction, the value is silently clamped, and if clamping
 /// occurred, the supplied [ChangeListener] is notified immediately so callers
