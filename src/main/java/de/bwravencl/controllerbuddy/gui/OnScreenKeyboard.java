@@ -645,6 +645,9 @@ public final class OnScreenKeyboard extends JFrame {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		Border focusedButtonBorder;
 
+		/// Multiplier applied to this button's preferred width.
+		float widthMultiplier = 1f;
+
 		/// Whether this button is currently in a pressed state.
 		private volatile boolean pressed;
 
@@ -656,6 +659,19 @@ public final class OnScreenKeyboard extends JFrame {
 
 			updateTheme();
 			setMargin(new Insets(1, 1, 1, 1));
+		}
+
+		/// Returns the preferred size, adjusted by key-specific width multiplier
+		/// (e.g., greater width for Space, Backspace, Shift).
+		///
+		/// @return the preferred size
+		@SuppressWarnings({ "NarrowingCompoundAssignment" })
+		@Override
+		public final Dimension getPreferredSize() {
+			final var preferredSize = super.getPreferredSize();
+			preferredSize.width = Math.round(preferredSize.width * widthMultiplier);
+
+			return preferredSize;
 		}
 
 		/// Returns whether this button is currently pressed.
@@ -811,9 +827,6 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -1739002089027358633L;
 
-		/// DirectInput key code name identifying the key this button represents.
-		final String directInputKeyCodeName;
-
 		/// Keystroke sent to the input layer when this button is pressed.
 		private final Keystroke keystroke;
 
@@ -833,8 +846,6 @@ public final class OnScreenKeyboard extends JFrame {
 		private DefaultKeyboardButton(final String directInputKeyCodeName) {
 			super(getDefaultKeyDisplayName(directInputKeyCodeName));
 
-			this.directInputKeyCodeName = directInputKeyCodeName;
-
 			final Scancode[] keyScancodes;
 			final Scancode[] modifierScancodes;
 
@@ -852,6 +863,20 @@ public final class OnScreenKeyboard extends JFrame {
 			} else {
 				keyScancodes = new Scancode[] { scancode };
 				modifierScancodes = new Scancode[0];
+			}
+
+			if (this instanceof NumPadKeyboardButton) {
+				widthMultiplier = Scancode.DIK_NUMPAD0.equals(directInputKeyCodeName) ? 2f : 1f;
+			} else {
+				widthMultiplier = switch (directInputKeyCodeName) {
+				case Scancode.DIK_INSERT, Scancode.DIK_DELETE -> 0.75f;
+				case Scancode.DIK_TAB -> 1.5f;
+				case Scancode.DIK_BACKSLASH -> 2f;
+				case Scancode.DIK_LSHIFT, Scancode.DIK_RETURN, Scancode.DIK_BACK -> 2.5f;
+				case Scancode.DIK_RSHIFT -> 3f;
+				case Scancode.DIK_SPACE -> 5.5f;
+				default -> 1f;
+				};
 			}
 
 			keystroke = new Keystroke(keyScancodes, modifierScancodes);
@@ -888,39 +913,6 @@ public final class OnScreenKeyboard extends JFrame {
 					}
 				}
 			});
-		}
-
-		/// Returns the preferred size, adjusted by key-specific width multipliers
-		/// (e.g., greater width for Space, Backspace, Shift).
-		///
-		/// @return the preferred size
-		@SuppressWarnings({ "lossy-conversions", "NarrowingCompoundAssignment" })
-		@Override
-		public final Dimension getPreferredSize() {
-			final var preferredSize = super.getPreferredSize();
-
-			if (this instanceof NumPadKeyboardButton) {
-				if (Scancode.DIK_NUMPAD0.equals(directInputKeyCodeName)) {
-					preferredSize.width *= 2;
-				}
-			} else if (Scancode.DIK_INSERT.equals(directInputKeyCodeName)
-					|| Scancode.DIK_DELETE.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 0.75;
-			} else if (Scancode.DIK_TAB.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 1.5;
-			} else if (Scancode.DIK_BACKSLASH.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 2;
-			} else if (Scancode.DIK_LSHIFT.equals(directInputKeyCodeName)
-					|| Scancode.DIK_RETURN.equals(directInputKeyCodeName)
-					|| Scancode.DIK_BACK.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 2.5;
-			} else if (Scancode.DIK_RSHIFT.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 3;
-			} else if (Scancode.DIK_SPACE.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 5.5;
-			}
-
-			return preferredSize;
 		}
 
 		@Override
@@ -1057,21 +1049,11 @@ public final class OnScreenKeyboard extends JFrame {
 			super(getLockKeyDisplayName(lockKey.name()));
 			this.lockKey = lockKey;
 
-			addActionListener(_ -> toggleLock());
-		}
-
-		/// Returns the preferred size, doubled in width for the Caps Lock key.
-		///
-		/// @return the preferred size
-		@Override
-		public final Dimension getPreferredSize() {
-			final var preferredSize = super.getPreferredSize();
-
 			if (lockKey.virtualKeyCode() == KeyEvent.VK_CAPS_LOCK) {
-				preferredSize.width *= 2;
+				widthMultiplier = 2f;
 			}
 
-			return preferredSize;
+			addActionListener(_ -> toggleLock());
 		}
 
 		@Override
