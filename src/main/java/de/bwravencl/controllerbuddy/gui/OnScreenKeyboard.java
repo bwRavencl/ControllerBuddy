@@ -113,7 +113,7 @@ public final class OnScreenKeyboard extends JFrame {
 	/// The right Shift key button on this keyboard.
 	private final ShiftKeyboardButton rightShiftKeyboardButton;
 
-	/// Whether any keyboard button state changed since the last poll.
+	/// Whether any keyboard button state has changed since the last poll.
 	private volatile boolean anyChanges;
 
 	/// Column index of the currently selected keyboard button.
@@ -628,7 +628,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = 4567858619453576258L;
 
-		/// Whether this button's visual state changed since the last repaint.
+		/// Whether this button's visual state has changed since the last repaint.
 		volatile boolean changed;
 
 		/// Default background color of this button.

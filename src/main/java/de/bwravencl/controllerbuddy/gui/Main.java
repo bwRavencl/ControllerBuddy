@@ -523,7 +523,7 @@ public final class Main extends JFrame {
 	/// End-of-file sentinel token in the single-instance IPC protocol.
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
 
-	/// Initialisation token sent when a second instance contacts the first.
+	/// Initialization token sent when a second instance contacts the first.
 	private static final String SINGLE_INSTANCE_INIT = "INIT";
 
 	/// Lock file used to detect and communicate with an already-running instance.
