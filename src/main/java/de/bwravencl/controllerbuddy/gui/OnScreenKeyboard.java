@@ -533,21 +533,22 @@ public final class OnScreenKeyboard extends JFrame {
 	/// @param previousButton the button that was selected before the row change
 	private void updateSelectedColumn(final AbstractKeyboardButton previousButton) {
 		final var previousButtonX = previousButton.getX();
-		final var previousButtonWidth = previousButton.getPreferredSize().width;
+		final var previousButtonWidth = previousButton.getWidth();
 		final var previousButtonCenter = previousButtonX + previousButtonWidth / 2;
 		final var previousButtonMaxX = previousButtonX + previousButtonWidth;
+		final var currentRowButtons = keyboardButtons[selectedRow];
 
 		var minDelta = Integer.MAX_VALUE;
-		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
-			final var iButton = keyboardButtons[selectedRow][i];
+		for (var i = 0; i < currentRowButtons.length; i++) {
+			final var iButton = currentRowButtons[i];
 
 			final var iX = iButton.getX();
-			final var iWidth = iButton.getPreferredSize().width;
+			final var iWidth = iButton.getWidth();
 			final var iCenter = iX + iWidth / 2;
 			final var iMaxX = iX + iWidth;
 
 			if (previousButtonX >= iX && previousButtonMaxX <= iMaxX) {
-				selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+				selectedColumn = i;
 				break;
 			}
 
@@ -556,7 +557,7 @@ public final class OnScreenKeyboard extends JFrame {
 				break;
 			}
 
-			selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+			selectedColumn = i;
 			minDelta = delta;
 		}
 	}
