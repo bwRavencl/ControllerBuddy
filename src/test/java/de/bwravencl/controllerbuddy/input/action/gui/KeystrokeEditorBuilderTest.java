@@ -67,7 +67,7 @@ final class KeystrokeEditorBuilderTest {
 		void findsInGenericListModel() throws Exception {
 			// Use an anonymous ListModel that is not a DefaultListModel
 			final var items = new String[] { "X", "Y", "Z" };
-			final ListModel<String> model = new ListModel<>() {
+			final var model = new ListModel<String>() {
 
 				@Override
 				public void addListDataListener(final ListDataListener l) {

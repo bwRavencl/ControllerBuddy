@@ -308,7 +308,7 @@ final class InputPipelineTest {
 
 		injector = new GamepadStateInjector(input, sdlGamepadMock);
 
-		sdlGamepadMock.when(() -> SDLGamepad.SDL_GamepadConnected(injector.getDummySdlGamepadHandle()))
+		sdlGamepadMock.when(() -> SDLGamepad.SDL_GamepadConnected(GamepadStateInjector.DUMMY_SDL_GAMEPAD_HANDLE))
 				.thenReturn(true);
 	}
 
@@ -387,10 +387,6 @@ final class InputPipelineTest {
 				return (short) Math.round(Input.normalize(value, -1f, 1f, 0, Short.MAX_VALUE));
 			}
 			return (short) Math.round(Input.normalize(value, -1f, 1f, Short.MIN_VALUE, Short.MAX_VALUE));
-		}
-
-		private long getDummySdlGamepadHandle() {
-			return DUMMY_SDL_GAMEPAD_HANDLE;
 		}
 
 		private void injectState(final float[] axes, final boolean[] buttons) {

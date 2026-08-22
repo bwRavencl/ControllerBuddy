@@ -51,7 +51,7 @@ final class AssignmentsScrollPaneTest {
 	/// Creates a `CompoundButton` (the only concrete sub-final class of the
 	/// private-abstract `CustomButton`) via reflection, using the left-stick button
 	/// component so the constructor follows the
-	/// [ComponentType.BUTTON]/[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] branch.
+	/// [ComponentType#BUTTON]/[SDLGamepad#SDL_GAMEPAD_BUTTON_LEFT_STICK] branch.
 	private Object createCompoundButton() throws ReflectiveOperationException {
 		final var compoundButtonClass = Arrays.stream(AssignmentsScrollPane.class.getDeclaredClasses())
 				.filter(c -> "CompoundButton".equals(c.getSimpleName())).findFirst().orElseThrow();
@@ -81,9 +81,9 @@ final class AssignmentsScrollPaneTest {
 		private Graphics graphics;
 
 		@Test
-		@DisplayName("when multiple spaces exist, the one closest to the centre is chosen as the split point")
+		@DisplayName("when multiple spaces exist, the one closest to the center is chosen as the split point")
 		void centermostSpaceIsChosen() throws ReflectiveOperationException {
-			// "A BC DEF": spaces at indices 1 and 4, length=8, centre=4.
+			// "A BC DEF": spaces at indices 1 and 4, length=8, center=4.
 			// Space at 4 has distance 0; space at 1 has distance 3 → split at 4.
 			// First line: "A BC", second line: "DEF".
 			try (final var flatButtonUiMock = Mockito.mockStatic(FlatButtonUI.class)) {
@@ -96,9 +96,9 @@ final class AssignmentsScrollPaneTest {
 		}
 
 		@Test
-		@DisplayName("when two spaces are equidistant from the centre, the earlier one is chosen")
+		@DisplayName("when two spaces are equidistant from the center, the earlier one is chosen")
 		void firstEquidistantSpaceIsChosen() throws ReflectiveOperationException {
-			// "A B C D E": spaces at 1, 3, 5, 7; length=9, centre=4.
+			// "A B C D E": spaces at 1, 3, 5, 7; length=9, center=4.
 			// Space at 3 (dist 1) and space at 5 (dist 1) are equidistant.
 			// The algorithm keeps the first one it finds with strictly less distance,
 			// so index 3 wins → first line: "A B", second line: "C D E".
