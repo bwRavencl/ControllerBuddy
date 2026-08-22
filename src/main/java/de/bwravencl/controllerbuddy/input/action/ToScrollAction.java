@@ -66,7 +66,7 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	/// calls, and updates the scroll click count on the input state only when
 	/// the rounded amount is non-zero.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param d the raw scroll delta
 	final void scroll(final Input input, float d) {
 		d = invert ? -d : d;

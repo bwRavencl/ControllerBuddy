@@ -17,12 +17,14 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps axis input to cursor movement.
 ///
@@ -49,7 +51,8 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	/// zone filtering and exponential response curve. Resets the remaining delta
 	/// when the axis is within the dead zone.
 	@Override
-	public void doAction(final Input input, final int component, final Float value) {
+	public void doAction(final Input input, final int component, final Float value,
+			final @Nullable GamepadState gamepadState) {
 		final var absValue = Math.abs(value);
 
 		if (!input.isAxisSuspended(component) && absValue > deadZone) {

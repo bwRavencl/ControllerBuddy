@@ -64,7 +64,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 
 	/// Returns a description including the target mouse axis direction.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {
@@ -81,7 +81,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	/// calls, and updates the corresponding cursor delta on the input state
 	/// only when the rounded movement is non-zero.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param d the raw movement delta in pixels
 	final void moveCursor(final Input input, float d) {
 		d = invert ? -d : d;

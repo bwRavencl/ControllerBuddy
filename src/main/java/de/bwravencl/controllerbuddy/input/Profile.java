@@ -193,7 +193,7 @@ public final class Profile implements Cloneable {
 	/// Sets the active mode to the mode at the specified index, resetting any
 	/// axis-to-axis action values from the outgoing mode and updating the overlay.
 	///
-	/// @param input the input instance used for scheduling and overlay updates
+	/// @param input the input instance
 	/// @param index the index of the mode to activate
 	void setActiveMode(final Input input, final int index) {
 		if (modes.size() > index) {

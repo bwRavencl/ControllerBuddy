@@ -149,7 +149,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	/// Initializes activation state and resets all transient timing fields to their
 	/// defaults.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	@Override
 	public final void init(final Input input) {
 		IActivatableAction.super.init(input);

@@ -30,6 +30,6 @@ public interface IResetableAction<V extends Constable> extends IAction<V> {
 
 	/// Resets the transient state of this action.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	void reset(final Input input);
 }

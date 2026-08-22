@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -50,6 +51,9 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	/// Default maximum relative speed for axis movement.
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 3f;
 
+	/// Default setting for whether to use the raw axis value.
+	private static final boolean DEFAULT_USE_RAW_VALUE = true;
+
 	/// Accumulated sub-unit movement remainder carried over between frames.
 	transient float remainingD;
 
@@ -71,20 +75,31 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 		deadZone = DEFAULT_DEAD_ZONE;
 		exponent = DEFAULT_EXPONENT;
 		initialValue = DEFAULT_INITIAL_VALUE;
+		useRawValue = DEFAULT_USE_RAW_VALUE;
 	}
 
 	/// Applies relative axis movement based on the current axis value, dead zone,
 	/// exponent curve, and maximum relative speed. Accumulates subunit remainders
 	/// across calls.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the axis component index
 	/// @param value the current axis value
+	/// @param gamepadState the current gamepad state
 	@Override
-	public void doAction(final Input input, final int component, final Float value) {
+	public void doAction(final Input input, final int component, Float value,
+			final @Nullable GamepadState gamepadState) {
+		if (input.isAxisSuspended(component)) {
+			return;
+		}
+
+		if (gamepadState != null) {
+			value = handleUseRawValue(component, value, gamepadState);
+		}
+
 		final var absValue = Math.abs(value);
 
-		if (input.isAxisSuspended(component) || absValue <= deadZone) {
+		if (absValue <= deadZone) {
 			return;
 		}
 

@@ -55,14 +55,14 @@ final class AxisToButtonActionTest {
 		@Test
 		@DisplayName("activates button at the exact minimum boundary")
 		void activatesAtExactMinBoundary() {
-			action.doAction(mockInput, 0, 0.5f);
+			action.doAction(mockInput, 0, 0.5f, null);
 			Assertions.assertTrue(buttons[0]);
 		}
 
 		@Test
 		@DisplayName("activates button when axis value is within the min-max zone")
 		void activatesButtonWhenInZone() {
-			action.doAction(mockInput, 0, 0.75f);
+			action.doAction(mockInput, 0, 0.75f, null);
 			Assertions.assertTrue(buttons[0]);
 		}
 
@@ -70,14 +70,14 @@ final class AxisToButtonActionTest {
 		@DisplayName("does not activate button when axis value is above the maximum")
 		void doesNotActivateAboveMax() {
 			action.setMaxAxisValue(0.8f);
-			action.doAction(mockInput, 0, 0.9f);
+			action.doAction(mockInput, 0, 0.9f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 
 		@Test
 		@DisplayName("does not activate button when axis value is below the minimum")
 		void doesNotActivateBelowMin() {
-			action.doAction(mockInput, 0, 0.3f);
+			action.doAction(mockInput, 0, 0.3f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 
@@ -85,7 +85,7 @@ final class AxisToButtonActionTest {
 		@DisplayName("does not activate when axis is suspended")
 		void doesNotActivateWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
-			action.doAction(mockInput, 0, 0.75f);
+			action.doAction(mockInput, 0, 0.75f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 

@@ -40,7 +40,7 @@ public abstract class ToAxisAction<V extends Constable> extends InvertableAction
 
 	/// Returns a description including the target virtual axis name.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {

@@ -409,7 +409,7 @@ public final class OnScreenKeyboard extends JFrame {
 	/// Polls all keyboard buttons and applies their pending key events to the given
 	/// input state.
 	///
-	/// @param input the input state to update
+	/// @param input the input instance
 	public void poll(@SuppressWarnings("exports") final Input input) {
 		synchronized (keyboardButtons) {
 			if (anyChanges) {
@@ -685,7 +685,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Polls this button's state and applies any pending key events to the given
 		/// input.
 		///
-		/// @param input the input state to update
+		/// @param input the input instance
 		/// @return `true` if the button requires continued polling on the next cycle
 		abstract boolean poll(final Input input);
 

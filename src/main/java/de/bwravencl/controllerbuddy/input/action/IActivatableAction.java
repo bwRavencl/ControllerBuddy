@@ -46,7 +46,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 
 	/// Initializes the activatable state based on the configured activation mode.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	@Override
 	default void init(final Input input) {
 		setActivatable(getActivation() == Activation.ON_RELEASE ? Activatable.NO : Activatable.YES);

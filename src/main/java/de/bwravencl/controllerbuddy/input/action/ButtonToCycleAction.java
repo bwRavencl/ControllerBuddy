@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -27,6 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a button press to cycling through a list of sub-actions.
 ///
@@ -79,7 +81,8 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	/// cycle
 	/// when the configured activation condition is met.
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		switch (activation) {
@@ -90,7 +93,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
-				doActionAndAdvanceIndex(input, component);
+				doActionAndAdvanceIndex(input, component, gamepadState);
 			}
 		}
 		case ON_RELEASE -> {
@@ -102,7 +105,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				}
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
-				doActionAndAdvanceIndex(input, component);
+				doActionAndAdvanceIndex(input, component, gamepadState);
 			}
 		}
 		}
@@ -114,12 +117,14 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	/// [ButtonToLockKeyAction], then increments the index, and wraps it back to
 	/// zero after the last sub-action.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the button component index
-	private void doActionAndAdvanceIndex(final Input input, final int component) {
+	/// @param gamepadState the current gamepad state
+	private void doActionAndAdvanceIndex(final Input input, final int component,
+			final @Nullable GamepadState gamepadState) {
 		final var action = actions.get(index);
 
-		action.doAction(input, component, true);
+		action.doAction(input, component, true, gamepadState);
 		if (action instanceof final ButtonToLockKeyAction buttonToLockKeyAction) {
 			buttonToLockKeyAction.resetWasUp();
 		}

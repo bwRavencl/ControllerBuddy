@@ -93,7 +93,7 @@ public abstract class ToKeyAction<V extends Constable> extends ActivationInterva
 	/// optional minimum interval hold behavior.
 	///
 	/// @param hot `true` if the input is currently active
-	/// @param input the current input state
+	/// @param input the input instance
 	final void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpKeystrokes().add(keystroke);

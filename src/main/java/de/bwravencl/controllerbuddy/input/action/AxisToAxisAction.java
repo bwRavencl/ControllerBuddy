@@ -17,15 +17,18 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxAxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a physical axis input to a virtual axis output.
 ///
@@ -50,12 +53,15 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	/// Default minimum output value for the virtual axis.
 	private static final float DEFAULT_MIN_VALUE = -1f;
 
+	/// Default setting for whether to use the raw axis value.
+	private static final boolean DEFAULT_USE_RAW_VALUE = false;
+
 	/// The dead zone threshold below which axis input values are treated as zero.
 	@ActionProperty(icon = "∅", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// The exponent applied to the input value for a non-linear response curve.
-	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 103)
+	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 104)
 	float exponent = DEFAULT_EXPONENT;
 
 	/// The value assigned to the virtual axis when the action is initialized.
@@ -70,16 +76,26 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
 	float minValue = DEFAULT_MIN_VALUE;
 
+	/// Whether to use the raw axis value without applying any transformations.
+	@ActionProperty(icon = "○", title = "USE_RAW_VALUE_TITLE", description = "USE_RAW_VALUE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 103)
+	boolean useRawValue = DEFAULT_USE_RAW_VALUE;
+
 	/// Processes the axis input value by applying dead zone, exponent curve, and
 	/// normalization, then sets the virtual axis output.
 	///
-	/// @param input the input state
+	/// @param input the input instance
 	/// @param component the component index
 	/// @param value the raw axis value
+	/// @param gamepadState the current gamepad state
 	@Override
-	public void doAction(final Input input, final int component, Float value) {
+	public void doAction(final Input input, final int component, Float value,
+			final @Nullable GamepadState gamepadState) {
 		if (input.isAxisSuspended(component)) {
 			return;
+		}
+
+		if (gamepadState != null) {
+			value = handleUseRawValue(component, value, gamepadState);
 		}
 
 		final var absValue = Math.abs(value);
@@ -141,14 +157,36 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		return minValue;
 	}
 
+	/// Handles the use of the raw axis value if configured to do so, returning
+	/// either the raw value or the provided value.
+	///
+	/// @param component the axis component index
+	/// @param value the current axis value
+	/// @param gamepadState the current gamepad state
+	/// @return the axis value
+	float handleUseRawValue(final int component, final Float value, final GamepadState gamepadState) {
+		if (useRawValue) {
+			return gamepadState.getRawAxes()[component];
+		}
+
+		return value;
+	}
+
 	/// Initializes the virtual axis to its configured initial value.
 	///
-	/// @param input the input state
+	/// @param input the input instance
 	@Override
 	public final void init(final Input input) {
 		if (!input.isSkipAxisInitialization()) {
 			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null, null, null);
 		}
+	}
+
+	/// Returns whether the raw axis value is used without transformations.
+	///
+	/// @return `true` if the raw value is used
+	public final boolean isUseRawValue() {
+		return useRawValue;
 	}
 
 	/// Sets the dead zone threshold.
@@ -184,5 +222,12 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	/// @param minValue the minimum value
 	public final void setMinValue(final float minValue) {
 		this.minValue = minValue;
+	}
+
+	/// Sets whether the raw axis value is used without transformations.
+	///
+	/// @param useRawValue `true` to use the raw value
+	public final void setUseRawValue(final boolean useRawValue) {
+		this.useRawValue = useRawValue;
 	}
 }

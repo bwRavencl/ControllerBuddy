@@ -17,9 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a gamepad button press to a virtual mouse button click.
 ///
@@ -31,7 +33,8 @@ public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean
 	/// Processes the button input, applying delay handling before delegating the
 	/// mouse button action.
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 		handleAction(value, input);
 	}

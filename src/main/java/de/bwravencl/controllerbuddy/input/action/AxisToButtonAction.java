@@ -17,11 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps axis input to a virtual button output.
 ///
@@ -48,7 +50,8 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 	/// within the configured axis range, respecting delay and axis suspension
 	/// state.
 	@Override
-	public void doAction(final Input input, final int component, Float value) {
+	public void doAction(final Input input, final int component, Float value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;

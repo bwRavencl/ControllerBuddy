@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
@@ -72,7 +73,8 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	/// Processes a button input value and resets the configured virtual axis based
 	/// on the current activation mode.
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		switch (activation) {
@@ -158,7 +160,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	/// [Input#setAxis(VirtualAxis, float, boolean, Float, Float, Float)] for an
 	/// absolute position reset.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	private void resetAxis(final Input input) {
 		if (fluid) {
 			input.moveAxis(virtualAxis, resetValue);

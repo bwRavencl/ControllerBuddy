@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
@@ -26,6 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a button press to toggling a lock key (e.g., Caps Lock, Num Lock,
 /// Scroll Lock).
@@ -37,12 +39,15 @@ import java.text.MessageFormat;
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
+	/// Default on state the lock key is toggled to.
+	private static final boolean DEFAULT_ON = true;
+
 	/// Delay in milliseconds before this action becomes active.
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether the lock key is toggled to the on state by this action.
 	@ActionProperty(icon = "⏻", title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
-	private boolean on = true;
+	private boolean on = DEFAULT_ON;
 
 	/// Lock key targeted by this action.
 	@ActionProperty(icon = "⌨️", title = "KEY_TITLE", description = "KEY_DESCRIPTION", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
@@ -52,7 +57,8 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 	private transient boolean wasUp = true;
 
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		if (value) {

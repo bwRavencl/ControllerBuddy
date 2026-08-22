@@ -87,7 +87,7 @@ public abstract class ToMouseButtonAction<V extends Constable> extends Activatio
 	/// release, with optional minimum interval hold behavior.
 	///
 	/// @param hot `true` if the input is currently active
-	/// @param input the current input state
+	/// @param input the input instance
 	final void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpMouseButtons().add(mouseButton);

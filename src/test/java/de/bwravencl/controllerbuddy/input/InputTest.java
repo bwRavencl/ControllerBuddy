@@ -252,8 +252,6 @@ final class InputTest {
 		@Test
 		@DisplayName("returns false and does not set initialized when the selected controller fails to open")
 		void returnsFalseWhenSelectedControllerFailsToOpen() {
-			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
-			Mockito.when(mockMain.isMapCircularAxesToSquareAxes()).thenReturn(false);
 			Mockito.when(mockMain.getControllers()).thenReturn(Set.of(mockController));
 			Mockito.when(mockController.instanceId()).thenReturn(1);
 

@@ -123,7 +123,7 @@ public final class EditActionsDialog extends JDialog {
 	private static final List<Class<?>> CYCLE_ACTION_CLASSES;
 
 	/// Default height of the dialog bounds in pixels.
-	private static final int DIALOG_BOUNDS_HEIGHT = 690;
+	private static final int DIALOG_BOUNDS_HEIGHT = 710;
 
 	/// Pixel offset applied to the dialog position relative to its parent.
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;

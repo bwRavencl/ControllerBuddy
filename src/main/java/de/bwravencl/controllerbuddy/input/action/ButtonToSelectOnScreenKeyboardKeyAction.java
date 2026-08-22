@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -27,6 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
 import java.text.MessageFormat;
 import java.util.Locale;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a gamepad button press to moving the on-screen keyboard key selector.
 ///
@@ -70,7 +72,8 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		if (value) {

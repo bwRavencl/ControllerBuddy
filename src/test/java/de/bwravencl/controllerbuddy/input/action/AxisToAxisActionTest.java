@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import org.jspecify.annotations.NullMarked;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,6 +37,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @NullMarked
 @ExtendWith(MockitoExtension.class)
 final class AxisToAxisActionTest {
+
+	@Mock
+	GamepadState gamepadState;
 
 	@Mock
 	Input mockInput;
@@ -54,7 +59,7 @@ final class AxisToAxisActionTest {
 		@DisplayName("applies dead zone: values within dead zone produce 0")
 		void deadZoneProducesZero() {
 			action.setDeadZone(0.2f);
-			action.doAction(mockInput, 0, 0.1f);
+			action.doAction(mockInput, 0, 0.1f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -66,7 +71,7 @@ final class AxisToAxisActionTest {
 		@DisplayName("does nothing when axis is suspended")
 		void doesNothingWhenAxisSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
-			action.doAction(mockInput, 0, 0.5f);
+			action.doAction(mockInput, 0, 0.5f, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
@@ -74,7 +79,7 @@ final class AxisToAxisActionTest {
 		@Test
 		@DisplayName("full negative input with defaults produces minValue (-1.0)")
 		void fullNegativeInputProducesMinValue() {
-			action.doAction(mockInput, 0, -1.0f);
+			action.doAction(mockInput, 0, -1.0f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -85,7 +90,7 @@ final class AxisToAxisActionTest {
 		@Test
 		@DisplayName("full positive input with defaults produces maxValue (1.0)")
 		void fullPositiveInputProducesMaxValue() {
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -97,7 +102,7 @@ final class AxisToAxisActionTest {
 		@DisplayName("inverts the output value when invert is true")
 		void invertsOutput() {
 			action.setInvert(true);
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -112,10 +117,23 @@ final class AxisToAxisActionTest {
 		}
 
 		@Test
+		@DisplayName("uses raw value when useRawValue is true")
+		void usesRawValue() {
+			action.setUseRawValue(true);
+			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1.0f });
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, gamepadState);
+
+			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
+			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
+					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
+			Assertions.assertEquals(1.0f, valueCaptor.getValue(), 0.01f);
+		}
+
+		@Test
 		@DisplayName("exponent=1 bypasses the power curve and uses linear normalization")
 		void zeroExponentUsesLinearNormalization() {
 			action.setExponent(1f);
-			action.doAction(mockInput, 0, 0.5f);
+			action.doAction(mockInput, 0, 0.5f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),

@@ -18,9 +18,11 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import java.lang.constant.Constable;
+import org.jspecify.annotations.Nullable;
 
 /// Root interface for all controller input actions in the action type
 /// hierarchy.
@@ -67,15 +69,15 @@ public interface IAction<V extends Constable> extends Cloneable {
 	/// Executes this action, transforming the given input value into virtual output
 	/// events.
 	///
-	/// @param input the current input state
-	/// @param component the index of the input component (axis or button)
-	/// triggering this action
-	/// @param value the current input value
-	void doAction(final Input input, int component, V value);
+	/// @param input the input instance
+	/// @param component the index of the input component triggering this action
+	/// @param value the current value of the input component
+	/// @param gamepadState the entire current gamepad state
+	void doAction(final Input input, int component, V value, final @Nullable GamepadState gamepadState);
 
 	/// Returns a human-readable description of this action for display in the UI.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return the description string
 	String getDescription(final Input input);
 }

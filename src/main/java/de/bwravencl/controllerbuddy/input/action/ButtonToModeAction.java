@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -82,7 +83,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// action handlers of the mode transition and shows the on-screen keyboard
 	/// if the target mode is the on-screen keyboard mode.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param profile the active profile
 	private void activateMode(final Input input, final Profile profile) {
 		if (!BUTTON_TO_MODE_ACTION_STACK.contains(this) && modeUuid != null) {
@@ -110,7 +111,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// in the mode. Returns `true` only when no active mode intercepts the button,
 	/// indicating it is safe to activate this action's mode.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return `true` if no active mode uses the same button as this action
 	private boolean buttonNotUsedByActiveModes(final Input input) {
 		final var profile = input.getProfile();
@@ -152,7 +153,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// previously active mode are re-initialized, overlapping axes are suspended,
 	/// and the on-screen keyboard is hidden if it was shown by this action.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param profile the active profile
 	private void deactivateMode(final Input input, final Profile profile) {
 		for (var topmostModeAction = BUTTON_TO_MODE_ACTION_STACK
@@ -201,7 +202,8 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// Activates or deactivates the target mode based on button state and toggle
 	/// configuration.
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		final var profile = input.getProfile();
@@ -242,7 +244,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// Returns the target [Mode], falling back to the on-screen keyboard mode or
 	/// the default mode.
 	///
-	/// @param input the current input context
+	/// @param input the input instance
 	/// @return the resolved target mode
 	public Mode getMode(final Input input) {
 		for (final var mode : input.getProfile().getModes()) {

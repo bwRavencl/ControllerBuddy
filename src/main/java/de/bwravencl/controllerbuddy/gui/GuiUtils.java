@@ -154,7 +154,7 @@ public final class GuiUtils {
 	/// @param text the initial text
 	/// @param columns the number of columns for sizing
 	/// @return a new text field with a context menu
-	public static JTextField createTextFieldWithMenu(@Nullable final String text, final int columns) {
+	public static JTextField createTextFieldWithMenu(final @Nullable String text, final int columns) {
 		return createTextFieldWithMenu(null, text, columns);
 	}
 
@@ -166,7 +166,7 @@ public final class GuiUtils {
 	/// @param text the initial text
 	/// @param columns the number of columns for sizing
 	/// @return a new text field with a context menu
-	public static JTextField createTextFieldWithMenu(final @Nullable Document doc, @Nullable final String text,
+	public static JTextField createTextFieldWithMenu(final @Nullable Document doc, final @Nullable String text,
 			final int columns) {
 		final var textField = new JTextField(doc, text, columns);
 

@@ -3981,7 +3981,7 @@ final class InputPipelineTest {
 		@DisplayName("null action produces no output")
 		void nullActionProducesNoOutput() {
 			final var before = OutputCapture.captureAndReset(input);
-			new NullAction().doAction(input, 0, 0f);
+			new NullAction().doAction(input, 0, 0f, null);
 			final var after = OutputCapture.captureAndReset(input);
 
 			Assertions.assertEquals(before, after);
@@ -4053,7 +4053,7 @@ final class InputPipelineTest {
 		@DisplayName("all reflected Input fields exist")
 		void allReflectedInputFieldsExist() {
 			final var fieldNames = new String[] { "sdlGamepadToGamepadStateMap", "selectedSdlGamepad", "initialized",
-					"lastPollNanoTime", "swapLeftAndRightSticks", "mapCircularAxesToSquareAxes" };
+					"lastPollNanoTime" };
 
 			for (final var fieldName : fieldNames) {
 				try {
@@ -4070,7 +4070,7 @@ final class InputPipelineTest {
 		@DisplayName("GamepadState inner final class exists with expected fields")
 		void gamepadStateClassExists() {
 			try {
-				final var gamepadStateClass = Class.forName("de.bwravencl.controllerbuddy.input.Input$GamepadState");
+				final var gamepadStateClass = Class.forName("de.bwravencl.controllerbuddy.input.GamepadState");
 				gamepadStateClass.getDeclaredField("axes");
 				gamepadStateClass.getDeclaredField("buttons");
 				gamepadStateClass.getDeclaredField("sdlGamepad");

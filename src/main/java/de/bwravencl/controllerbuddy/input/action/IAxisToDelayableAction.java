@@ -94,7 +94,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 	/// value passes through unchanged. Otherwise, the value is suppressed until the
 	/// axis stays within range for the configured delay duration.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the axis component index
 	/// @param value the current axis value
 	/// @return the original value if the delay has elapsed, or `Float.MIN_VALUE` to

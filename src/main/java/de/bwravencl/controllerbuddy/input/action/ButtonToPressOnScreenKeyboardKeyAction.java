@@ -18,12 +18,14 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a gamepad button press to pressing the currently selected on-screen
 /// keyboard key.
@@ -62,7 +64,8 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 	/// Presses or releases the selected on-screen keyboard key or toggles its lock
 	/// state.
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();

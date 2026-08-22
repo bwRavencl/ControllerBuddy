@@ -17,12 +17,14 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a controller axis to mouse scroll wheel input.
 ///
@@ -49,11 +51,13 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 	/// an exponent curve. Resets the scroll remainder when the axis is in the dead
 	/// zone or suspended.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the axis component index
 	/// @param value the current axis value
+	/// @param gamepadState the current gamepad state
 	@Override
-	public void doAction(final Input input, final int component, final Float value) {
+	public void doAction(final Input input, final int component, final Float value,
+			final @Nullable GamepadState gamepadState) {
 		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			final var rateMultiplier = input.getRateMultiplier();
 

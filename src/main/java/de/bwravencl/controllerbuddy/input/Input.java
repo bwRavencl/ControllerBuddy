@@ -151,9 +151,6 @@ public final class Input {
 	/// Timestamp of the last input poll in nanoseconds.
 	private long lastPollNanoTime;
 
-	/// Whether circular axis values should be remapped to square axes.
-	private boolean mapCircularAxesToSquareAxes;
-
 	/// The smallest representable axis step, computed from the run mode's axis
 	/// range.
 	private float minAxisStep;
@@ -185,9 +182,6 @@ public final class Input {
 	/// externally.
 	private boolean skipAxisInitialization;
 
-	/// Whether the left and right sticks should be swapped during input processing.
-	private boolean swapLeftAndRightSticks;
-
 	/// Constructs an [Input] for the given controller.
 	///
 	/// @param main the [Main] application instance
@@ -209,26 +203,6 @@ public final class Input {
 		resetLastHotSwapPollNanoTime();
 
 		profile = new Profile();
-	}
-
-	/// Clamps a float value to the range [-1, 1].
-	///
-	/// @param v the value to clamp
-	/// @return the clamped value in the range [-1, 1]
-	private static float clamp(final float v) {
-		return Math.clamp(v, -1f, 1f);
-	}
-
-	/// Corrects near-zero numerical imprecision by snapping values smaller than
-	/// a small epsilon to exactly zero.
-	///
-	/// @param d the value to correct
-	/// @return `0` if `d` is smaller than the epsilon threshold, otherwise `d`
-	private static double correctNumericalImprecision(final double d) {
-		if (d < 0.000_000_1) {
-			return 0d;
-		}
-		return d;
 	}
 
 	/// Returns whether the given SDL button index is a valid gamepad button.
@@ -439,9 +413,6 @@ public final class Input {
 
 		Objects.requireNonNull(runMode, "Field runMode must not be null");
 
-		swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
-		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
-
 		sdlGamepadToGamepadStateMap.clear();
 		for (final var controller : main.getControllers()) {
 			if (!openController(controller) && controller.equals(selectedController)) {
@@ -518,7 +489,8 @@ public final class Input {
 			return false;
 		}
 
-		sdlGamepadToGamepadStateMap.put(sdlGamepad, new GamepadState(sdlGamepad));
+		sdlGamepadToGamepadStateMap.put(sdlGamepad,
+				new GamepadState(sdlGamepad, main.isSwapLeftAndRightSticks(), main.isMapCircularAxesToSquareAxes()));
 		updateHotSwappingButtonId();
 
 		final var gamepadProperties = SDLGamepad.SDL_GetGamepadProperties(sdlGamepad);
@@ -586,7 +558,7 @@ public final class Input {
 				if (gamepadState.update()) {
 					final var instanceId = SDLGamepad.SDL_GetGamepadID(sdlGamepad);
 
-					if (gamepadState.buttons[hotSwappingButtonId]) {
+					if (gamepadState.getButtons()[hotSwappingButtonId]) {
 						hotSwappingButtonDownInstanceIds.add(instanceId);
 					} else if (hotSwappingButtonDownInstanceIds.contains(instanceId)) {
 						final var optionalController = main.getControllers().stream()
@@ -672,7 +644,7 @@ public final class Input {
 		final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
 
 		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
-			final var axisValue = gamepadState.axes[axis];
+			final var axisValue = gamepadState.getAxes()[axis];
 
 			if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
 				axisToSuspensionInfoMap.remove(axis);
@@ -699,7 +671,7 @@ public final class Input {
 
 			if (actions != null) {
 				for (final var action : actions) {
-					action.doAction(this, axis, axisValue);
+					action.doAction(this, axis, axisValue, gamepadState);
 				}
 			}
 		}
@@ -726,7 +698,7 @@ public final class Input {
 
 			if (actions != null) {
 				for (final var action : actions) {
-					action.doAction(this, button, gamepadState.buttons[button]);
+					action.doAction(this, button, gamepadState.getButtons()[button], gamepadState);
 				}
 			}
 		}
@@ -736,7 +708,7 @@ public final class Input {
 				final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 				if (buttonToModeActions != null) {
 					for (final var action : buttonToModeActions) {
-						action.doAction(this, button, gamepadState.buttons[button]);
+						action.doAction(this, button, gamepadState.getButtons()[button], gamepadState);
 					}
 				}
 			}
@@ -1031,152 +1003,5 @@ public final class Input {
 	/// shall end
 	/// @param activeMode the mode that was active when the axis was suspended
 	private record SuspensionInfo(long endSuspensionTimeNanos, Mode activeMode) {
-	}
-
-	/// Holds the most recently polled axis and button state for a single SDL
-	/// gamepad.
-	///
-	/// Wraps a native SDL gamepad handle and provides an [#update] method that
-	/// reads all axis and button values via SDL, applies optional transformations
-	/// such as stick-swap and circular-to-square axis remapping, and stores the
-	/// normalized results for use by the input pipeline on each polling cycle.
-	private final class GamepadState {
-
-		/// Normalized axis values for all SDL gamepad axes.
-		private final float[] axes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_COUNT];
-
-		/// Button pressed states for all SDL gamepad buttons.
-		private final boolean[] buttons = new boolean[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT + 1];
-
-		/// The SDL gamepad handle associated with this state.
-		private final long sdlGamepad;
-
-		/// Constructs a [GamepadState] for the given SDL gamepad handle.
-		///
-		/// @param sdlGamepad the native SDL gamepad handle
-		private GamepadState(final long sdlGamepad) {
-			this.sdlGamepad = sdlGamepad;
-		}
-
-		/// Remaps the circular range of a pair of axes to a square range using disc to
-		/// square mapping as described in ["Analytical Methods for Squaring the Disc"
-		/// by Chamberlain Fong](https://arxiv.org/abs/1509.06344), updating the axis
-		/// values in place.
-		///
-		/// @param xAxisIndex the index of the horizontal axis in the axes array
-		/// @param yAxisIndex the index of the vertical axis in the axes array
-		private void mapCircularAxesToSquareAxes(final int xAxisIndex, final int yAxisIndex) {
-			final var u = clamp(axes[xAxisIndex]);
-			final var v = clamp(axes[yAxisIndex]);
-
-			final var u2 = u * u;
-			final var v2 = v * v;
-
-			final var subtermX = 2d + u2 - v2;
-			final var subtermY = 2d - u2 + v2;
-
-			final var twoSqrt2 = 2d * Math.sqrt(2d);
-
-			var termX1 = subtermX + u * twoSqrt2;
-			var termX2 = subtermX - u * twoSqrt2;
-			var termY1 = subtermY + v * twoSqrt2;
-			var termY2 = subtermY - v * twoSqrt2;
-
-			termX1 = correctNumericalImprecision(termX1);
-			termY1 = correctNumericalImprecision(termY1);
-			termX2 = correctNumericalImprecision(termX2);
-			termY2 = correctNumericalImprecision(termY2);
-
-			final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
-			final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
-
-			axes[xAxisIndex] = clamp((float) x);
-			axes[yAxisIndex] = clamp((float) y);
-		}
-
-		/// Polls the SDL gamepad and refreshes all axis and button state arrays.
-		///
-		/// Reads normalized axis values for sticks and triggers, optionally swapping
-		/// left and right sticks and remapping circular to square axes, then reads
-		/// all button states.
-		///
-		/// @return `true` if the gamepad is still connected and state was updated,
-		/// `false` if the gamepad has been disconnected
-		private boolean update() {
-			if (!SDLGamepad.SDL_GamepadConnected(sdlGamepad)) {
-				return false;
-			}
-
-			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX
-					: SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = normalize(
-							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
-							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
-			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY
-					: SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = normalize(
-							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY),
-							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
-			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX
-					: SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = normalize(
-							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX),
-							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
-			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY
-					: SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = normalize(
-							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY),
-							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
-
-			if (mapCircularAxesToSquareAxes) {
-				mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY);
-				mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
-			}
-
-			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = normalize(
-					SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER), 0,
-					Short.MAX_VALUE, -1f, 1f);
-
-			axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER] = normalize(
-					SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER), 0,
-					Short.MAX_VALUE, -1f, 1f);
-
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_EAST);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_WEST);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_BACK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_BACK);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_START);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK);
-
-			buttons[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK
-					: SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-							SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
-			buttons[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK
-					: SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-							SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK);
-
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT);
-			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
-
-			return true;
-		}
 	}
 }

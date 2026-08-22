@@ -451,7 +451,7 @@ public final class Main extends JFrame {
 	/// Preferences key for the controller LED color.
 	private static final String PREFERENCES_LED_COLOR = "led_color";
 
-	/// Preferences key for the map-circular-axes-to-square setting.
+	/// Preferences key for the circular-to-square axis mapping setting.
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 
 	/// Preferences key for the maximum polling rate.
@@ -3178,7 +3178,7 @@ public final class Main extends JFrame {
 		for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
 			for (final var buttonToModeAction : buttonToModeActions) {
 				if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-					buttonToModeAction.doAction(input, -1, true);
+					buttonToModeAction.doAction(input, -1, true, null);
 					break;
 				}
 			}

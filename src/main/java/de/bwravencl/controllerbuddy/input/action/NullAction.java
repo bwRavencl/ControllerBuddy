@@ -17,10 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import java.lang.constant.Constable;
+import org.jspecify.annotations.Nullable;
 
 /// A no-op action that performs no work when executed.
 ///
@@ -36,16 +38,18 @@ public final class NullAction implements IAction<Constable> {
 
 	/// Does nothing. This action intentionally has no effect.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the component index
 	/// @param value the input value (ignored)
+	/// @param gamepadState the current gamepad state
 	@Override
-	public void doAction(final Input input, final int component, final Constable value) {
+	public void doAction(final Input input, final int component, final Constable value,
+			final @Nullable GamepadState gamepadState) {
 	}
 
 	/// Returns the default description for this no-op action.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return the action description
 	@Override
 	public String getDescription(final Input input) {

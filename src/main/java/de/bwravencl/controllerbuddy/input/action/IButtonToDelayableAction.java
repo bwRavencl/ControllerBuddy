@@ -84,7 +84,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 	/// value passes through unchanged. Otherwise, the button press is suppressed
 	/// until held for the configured delay duration.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the button component index
 	/// @param value the current button state (true if pressed)
 	/// @return the effective button state after delay processing

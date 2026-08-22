@@ -17,11 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a gamepad button press to mouse scroll wheel movement.
 ///
@@ -36,7 +38,8 @@ public final class ButtonToScrollAction extends ToScrollAction<Boolean> implemen
 	private long delay = DEFAULT_DELAY;
 
 	@Override
-	public void doAction(final Input input, final int component, Boolean value) {
+	public void doAction(final Input input, final int component, Boolean value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		if (!value) {

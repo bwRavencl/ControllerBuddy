@@ -17,11 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import org.jspecify.annotations.Nullable;
 
 /// Triggers a keystroke when an axis value falls within a configurable range.
 ///
@@ -47,11 +49,13 @@ public final class AxisToKeyAction extends ToKeyAction<Float> implements IAxisTo
 	/// Executes the key action if the axis value is within the configured min/max
 	/// range.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @param component the axis component index
 	/// @param value the current axis value
+	/// @param gamepadState the current gamepad state
 	@Override
-	public void doAction(final Input input, final int component, Float value) {
+	public void doAction(final Input input, final int component, Float value,
+			final @Nullable GamepadState gamepadState) {
 		value = handleDelay(input, component, value);
 
 		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;

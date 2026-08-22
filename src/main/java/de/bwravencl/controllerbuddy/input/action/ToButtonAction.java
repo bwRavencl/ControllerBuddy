@@ -69,7 +69,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 
 	/// Returns a description including the one-based target button number.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {
@@ -89,7 +89,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	/// optional minimum interval hold behavior.
 	///
 	/// @param hot `true` if the input is currently active
-	/// @param input the current input state
+	/// @param input the input instance
 	final void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getButtons()[buttonId] = true;

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.GamepadState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,6 +38,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @NullMarked
 @ExtendWith(MockitoExtension.class)
 final class AxisToRelativeAxisActionTest {
+
+	@Mock
+	GamepadState gamepadState;
 
 	@Mock
 	Input mockInput;
@@ -62,7 +67,7 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(0.001f);
 			Mockito.when(mockInput.getMinAxisStep()).thenReturn(1.0f);
 
-			action.doAction(mockInput, 0, 0.2f);
+			action.doAction(mockInput, 0, 0.2f, null);
 			Assertions.assertTrue(action.remainingD > 0f,
 					"remainingD (" + action.remainingD + ") should be positive for positive input");
 			Assertions.assertTrue(action.remainingD < 0.01f,
@@ -81,7 +86,7 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
 
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
@@ -99,7 +104,7 @@ final class AxisToRelativeAxisActionTest {
 			axes.put(VirtualAxis.X, 32_000);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
 
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 
 			final var valueCaptor = org.mockito.ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -110,7 +115,7 @@ final class AxisToRelativeAxisActionTest {
 		@Test
 		@DisplayName("does nothing when value is within dead zone")
 		void doesNothingInDeadZone() {
-			action.doAction(mockInput, 0, 0.05f);
+			action.doAction(mockInput, 0, 0.05f, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
@@ -119,7 +124,7 @@ final class AxisToRelativeAxisActionTest {
 		@DisplayName("does nothing when axis is suspended")
 		void doesNothingWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
@@ -136,7 +141,7 @@ final class AxisToRelativeAxisActionTest {
 			axes.put(VirtualAxis.X, 0);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
 
-			action.doAction(mockInput, 0, 1.0f);
+			action.doAction(mockInput, 0, 1.0f, null);
 
 			final var valueCaptor = org.mockito.ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -152,6 +157,24 @@ final class AxisToRelativeAxisActionTest {
 			action.setDeadZone(0.1f);
 			axes = new EnumMap<>(VirtualAxis.class);
 			axes.put(VirtualAxis.X, 0);
+		}
+
+		@Test
+		@DisplayName("uses raw value when useRawValue is true")
+		void usesRawValue() {
+			action.setUseRawValue(true);
+			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1.0f });
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
+			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
+			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
+			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
+			Mockito.when(mockInput.getAxes()).thenReturn(axes);
+
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, gamepadState);
+			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),
+					Mockito.any(), Mockito.any(), Mockito.any());
+			Assertions.assertEquals(0f, action.remainingD, 0.001f);
 		}
 	}
 }

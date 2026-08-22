@@ -31,6 +31,6 @@ public interface IInitializationAction<V extends Constable> extends IAction<V> {
 
 	/// Initializes or resets the transient state of this action.
 	///
-	/// @param input the current input state
+	/// @param input the input instance
 	void init(final Input input);
 }

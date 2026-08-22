@@ -55,17 +55,17 @@ final class ButtonToLockKeyActionTest {
 		@Test
 		@DisplayName("adds lock key to offLockKeys on first press")
 		void addsToOffLockKeys() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(offLockKeys.contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
 
 		@Test
 		@DisplayName("does not add to offLockKeys on sustained press (wasUp guard)")
 		void doesNotAddOnSustainedPress() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			offLockKeys.clear();
 
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(offLockKeys.isEmpty());
 		}
 
@@ -90,41 +90,41 @@ final class ButtonToLockKeyActionTest {
 		@Test
 		@DisplayName("adds lock key to onLockKeys on first press")
 		void addsToOnLockKeys() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(onLockKeys.contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
 
 		@Test
 		@DisplayName("does not add again on sustained press (wasUp guard)")
 		void doesNotAddOnSustainedPress() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			onLockKeys.clear();
 
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(onLockKeys.isEmpty());
 		}
 
 		@Test
 		@DisplayName("re-triggers after a release-press cycle")
 		void reTriggersAfterReleasePressycle() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			onLockKeys.clear();
 
-			action.doAction(mockInput, 0, false);
+			action.doAction(mockInput, 0, false, null);
 
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(onLockKeys.contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
 
 		@Test
 		@DisplayName("resetWasUp() allows re-triggering without an explicit release")
 		void resetWasUpAllowsRetrigger() {
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			onLockKeys.clear();
 
 			action.resetWasUp();
 
-			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, true, null);
 			Assertions.assertTrue(onLockKeys.contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
 
