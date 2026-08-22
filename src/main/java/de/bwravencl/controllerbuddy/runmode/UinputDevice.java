@@ -171,9 +171,6 @@ public final class UinputDevice implements Closeable {
 		});
 	}
 
-	/// Destroys the uinput device and closes the underlying file descriptor.
-	///
-	/// @throws IOException if the device cannot be destroyed or closed
 	@Override
 	public void close() throws IOException {
 		ioctlChecked(fd, Linux.UI_DEV_DESTROY, MemorySegment.NULL);
@@ -234,9 +231,6 @@ public final class UinputDevice implements Closeable {
 		emit(Event.SYN_REPORT, 0, false);
 	}
 
-	/// Returns the human-readable name of this uinput device.
-	///
-	/// @return the device name
 	@Override
 	public String toString() {
 		return name;

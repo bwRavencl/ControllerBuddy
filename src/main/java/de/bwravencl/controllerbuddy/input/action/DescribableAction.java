@@ -47,11 +47,6 @@ public abstract class DescribableAction<V extends Constable> implements IAction<
 		return description;
 	}
 
-	/// Returns the custom description if set, otherwise falls back to the default
-	/// description.
-	///
-	/// @param input the input instance
-	/// @return the action description
 	@SuppressWarnings("NullAway")
 	@Override
 	public String getDescription(final Input input) {

@@ -34,16 +34,6 @@ import org.jspecify.annotations.Nullable;
 /// JSON string (lock key name). Serializes a [LockKey] using its name.
 public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeserializer<LockKey> {
 
-	/// Deserializes a [LockKey] from a JSON element.
-	///
-	/// Accepts either a numeric virtual key code or a string name to look up the
-	/// corresponding
-	/// [LockKey]. Throws [JsonParseException] if no matching lock key is found.
-	///
-	/// @param json the JSON element to deserialize
-	/// @param typeOfT the target type
-	/// @param context the deserialization context
-	/// @return the deserialized [LockKey]
 	@Override
 	public LockKey deserialize(final JsonElement json, final Type typeOfT,
 			final @Nullable JsonDeserializationContext context) throws JsonParseException {
@@ -71,12 +61,6 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
 		}
 	}
 
-	/// Serializes a [LockKey] as a JSON primitive containing its name.
-	///
-	/// @param src the lock key to serialize
-	/// @param typeOfSrc the source type
-	/// @param context the serialization context
-	/// @return a [JsonPrimitive] containing the lock key name
 	@Override
 	public JsonElement serialize(final LockKey src, final Type typeOfSrc,
 			final @Nullable JsonSerializationContext context) {

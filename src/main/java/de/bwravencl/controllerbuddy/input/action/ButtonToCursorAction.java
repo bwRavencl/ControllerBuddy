@@ -37,9 +37,6 @@ public final class ButtonToCursorAction extends ToCursorAction<Boolean> implemen
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
-	/// Processes a button input value and moves the cursor while the button is
-	/// pressed. Resets the fractional movement remainder when the button is
-	/// released.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {

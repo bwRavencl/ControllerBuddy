@@ -59,7 +59,6 @@ class FrameDragListener extends MouseAdapter {
 		return mouseDownLocation != null;
 	}
 
-	/// Moves the frame to follow the mouse cursor during a drag.
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		if (mouseDownLocation == null) {
@@ -74,14 +73,11 @@ class FrameDragListener extends MouseAdapter {
 		GuiUtils.setFrameLocationRespectingBounds(frame, newFrameLocation, totalDisplayBounds);
 	}
 
-	/// Records the initial mouse-click position to begin a drag operation.
 	@Override
 	public void mousePressed(final MouseEvent e) {
 		mouseDownLocation = e.getPoint();
 	}
 
-	/// Ends the drag operation and persists the frame location as normalized
-	/// coordinates.
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		mouseDownLocation = null;

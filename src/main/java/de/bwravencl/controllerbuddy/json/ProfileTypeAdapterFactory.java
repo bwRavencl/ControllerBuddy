@@ -108,18 +108,6 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 		};
 	}
 
-	/// Creates a type adapter for the given type, applying profile migration logic
-	/// as needed.
-	///
-	/// Returns specialized adapters for Profile types (with `keyRepeatInterval` and
-	/// GLFW migration), enum types (with legacy name mapping), [IDelayableAction]
-	/// subtypes (with `longPress` migration), and general types (with default mode
-	/// descriptions, and overlay axis defaults).
-	///
-	/// @param gson the Gson instance
-	/// @param type the type token for the target type
-	/// @param <T> the type being adapted
-	/// @return a [TypeAdapter] for the given type
 	@SuppressWarnings("NullAway")
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<@Nullable T> type) {

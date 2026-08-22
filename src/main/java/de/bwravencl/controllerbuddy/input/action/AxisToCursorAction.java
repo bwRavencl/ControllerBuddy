@@ -47,9 +47,6 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 12)
 	private float exponent = DEFAULT_EXPONENT;
 
-	/// Processes the axis value and moves the cursor proportionally, applying dead
-	/// zone filtering and exponential response curve. Resets the remaining delta
-	/// when the axis is within the dead zone.
 	@Override
 	public void doAction(final Input input, final int component, final Float value,
 			final @Nullable GamepadState gamepadState) {

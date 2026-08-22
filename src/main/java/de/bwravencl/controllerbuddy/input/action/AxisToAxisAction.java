@@ -80,13 +80,6 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	@ActionProperty(icon = "○", title = "USE_RAW_VALUE_TITLE", description = "USE_RAW_VALUE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 103)
 	boolean useRawValue = DEFAULT_USE_RAW_VALUE;
 
-	/// Processes the axis input value by applying dead zone, exponent curve, and
-	/// normalization, then sets the virtual axis output.
-	///
-	/// @param input the input instance
-	/// @param component the component index
-	/// @param value the raw axis value
-	/// @param gamepadState the current gamepad state
 	@Override
 	public void doAction(final Input input, final int component, Float value,
 			final @Nullable GamepadState gamepadState) {
@@ -172,9 +165,6 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		return value;
 	}
 
-	/// Initializes the virtual axis to its configured initial value.
-	///
-	/// @param input the input instance
 	@Override
 	public final void init(final Input input) {
 		if (!input.isSkipAxisInitialization()) {

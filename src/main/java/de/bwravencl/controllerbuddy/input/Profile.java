@@ -81,11 +81,6 @@ public final class Profile implements Cloneable {
 		modes.add(defaultMode);
 	}
 
-	/// Constructs a deep copy of this [Profile], including all modes,
-	/// button-to-mode actions, and overlay axis mappings.
-	///
-	/// @return a new [Profile] with cloned contents
-	/// @throws CloneNotSupportedException if cloning of a contained object fails
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var profile = (Profile) super.clone();

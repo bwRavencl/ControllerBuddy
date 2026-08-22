@@ -155,7 +155,6 @@ public final class ServerRunMode extends RunMode {
 		return logger;
 	}
 
-	/// Requests this server run mode to stop by closing the UDP socket.
 	@Override
 	public void requestStop() {
 		super.requestStop();
@@ -165,11 +164,6 @@ public final class ServerRunMode extends RunMode {
 		}
 	}
 
-	/// Runs the server loop: binds a UDP socket, waits for a client handshake, then
-	/// repeatedly polls the controller, and - only when the input state has
-	/// actually changed since the last packet - serializes it, encrypts it, and
-	/// sends it to the connected client. Periodically checks that the client is
-	/// still alive.
 	@Override
 	public void run() {
 		logStart();

@@ -30,8 +30,6 @@ import org.jspecify.annotations.Nullable;
 @Action(icon = "🖱️", title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
 public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean> implements IButtonToDelayableAction {
 
-	/// Processes the button input, applying delay handling before delegating the
-	/// mouse button action.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {

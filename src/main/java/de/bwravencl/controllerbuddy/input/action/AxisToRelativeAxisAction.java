@@ -78,14 +78,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 		useRawValue = DEFAULT_USE_RAW_VALUE;
 	}
 
-	/// Applies relative axis movement based on the current axis value, dead zone,
-	/// exponent curve, and maximum relative speed. Accumulates subunit remainders
-	/// across calls.
-	///
-	/// @param input the input instance
-	/// @param component the axis component index
-	/// @param value the current axis value
-	/// @param gamepadState the current gamepad state
 	@Override
 	public void doAction(final Input input, final int component, Float value,
 			final @Nullable GamepadState gamepadState) {

@@ -199,8 +199,6 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		}
 	}
 
-	/// Activates or deactivates the target mode based on button state and toggle
-	/// configuration.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {
@@ -234,7 +232,6 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		return delay;
 	}
 
-	/// Returns a localized description including the target mode name.
 	@Override
 	public String getDescription(final Input input) {
 		final var mode = getMode(input);
@@ -275,7 +272,6 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		return toggle;
 	}
 
-	/// Clears the mode action stack and hides the on-screen keyboard if targeted.
 	@Override
 	public void reset(final Input input) {
 		BUTTON_TO_MODE_ACTION_STACK.clear();

@@ -70,8 +70,6 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	@ActionProperty(icon = "✥", title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	private VirtualAxis virtualAxis = VirtualAxis.X;
 
-	/// Processes a button input value and resets the configured virtual axis based
-	/// on the current activation mode.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {
@@ -121,8 +119,6 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		return delay;
 	}
 
-	/// Returns a human-readable description, defaulting to a formatted message that
-	/// includes the target virtual axis name.
 	@Override
 	public String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {

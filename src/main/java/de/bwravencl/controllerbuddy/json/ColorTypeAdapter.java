@@ -35,16 +35,6 @@ import org.jspecify.annotations.Nullable;
 /// RGB integer representation.
 public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 
-	/// Deserializes a [Color] from a JSON element.
-	///
-	/// Accepts either a JSON number representing an RGBA value or a JSON object
-	/// containing a numeric `value` member. Throws [JsonParseException] if the
-	/// element cannot be interpreted as a color.
-	///
-	/// @param json the JSON element to deserialize
-	/// @param typeOfT the target type
-	/// @param context the deserialization context
-	/// @return the deserialized [Color]
 	@Override
 	public Color deserialize(final JsonElement json, final Type typeOfT,
 			final @Nullable JsonDeserializationContext context) throws JsonParseException {
@@ -73,12 +63,6 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 		}
 	}
 
-	/// Serializes a [Color] as a JSON primitive containing its RGB integer value.
-	///
-	/// @param src the color to serialize
-	/// @param typeOfSrc the source type
-	/// @param context the serialization context
-	/// @return a [JsonPrimitive] containing the RGB integer
 	@Override
 	public JsonElement serialize(final Color src, final Type typeOfSrc,
 			final @Nullable JsonSerializationContext context) {

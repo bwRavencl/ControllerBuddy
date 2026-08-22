@@ -68,17 +68,6 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 		return jsonElement;
 	}
 
-	/// Deserializes an [IAction] from a JSON wrapper object.
-	///
-	/// Extracts the `type` and `data` members from the wrapper, resolves the action
-	/// class by its fully qualified name, and delegates deserialization to the
-	/// context. If the class cannot be found and the target type is [IAction], a
-	/// [NullAction] is substituted.
-	///
-	/// @param json the JSON element containing the wrapper object
-	/// @param typeOfT the target type
-	/// @param context the deserialization context
-	/// @return the deserialized action instance
 	@Override
 	public IAction<?> deserialize(final JsonElement json, Type typeOfT, final JsonDeserializationContext context)
 			throws JsonParseException {
@@ -115,13 +104,6 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 		return unknownActionClasses;
 	}
 
-	/// Serializes an [IAction] into a JSON wrapper object with `type` and `data`
-	/// properties.
-	///
-	/// @param src the action to serialize
-	/// @param typeOfSrc the source type
-	/// @param context the serialization context
-	/// @return a [JsonObject] wrapping the action class name and serialized data
 	@Override
 	public JsonElement serialize(final IAction<?> src, final Type typeOfSrc, final JsonSerializationContext context) {
 		final var wrapper = new JsonObject();

@@ -47,13 +47,6 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
-	/// Executes the mouse button action if the axis value is within the configured
-	/// min/max range.
-	///
-	/// @param input the input instance
-	/// @param component the axis component index
-	/// @param value the current axis value
-	/// @param gamepadState the current gamepad state
 	@Override
 	public void doAction(final Input input, final int component, Float value,
 			final @Nullable GamepadState gamepadState) {
@@ -63,33 +56,21 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 		handleAction(inZone, input);
 	}
 
-	/// Returns the maximum axis value for the activation zone.
-	///
-	/// @return the upper bound of the axis activation range
 	@Override
 	public float getMaxAxisValue() {
 		return maxAxisValue;
 	}
 
-	/// Returns the minimum axis value for the activation zone.
-	///
-	/// @return the lower bound of the axis activation range
 	@Override
 	public float getMinAxisValue() {
 		return minAxisValue;
 	}
 
-	/// Sets the maximum axis value for the activation zone.
-	///
-	/// @param maxAxisValue the upper bound of the axis activation range
 	@Override
 	public void setMaxAxisValue(final float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	/// Sets the minimum axis value for the activation zone.
-	///
-	/// @param minAxisValue the lower bound of the axis activation range
 	@Override
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;

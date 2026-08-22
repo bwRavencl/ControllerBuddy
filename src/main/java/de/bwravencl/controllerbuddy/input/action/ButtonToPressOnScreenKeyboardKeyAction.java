@@ -61,8 +61,6 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 		return super.clone();
 	}
 
-	/// Presses or releases the selected on-screen keyboard key or toggles its lock
-	/// state.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {
@@ -95,14 +93,12 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 		return delay;
 	}
 
-	/// Returns a localized description indicating press or lock mode.
 	@Override
 	public String getDescription(final Input input) {
 		return Main.strings
 				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
 	}
 
-	/// Resets the transient press/release tracking state.
 	@Override
 	public void init(final Input input) {
 		wasUp = INITIAL_WAS_UP;

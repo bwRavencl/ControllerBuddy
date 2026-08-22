@@ -86,10 +86,6 @@ public final class ClampingSpinnerNumberModel extends SpinnerNumberModel {
 		return value;
 	}
 
-	/// Sets the current value, clamping it to `[minimum, maximum]` first if it is a
-	/// [Number]. Non-[Number] values are delegated to the superclass unchanged.
-	///
-	/// @param value the new value
 	@Override
 	public void setValue(final Object value) {
 		if (value instanceof final Number number) {

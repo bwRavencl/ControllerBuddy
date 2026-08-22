@@ -43,7 +43,6 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 		return super.clone();
 	}
 
-	/// Releases all on-screen keyboard buttons when the gamepad button is pressed.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {
@@ -59,7 +58,6 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 		return delay;
 	}
 
-	/// Returns a localized description of this action.
 	@Override
 	public String getDescription(final Input input) {
 		return Main.strings.getString("BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE");

@@ -64,10 +64,6 @@ public final class Keystroke implements Cloneable, Serializable {
 		this.modifierCodes = modifierCodes;
 	}
 
-	/// Creates a deep copy of this keystroke, including copies of the key code and
-	/// modifier code arrays.
-	///
-	/// @return a cloned Keystroke instance
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var keystroke = (Keystroke) super.clone();
@@ -83,7 +79,6 @@ public final class Keystroke implements Cloneable, Serializable {
 		return keystroke;
 	}
 
-	/// Checks equality based on key codes and modifier codes arrays.
 	@Override
 	public boolean equals(final @Nullable Object obj) {
 		return obj instanceof final Keystroke keystroke && Arrays.equals(keyCodes, keystroke.keyCodes)
@@ -143,11 +138,6 @@ public final class Keystroke implements Cloneable, Serializable {
 		this.modifierCodes = modifierCodes;
 	}
 
-	/// Returns a human-readable representation of this keystroke, joining modifier
-	/// and key names with " + ".
-	///
-	/// @return the formatted keystroke string, or the localized "NOTHING" string
-	/// if empty
 	@Override
 	public String toString() {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));

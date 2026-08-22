@@ -403,7 +403,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 		throw new NotSerializableException(AssignmentsScrollPane.class.getName());
 	}
 
-	/// Enables or disables all child components recursively.
 	@Override
 	public void setEnabled(final boolean enabled) {
 		GuiUtils.setEnabledRecursive(assignmentsPanel, enabled);
@@ -608,8 +607,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 			throw new NotSerializableException(AssignmentsButton.class.getName());
 		}
 
-		/// Stores the content area filled flag without delegating to the superclass,
-		/// since custom painting is handled manually.
 		@Override
 		public final void setContentAreaFilled(final boolean b) {
 			contentAreaFilled = b;
@@ -636,7 +633,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 			}
 		}
 
-		/// Updates the UI delegate and refreshes theme colors.
 		@Override
 		public final void updateUI() {
 			super.updateUI();
@@ -862,7 +858,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 					+ " " + componentType + ": " + componentIndex);
 		}
 
-		/// Tests whether a point is within this button's shaped region.
 		@Override
 		public boolean contains(final int x, final int y) {
 			initShape();
@@ -871,9 +866,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 			return shape.contains(x, y);
 		}
 
-		/// Returns the preferred size inherited from the parent panel.
-		///
-		/// @return the preferred size
 		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(preferredSize);
@@ -922,7 +914,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 			return false;
 		}
 
-		/// Paints the border by drawing the outline of this button's shape.
 		@Override
 		protected void paintBorder(final Graphics g) {
 			if (!isBorderPainted()) {
@@ -935,7 +926,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 			g2d.draw(shape);
 		}
 
-		/// Initializes the shape geometry before delegating to the superclass paint.
 		@Override
 		protected void paintComponent(final Graphics g) {
 			initShape();
@@ -1033,7 +1023,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 					MessageFormat.format(Main.strings.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
-		/// Opens the edit dialog for the associated component.
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var editComponentDialog = new EditActionsDialog(main, component, name);

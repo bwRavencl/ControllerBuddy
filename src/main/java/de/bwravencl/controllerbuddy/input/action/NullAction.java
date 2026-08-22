@@ -36,21 +36,11 @@ public final class NullAction implements IAction<Constable> {
 		return super.clone();
 	}
 
-	/// Does nothing. This action intentionally has no effect.
-	///
-	/// @param input the input instance
-	/// @param component the component index
-	/// @param value the input value (ignored)
-	/// @param gamepadState the current gamepad state
 	@Override
 	public void doAction(final Input input, final int component, final Constable value,
 			final @Nullable GamepadState gamepadState) {
 	}
 
-	/// Returns the default description for this no-op action.
-	///
-	/// @param input the input instance
-	/// @return the action description
 	@Override
 	public String getDescription(final Input input) {
 		return IAction.getDefaultDescription(this);

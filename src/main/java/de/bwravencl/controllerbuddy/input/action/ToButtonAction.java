@@ -67,10 +67,6 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 		return delay;
 	}
 
-	/// Returns a description including the one-based target button number.
-	///
-	/// @param input the input instance
-	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {

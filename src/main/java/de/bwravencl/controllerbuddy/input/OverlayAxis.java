@@ -64,9 +64,6 @@ public final class OverlayAxis implements Cloneable {
 		this.inverted = inverted;
 	}
 
-	/// Constructs a deep copy of this overlay axis, including a copy of the color.
-	///
-	/// @return a new [OverlayAxis] with the same configuration
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public Object clone() {

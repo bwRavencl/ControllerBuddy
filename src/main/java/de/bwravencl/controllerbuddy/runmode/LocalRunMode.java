@@ -138,9 +138,6 @@ public final class LocalRunMode extends OutputRunMode {
 		return true;
 	}
 
-	/// Runs the local polling loop: initializes the output device, then repeatedly
-	/// polls the controller, and writes the input state to the output device at a
-	/// fixed rate until stopped.
 	@Override
 	public void run() {
 		logStart();

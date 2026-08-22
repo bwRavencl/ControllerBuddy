@@ -62,10 +62,6 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 		return cursorSensitivity;
 	}
 
-	/// Returns a description including the target mouse axis direction.
-	///
-	/// @param input the input instance
-	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
@@ -138,9 +134,6 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 			label = Main.strings.getString(labelKey);
 		}
 
-		/// Returns the localized label for this mouse axis.
-		///
-		/// @return the localized label string
 		@Override
 		public String toString() {
 			return label;

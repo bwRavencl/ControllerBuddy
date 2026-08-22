@@ -44,9 +44,6 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 	/// @return the activation mode
 	Activation getActivation();
 
-	/// Initializes the activatable state based on the configured activation mode.
-	///
-	/// @param input the input instance
 	@Override
 	default void init(final Input input) {
 		setActivatable(getActivation() == Activation.ON_RELEASE ? Activatable.NO : Activatable.YES);
@@ -119,9 +116,6 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 			return symbol;
 		}
 
-		/// Returns the localized label for this activation mode.
-		///
-		/// @return the localized label string
 		@Override
 		public String toString() {
 			return label;

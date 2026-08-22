@@ -146,10 +146,6 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 		return hot;
 	}
 
-	/// Initializes activation state and resets all transient timing fields to their
-	/// defaults.
-	///
-	/// @param input the input instance
 	@Override
 	public final void init(final Input input) {
 		IActivatableAction.super.init(input);
@@ -159,10 +155,6 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 		maxActivationTime = INITIAL_MAX_ACTIVATION_TIME;
 	}
 
-	/// Sets the activation mode and clears the maximum activation interval if the
-	/// new mode does not support it.
-	///
-	/// @param activation the activation mode to set
 	@Override
 	public final void setActivation(final Activation activation) {
 		this.activation = activation;

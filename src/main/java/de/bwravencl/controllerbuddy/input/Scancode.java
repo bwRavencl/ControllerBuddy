@@ -438,9 +438,6 @@ public record Scancode(String name, int keyCode, Event event) {
 		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
 	}
 
-	/// Returns the display name of this scancode.
-	///
-	/// @return the human-readable key name
 	@Override
 	public String toString() {
 		return name;

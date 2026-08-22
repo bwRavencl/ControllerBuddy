@@ -34,16 +34,6 @@ import org.jspecify.annotations.Nullable;
 /// (scancode name). Serializes a [Scancode] using its name.
 public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDeserializer<Scancode> {
 
-	/// Deserializes a [Scancode] from a JSON element.
-	///
-	/// Accepts either a numeric key code or a string name to look up the
-	/// corresponding [Scancode]. Throws [JsonParseException] if no matching scan
-	/// code is found.
-	///
-	/// @param json the JSON element to deserialize
-	/// @param typeOfT the target type
-	/// @param context the deserialization context
-	/// @return the deserialized [Scancode]
 	@Override
 	public Scancode deserialize(final JsonElement json, final Type typeOfT,
 			final @Nullable JsonDeserializationContext context) throws JsonParseException {
@@ -72,12 +62,6 @@ public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDese
 		}
 	}
 
-	/// Serializes a [Scancode] as a JSON primitive containing its name.
-	///
-	/// @param src the scancode to serialize
-	/// @param typeOfSrc the source type
-	/// @param context the serialization context
-	/// @return a [JsonPrimitive] containing the scancode name
 	@Override
 	public JsonElement serialize(final Scancode src, final Type typeOfSrc,
 			final @Nullable JsonSerializationContext context) {

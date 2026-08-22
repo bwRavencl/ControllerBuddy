@@ -61,8 +61,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	/// Current position in the sub-action list.
 	private transient int index;
 
-	/// Creates a deep copy of this cycle action, including clones of all
-	/// sub-actions.
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -77,9 +75,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		return cycleAction;
 	}
 
-	/// Processes a button input value and executes the current sub-action in the
-	/// cycle
-	/// when the configured activation condition is met.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {
@@ -158,8 +153,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		return delay;
 	}
 
-	/// Returns a human-readable description composed of the descriptions of all
-	/// sub-actions joined with arrow separators and wrapped in cycle symbols.
 	@Override
 	public String getDescription(final Input input) {
 		if (!isDescriptionEmpty() || actions.isEmpty()) {
@@ -170,9 +163,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				.collect(Collectors.joining(" → ", CYCLE_SYMBOL + " ", " ⟲"));
 	}
 
-	/// Initializes this action and all sub-actions, setting each sub-action's
-	/// activatable
-	/// state to [Activatable#ALWAYS] so they fire unconditionally within the cycle.
 	@Override
 	public void init(final Input input) {
 		IActivatableAction.super.init(input);
@@ -188,7 +178,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		});
 	}
 
-	/// Resets the cycle index back to the first action.
 	@Override
 	public void reset(final Input input) {
 		index = 0;

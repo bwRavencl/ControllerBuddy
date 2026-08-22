@@ -452,11 +452,6 @@ public final class OnScreenKeyboard extends JFrame {
 		getSelectedButton().release();
 	}
 
-	/// Shows or hides the on-screen keyboard. When showing, updates scaling and
-	/// applies a rounded window shape if supported. When hiding, releases all held
-	/// buttons.
-	///
-	/// @param b whether to show or hide the keyboard
 	@Override
 	public void setVisible(final boolean b) {
 		synchronized (keyboardButtons) {
@@ -599,9 +594,6 @@ public final class OnScreenKeyboard extends JFrame {
 			label = Main.strings.getString(labelKey);
 		}
 
-		/// Returns the localized label for this direction.
-		///
-		/// @return the display label
 		@Override
 		public String toString() {
 			return label;
@@ -662,10 +654,6 @@ public final class OnScreenKeyboard extends JFrame {
 			setMargin(new Insets(1, 1, 1, 1));
 		}
 
-		/// Returns the preferred size, adjusted by key-specific width multiplier
-		/// (e.g., greater width for Space, Backspace, Shift).
-		///
-		/// @return the preferred size
 		@SuppressWarnings({ "NarrowingCompoundAssignment" })
 		@Override
 		public final Dimension getPreferredSize() {
@@ -745,7 +733,6 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 		}
 
-		/// Updates the UI delegate and refreshes theme colors and borders.
 		@Override
 		public final void updateUI() {
 			super.updateUI();

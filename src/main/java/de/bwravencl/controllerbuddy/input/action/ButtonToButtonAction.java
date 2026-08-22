@@ -30,8 +30,6 @@ import org.jspecify.annotations.Nullable;
 @Action(icon = "◉", title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
 public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToDelayableAction {
 
-	/// Processes a button input value by applying delay handling, then delegating
-	/// to the inherited button action logic.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
 			final @Nullable GamepadState gamepadState) {

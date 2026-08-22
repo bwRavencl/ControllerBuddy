@@ -46,9 +46,6 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
-	/// Processes the axis value and activates the virtual button if the value is
-	/// within the configured axis range, respecting delay and axis suspension
-	/// state.
 	@Override
 	public void doAction(final Input input, final int component, Float value,
 			final @Nullable GamepadState gamepadState) {
@@ -58,25 +55,21 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 		handleAction(inZone, input);
 	}
 
-	/// Returns the upper bound of the activation axis range.
 	@Override
 	public float getMaxAxisValue() {
 		return maxAxisValue;
 	}
 
-	/// Returns the lower bound of the activation axis range.
 	@Override
 	public float getMinAxisValue() {
 		return minAxisValue;
 	}
 
-	/// Sets the upper bound of the activation axis range.
 	@Override
 	public void setMaxAxisValue(final float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	/// Sets the lower bound of the activation axis range.
 	@Override
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;

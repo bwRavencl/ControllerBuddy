@@ -1268,13 +1268,6 @@ public final class EditActionsDialog extends JDialog {
 			return titleLabel.getText();
 		}
 
-		/// Sets the foreground color of the panel and propagates it to the icon and
-		/// title labels.
-		///
-		/// The `null` checks are necessary because this method may be called during
-		/// superclass initialization before the labels are assigned.
-		///
-		/// @param fg the foreground color to set
 		@Override
 		public void setForeground(final Color fg) {
 			super.setForeground(fg);

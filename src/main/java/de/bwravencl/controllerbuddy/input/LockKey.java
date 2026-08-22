@@ -81,9 +81,6 @@ public record LockKey(String name, int virtualKeyCode, Event event, String sysfs
 		VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
 	}
 
-	/// Returns the display name of this lock key.
-	///
-	/// @return the human-readable lock key name
 	@Override
 	public String toString() {
 		return name;

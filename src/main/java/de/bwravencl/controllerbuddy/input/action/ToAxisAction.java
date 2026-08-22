@@ -38,10 +38,6 @@ public abstract class ToAxisAction<V extends Constable> extends InvertableAction
 	@ActionProperty(icon = "✥", title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	VirtualAxis virtualAxis = VirtualAxis.X;
 
-	/// Returns a description including the target virtual axis name.
-	///
-	/// @param input the input instance
-	/// @return the action description
 	@Override
 	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {

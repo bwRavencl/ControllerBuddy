@@ -47,14 +47,6 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 101)
 	private float exponent = DEFAULT_EXPONENT;
 
-	/// Converts the axis value to scroll clicks, applying dead zone filtering and
-	/// an exponent curve. Resets the scroll remainder when the axis is in the dead
-	/// zone or suspended.
-	///
-	/// @param input the input instance
-	/// @param component the axis component index
-	/// @param value the current axis value
-	/// @param gamepadState the current gamepad state
 	@Override
 	public void doAction(final Input input, final int component, final Float value,
 			final @Nullable GamepadState gamepadState) {

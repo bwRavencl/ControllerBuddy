@@ -394,8 +394,6 @@ public final class ClientRunMode extends OutputRunMode {
 		return retVal;
 	}
 
-	/// Requests this client run mode to stop by closing the UDP socket and
-	/// signaling a forced stop.
 	@Override
 	public void requestStop() {
 		super.requestStop();
@@ -406,9 +404,6 @@ public final class ClientRunMode extends OutputRunMode {
 		}
 	}
 
-	/// Runs the client loop: initializes the UDP socket, connects to the remote
-	/// server, and repeatedly receives input state and writes it to the local
-	/// output device until stopped.
 	@Override
 	public void run() {
 		logStart();
