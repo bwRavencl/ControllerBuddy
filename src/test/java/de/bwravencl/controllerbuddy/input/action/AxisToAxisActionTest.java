@@ -59,7 +59,7 @@ final class AxisToAxisActionTest {
 		@DisplayName("applies dead zone: values within dead zone produce 0")
 		void deadZoneProducesZero() {
 			action.setDeadZone(0.2f);
-			action.doAction(mockInput, 0, 0.1f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.1f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -71,7 +71,7 @@ final class AxisToAxisActionTest {
 		@DisplayName("does nothing when axis is suspended")
 		void doesNothingWhenAxisSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
-			action.doAction(mockInput, 0, 0.5f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
@@ -79,30 +79,30 @@ final class AxisToAxisActionTest {
 		@Test
 		@DisplayName("full negative input with defaults produces minValue (-1.0)")
 		void fullNegativeInputProducesMinValue() {
-			action.doAction(mockInput, 0, -1.0f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -1f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
-			Assertions.assertEquals(-1.0f, valueCaptor.getValue(), 0.01f);
+			Assertions.assertEquals(-1f, valueCaptor.getValue(), 0.01f);
 		}
 
 		@Test
 		@DisplayName("full positive input with defaults produces maxValue (1.0)")
 		void fullPositiveInputProducesMaxValue() {
-			action.doAction(mockInput, 0, 1.0f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
-			Assertions.assertEquals(1.0f, valueCaptor.getValue(), 0.01f);
+			Assertions.assertEquals(1f, valueCaptor.getValue(), 0.01f);
 		}
 
 		@Test
 		@DisplayName("inverts the output value when invert is true")
 		void invertsOutput() {
 			action.setInvert(true);
-			action.doAction(mockInput, 0, 1.0f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -120,20 +120,20 @@ final class AxisToAxisActionTest {
 		@DisplayName("uses raw value when useRawValue is true")
 		void usesRawValue() {
 			action.setUseRawValue(true);
-			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1.0f });
+			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1f });
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, gamepadState);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
-			Assertions.assertEquals(1.0f, valueCaptor.getValue(), 0.01f);
+			Assertions.assertEquals(1f, valueCaptor.getValue(), 0.01f);
 		}
 
 		@Test
 		@DisplayName("exponent=1 bypasses the power curve and uses linear normalization")
 		void zeroExponentUsesLinearNormalization() {
 			action.setExponent(1f);
-			action.doAction(mockInput, 0, 0.5f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
@@ -155,9 +155,7 @@ final class AxisToAxisActionTest {
 			action.setInitialValue(0.5f);
 			action.setInvert(true);
 			Mockito.when(mockInput.isSkipAxisInitialization()).thenReturn(false);
-
 			action.init(mockInput);
-
 			Mockito.verify(mockInput).setAxis(VirtualAxis.X, -0.5f, false, null, null, null);
 		}
 
@@ -168,9 +166,7 @@ final class AxisToAxisActionTest {
 			action.setVirtualAxis(VirtualAxis.Y);
 			action.setInitialValue(0.5f);
 			Mockito.when(mockInput.isSkipAxisInitialization()).thenReturn(false);
-
 			action.init(mockInput);
-
 			Mockito.verify(mockInput).setAxis(VirtualAxis.Y, 0.5f, false, null, null, null);
 		}
 
@@ -179,9 +175,7 @@ final class AxisToAxisActionTest {
 		void skipsWhenFlagSet() {
 			final var action = new AxisToAxisAction();
 			Mockito.when(mockInput.isSkipAxisInitialization()).thenReturn(true);
-
 			action.init(mockInput);
-
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}

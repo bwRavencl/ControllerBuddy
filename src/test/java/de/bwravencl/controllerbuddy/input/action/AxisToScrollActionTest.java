@@ -26,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -52,8 +53,8 @@ final class AxisToScrollActionTest {
 		@Test
 		@DisplayName("positive and negative inputs produce opposite scroll directions")
 		void oppositeDirections() {
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			action.doAction(mockInput, 0, 1.0f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 
 			final var captor = ArgumentCaptor.forClass(Integer.class);
 			Mockito.verify(mockInput).setScrollClicks(captor.capture());
@@ -64,8 +65,8 @@ final class AxisToScrollActionTest {
 			final var action2 = new AxisToScrollAction();
 			action2.setDeadZone(0.1f);
 			action2.setExponent(1f);
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			action2.doAction(mockInput, 0, -1.0f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action2.doAction(mockInput, 0, -1f, null);
 
 			Mockito.verify(mockInput).setScrollClicks(captor.capture());
 			final var negativeInputScroll = captor.getValue();
@@ -80,7 +81,7 @@ final class AxisToScrollActionTest {
 		@DisplayName("resets remainingD when value is within the dead zone")
 		void resetsRemainderInDeadZone() {
 			action.remainingD = 0.5f;
-			action.doAction(mockInput, 0, 0.05f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.05f, null);
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
 		}
 
@@ -89,15 +90,15 @@ final class AxisToScrollActionTest {
 		void resetsRemainderWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
 			action.remainingD = 0.5f;
-			action.doAction(mockInput, 0, 0.9f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.9f, null);
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
 		}
 
 		@Test
 		@DisplayName("scrolls when value exceeds dead zone")
 		void scrollsAboveDeadZone() {
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			action.doAction(mockInput, 0, 1.0f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 			Mockito.verify(mockInput).setScrollClicks(Mockito.anyInt());
 		}
 

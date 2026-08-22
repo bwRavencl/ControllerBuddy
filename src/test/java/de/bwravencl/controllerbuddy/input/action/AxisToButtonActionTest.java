@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,14 +56,14 @@ final class AxisToButtonActionTest {
 		@Test
 		@DisplayName("activates button at the exact minimum boundary")
 		void activatesAtExactMinBoundary() {
-			action.doAction(mockInput, 0, 0.5f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 			Assertions.assertTrue(buttons[0]);
 		}
 
 		@Test
 		@DisplayName("activates button when axis value is within the min-max zone")
 		void activatesButtonWhenInZone() {
-			action.doAction(mockInput, 0, 0.75f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.75f, null);
 			Assertions.assertTrue(buttons[0]);
 		}
 
@@ -70,14 +71,14 @@ final class AxisToButtonActionTest {
 		@DisplayName("does not activate button when axis value is above the maximum")
 		void doesNotActivateAboveMax() {
 			action.setMaxAxisValue(0.8f);
-			action.doAction(mockInput, 0, 0.9f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.9f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 
 		@Test
 		@DisplayName("does not activate button when axis value is below the minimum")
 		void doesNotActivateBelowMin() {
-			action.doAction(mockInput, 0, 0.3f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.3f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 
@@ -85,7 +86,7 @@ final class AxisToButtonActionTest {
 		@DisplayName("does not activate when axis is suspended")
 		void doesNotActivateWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
-			action.doAction(mockInput, 0, 0.75f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.75f, null);
 			Assertions.assertFalse(buttons[0]);
 		}
 
@@ -94,7 +95,7 @@ final class AxisToButtonActionTest {
 			action = new AxisToButtonAction();
 			action.setButtonId(0);
 			action.setMinAxisValue(0.5f);
-			action.setMaxAxisValue(1.0f);
+			action.setMaxAxisValue(1f);
 			action.setActivation(Activation.WHILE_PRESSED);
 			action.setActivatable(Activatable.YES);
 			buttons = new boolean[128];

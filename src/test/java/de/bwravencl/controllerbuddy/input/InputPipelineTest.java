@@ -563,7 +563,7 @@ final class InputPipelineTest {
 		@DisplayName("AxisToKeyAction ON_PRESS with minActivationInterval holds then releases keystroke")
 		void axisToKeyOnPressWithMinInterval() throws InterruptedException {
 			final var aScancode = scancode(Scancode.DIK_A);
-			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+			final var action = newAxisToKeyAction(0.5f, 1f, aScancode);
 			action.setActivation(Activation.ON_PRESS);
 			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
 
@@ -594,7 +594,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("AxisToMouseButtonAction ON_RELEASE with minActivationInterval holds then releases")
 		void axisToMouseButtonOnReleaseWithMinInterval() throws InterruptedException {
-			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1f);
 			action.setActivation(Activation.ON_RELEASE);
 			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
 
@@ -1206,7 +1206,7 @@ final class InputPipelineTest {
 		@DisplayName("WHILE_PRESSED axis keystroke removed when axis exits zone")
 		void whilePressedAxisKeystrokeRemovedOnExit() {
 			final var aScancode = scancode(Scancode.DIK_A);
-			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+			final var action = newAxisToKeyAction(0.5f, 1f, aScancode);
 
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1228,7 +1228,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("WHILE_PRESSED axis mouse button removed when axis exits zone")
 		void whilePressedAxisMouseButtonRemovedOnExit() {
-			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1f);
 
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1445,14 +1445,14 @@ final class InputPipelineTest {
 			setProfile(profile);
 
 			final var axes = noAxes();
-			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 1.0f;
-			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = -1.0f;
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 1f;
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = -1f;
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = 0.5f;
 
 			final var output = pollWithState(axes, noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(1.0f), output.axes().getOrDefault(VirtualAxis.X, 0));
-			assertAxisEquals(input.floatToIntAxisValue(-1.0f), output.axes().getOrDefault(VirtualAxis.Y, 0));
+			assertAxisEquals(input.floatToIntAxisValue(1f), output.axes().getOrDefault(VirtualAxis.X, 0));
+			assertAxisEquals(input.floatToIntAxisValue(-1f), output.axes().getOrDefault(VirtualAxis.Y, 0));
 			assertAxisEquals(input.floatToIntAxisValue(0.5f), output.axes().getOrDefault(VirtualAxis.RX, 0));
 		}
 
@@ -1491,7 +1491,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1508,7 +1508,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axesInZone = noAxes();
@@ -1528,7 +1528,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1542,7 +1542,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("ON_PRESS activates button once on entering zone")
 		void onPressActivatesButtonOnceOnEnteringZone() {
-			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			final var action = newAxisToButtonAction(0, 0.5f, 1f);
 			action.setActivation(Activation.ON_PRESS);
 
 			final var profile = new Profile();
@@ -1564,7 +1564,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("ON_RELEASE activates button once on leaving zone")
 		void onReleaseActivatesButtonOnceOnLeavingZone() {
-			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			final var action = newAxisToButtonAction(0, 0.5f, 1f);
 			action.setActivation(Activation.ON_RELEASE);
 
 			final var profile = new Profile();
@@ -1590,7 +1590,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1671,7 +1671,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1f, wScancode))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1691,7 +1691,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1f, wScancode))));
 			setProfile(profile);
 
 			final var axesInZone = noAxes();
@@ -1713,7 +1713,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1f, wScancode))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1728,7 +1728,7 @@ final class InputPipelineTest {
 		@DisplayName("ON_PRESS fires down-up keystroke once on entering zone")
 		void onPressFiresDownUpKeystrokeOnceOnEnteringZone() {
 			final var wScancode = scancode(Scancode.DIK_W);
-			final var action = newAxisToKeyAction(0.5f, 1.0f, wScancode);
+			final var action = newAxisToKeyAction(0.5f, 1f, wScancode);
 			action.setActivation(Activation.ON_PRESS);
 
 			final var profile = new Profile();
@@ -1753,7 +1753,7 @@ final class InputPipelineTest {
 		@DisplayName("ON_RELEASE fires down-up keystroke once on leaving zone")
 		void onReleaseFiresDownUpKeystrokeOnceOnLeavingZone() {
 			final var wScancode = scancode(Scancode.DIK_W);
-			final var action = newAxisToKeyAction(0.5f, 1.0f, wScancode);
+			final var action = newAxisToKeyAction(0.5f, 1f, wScancode);
 			action.setActivation(Activation.ON_RELEASE);
 
 			final var profile = new Profile();
@@ -1785,7 +1785,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1f, wScancode))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1810,7 +1810,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1827,7 +1827,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axesInZone = noAxes();
@@ -1847,7 +1847,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -1861,7 +1861,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("ON_PRESS fires down-up mouse button once on entering zone")
 		void onPressFiresDownUpMouseButtonOnceOnEnteringZone() {
-			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1f);
 			action.setActivation(Activation.ON_PRESS);
 
 			final var profile = new Profile();
@@ -1884,7 +1884,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("ON_RELEASE fires down-up mouse button once on leaving zone")
 		void onReleaseFiresDownUpMouseButtonOnceOnLeavingZone() {
-			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1f);
 			action.setActivation(Activation.ON_RELEASE);
 
 			final var profile = new Profile();
@@ -1911,7 +1911,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -2591,16 +2591,16 @@ final class InputPipelineTest {
 
 			// Default mode: axes
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X), newAxisToButtonAction(0, 0.8f, 1.0f))));
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X), newAxisToButtonAction(0, 0.8f, 1f))));
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
 					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.Y))));
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX,
 					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.RX))));
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY,
 					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.Z, 100f, 0.05f))));
-			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER, new ArrayList<>(List
-					.of(newAxisToKeyAction(0.5f, 1.0f, lShiftScancode), newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
-			final var btn2Action = newAxisToButtonAction(2, 0.5f, 1.0f);
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER, new ArrayList<>(
+					List.of(newAxisToKeyAction(0.5f, 1f, lShiftScancode), newAxisToMouseButtonAction(1, 0.5f, 1f))));
+			final var btn2Action = newAxisToButtonAction(2, 0.5f, 1f);
 			btn2Action.setActivation(Activation.ON_RELEASE);
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER,
 					new ArrayList<>(List.of(btn2Action)));
@@ -3061,7 +3061,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("axis delay tracking cleared on mode activation")
 		void axisDelayTrackingClearedOnModeActivation() {
-			final var delayedAction = newAxisToKeyAction(0.5f, 1.0f, scancode(Scancode.DIK_A));
+			final var delayedAction = newAxisToKeyAction(0.5f, 1f, scancode(Scancode.DIK_A));
 			delayedAction.setDelay(500L);
 
 			final var profile = new Profile();
@@ -3133,10 +3133,10 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("delayed axis action denies co-located undelayed ON_RELEASE action")
 		void delayedAxisActionDeniesColocatedOnReleaseAction() throws InterruptedException {
-			final var delayedAction = newAxisToKeyAction(0.5f, 1.0f, scancode(Scancode.DIK_A));
+			final var delayedAction = newAxisToKeyAction(0.5f, 1f, scancode(Scancode.DIK_A));
 			delayedAction.setDelay(TEST_DELAY);
 
-			final var onReleaseAction = newAxisToButtonAction(0, 0.5f, 1.0f);
+			final var onReleaseAction = newAxisToButtonAction(0, 0.5f, 1f);
 			onReleaseAction.setActivation(Activation.ON_RELEASE);
 
 			final var profile = new Profile();
@@ -3164,7 +3164,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("delayed AxisToButtonAction suppresses then fires after delay")
 		void delayedAxisToButtonSuppressesThenFires() throws InterruptedException {
-			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			final var action = newAxisToButtonAction(0, 0.5f, 1f);
 			action.setDelay(TEST_DELAY);
 
 			final var profile = new Profile();
@@ -3187,7 +3187,7 @@ final class InputPipelineTest {
 		@DisplayName("delayed AxisToKeyAction suppresses then fires after delay")
 		void delayedAxisToKeySuppressesThenFires() throws InterruptedException {
 			final var aScancode = scancode(Scancode.DIK_A);
-			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+			final var action = newAxisToKeyAction(0.5f, 1f, aScancode);
 			action.setDelay(TEST_DELAY);
 
 			final var profile = new Profile();
@@ -3210,7 +3210,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("delayed AxisToMouseButtonAction suppresses then fires after delay")
 		void delayedAxisToMouseButtonSuppressesThenFires() throws InterruptedException {
-			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1f);
 			action.setDelay(TEST_DELAY);
 
 			final var profile = new Profile();

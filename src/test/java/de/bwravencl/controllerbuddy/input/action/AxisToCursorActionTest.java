@@ -26,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -52,11 +53,11 @@ final class AxisToCursorActionTest {
 		@Test
 		@DisplayName("higher exponent increases non-linearity of cursor movement")
 		void higherExponentIncreasesNonLinearity() {
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
 
 			// With exponent=2 (quadratic), half-range input
 			action.setExponent(2f);
-			action.doAction(mockInput, 0, 0.5f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 
 			final var captorQuadratic = ArgumentCaptor.forClass(Integer.class);
 			Mockito.verify(mockInput).setCursorDeltaX(captorQuadratic.capture());
@@ -68,8 +69,8 @@ final class AxisToCursorActionTest {
 			final var linearAction = new AxisToCursorAction();
 			linearAction.setDeadZone(0.1f);
 			linearAction.setExponent(1f);
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			linearAction.doAction(mockInput, 0, 0.5f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			linearAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 
 			final var captorLinear = ArgumentCaptor.forClass(Integer.class);
 			Mockito.verify(mockInput).setCursorDeltaX(captorLinear.capture());
@@ -83,16 +84,16 @@ final class AxisToCursorActionTest {
 		@Test
 		@DisplayName("moves cursor when value exceeds dead zone")
 		void movesCursorAboveDeadZone() {
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			action.doAction(mockInput, 0, 1.0f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 			Mockito.verify(mockInput).setCursorDeltaX(Mockito.anyInt());
 		}
 
 		@Test
 		@DisplayName("negative input moves cursor in negative direction")
 		void negativeInputMovesNegative() {
-			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			action.doAction(mockInput, 0, -1.0f, null);
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -1f, null);
 			// Should produce a negative cursor delta
 			Mockito.verify(mockInput).setCursorDeltaX(Mockito.intThat(v -> v < 0));
 		}
@@ -101,7 +102,7 @@ final class AxisToCursorActionTest {
 		@DisplayName("resets remainingD when value is within the dead zone")
 		void resetsRemainderInDeadZone() {
 			action.remainingD = 0.7f;
-			action.doAction(mockInput, 0, 0.05f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.05f, null);
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
 		}
 
@@ -110,7 +111,7 @@ final class AxisToCursorActionTest {
 		void resetsRemainderWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);
 			action.remainingD = 0.7f;
-			action.doAction(mockInput, 0, 0.5f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
 		}
 

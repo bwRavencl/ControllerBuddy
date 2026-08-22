@@ -31,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -80,20 +81,20 @@ final class ButtonToCycleActionTest {
 		void cyclesThroughAndWraps() {
 			// Press-release three times cycles through all 3 actions
 			for (var i = 0; i < 3; i++) {
-				cycleAction.doAction(mockInput, 0, true, null);
-				cycleAction.doAction(mockInput, 0, false, null);
+				cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
+				cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			}
 			Assertions.assertEquals(3, executionCount.get());
 
 			// 4th press wraps back to the first action
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Assertions.assertEquals(4, executionCount.get());
 		}
 
 		@Test
 		@DisplayName("executes the current action on press transition and advances the index")
 		void executesOnPressTransition() {
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Assertions.assertEquals(1, executionCount.get());
 		}
 
@@ -114,8 +115,8 @@ final class ButtonToCycleActionTest {
 		@Test
 		@DisplayName("sustained press does not fire again")
 		void sustainedPressDoesNotRepeat() {
-			cycleAction.doAction(mockInput, 0, true, null);
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Assertions.assertEquals(1, executionCount.get());
 		}
 	}
@@ -134,10 +135,10 @@ final class ButtonToCycleActionTest {
 			cycleAction.setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
 
 			// Press: DENIED_BY_OTHER_ACTION → NO
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 
 			// Release: NO → does not fire
-			cycleAction.doAction(mockInput, 0, false, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			Assertions.assertEquals(0, executionCount.get());
 		}
 
@@ -145,11 +146,11 @@ final class ButtonToCycleActionTest {
 		@DisplayName("executes the current action on release transition")
 		void executesOnRelease() {
 			// Press: NO → YES
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Assertions.assertEquals(0, executionCount.get());
 
 			// Release: YES → fires
-			cycleAction.doAction(mockInput, 0, false, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			Assertions.assertEquals(1, executionCount.get());
 		}
 
@@ -184,14 +185,14 @@ final class ButtonToCycleActionTest {
 			cycleAction.setActions(actions);
 
 			// Advance to the second action
-			cycleAction.doAction(mockInput, 0, true, null);
-			cycleAction.doAction(mockInput, 0, false, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 
 			// Reset
 			cycleAction.reset(mockInput);
 
 			// Next fire should execute the first action again
-			cycleAction.doAction(mockInput, 0, true, null);
+			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Assertions.assertEquals(List.of("first", "first"), executionOrder);
 		}
 	}
@@ -208,7 +209,8 @@ final class ButtonToCycleActionTest {
 			cycleAction.setActivation(Activation.WHILE_PRESSED);
 			cycleAction.setActions(List.of((IAction<Boolean>) Mockito.mock(IAction.class)));
 
-			Assertions.assertThrows(IllegalStateException.class, () -> cycleAction.doAction(mockInput, 0, true, null));
+			Assertions.assertThrows(IllegalStateException.class,
+					() -> cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null));
 		}
 	}
 }

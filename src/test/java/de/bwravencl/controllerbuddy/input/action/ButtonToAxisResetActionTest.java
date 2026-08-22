@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,14 +55,14 @@ final class ButtonToAxisResetActionTest {
 		@DisplayName("calls moveAxis when fluid is true")
 		void callsMoveAxisWhenFluid() {
 			action.setFluid(true);
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput).moveAxis(VirtualAxis.X, 0f);
 		}
 
 		@Test
 		@DisplayName("calls setAxis when fluid is false")
 		void callsSetAxisWhenNotFluid() {
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput).setAxis(VirtualAxis.X, 0f, false, null, null, null);
 		}
 
@@ -83,17 +84,17 @@ final class ButtonToAxisResetActionTest {
 		@Test
 		@DisplayName("resets axis only on the first press transition")
 		void resetsOnlyOnFirstPress() {
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput).setAxis(VirtualAxis.Y, 0.5f, false, null, null, null);
 
 			// Sustained press: should not fire again
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput, Mockito.times(1)).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 
 			// Release re-arms
-			action.doAction(mockInput, 0, false, null);
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput, Mockito.times(2)).setAxis(VirtualAxis.Y, 0.5f, false, null, null, null);
 		}
 
@@ -118,8 +119,8 @@ final class ButtonToAxisResetActionTest {
 		void deniedDoesNotFire() {
 			action.setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
 
-			action.doAction(mockInput, 0, true, null);
-			action.doAction(mockInput, 0, false, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
@@ -128,12 +129,12 @@ final class ButtonToAxisResetActionTest {
 		@DisplayName("resets axis on release after a press")
 		void resetsOnRelease() {
 			// Press: NO → YES
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 
 			// Release: YES → fires
-			action.doAction(mockInput, 0, false, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			Mockito.verify(mockInput).setAxis(VirtualAxis.Z, 0.25f, false, null, null, null);
 		}
 
@@ -156,14 +157,14 @@ final class ButtonToAxisResetActionTest {
 		@Test
 		@DisplayName("calls setAxis while button is pressed")
 		void callsSetAxisWhilePressed() {
-			action.doAction(mockInput, 0, true, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
 			Mockito.verify(mockInput).setAxis(VirtualAxis.X, 0f, false, null, null, null);
 		}
 
 		@Test
 		@DisplayName("does not call setAxis when button is released")
 		void doesNotCallSetAxisWhenReleased() {
-			action.doAction(mockInput, 0, false, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, false, null);
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}

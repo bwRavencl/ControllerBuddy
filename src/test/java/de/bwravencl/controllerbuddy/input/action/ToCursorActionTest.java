@@ -67,7 +67,7 @@ final class ToCursorActionTest {
 		@DisplayName("inverts direction when invert is true")
 		void invertsDirection() {
 			action.setInvert(true);
-			action.moveCursor(mockInput, 5.0f);
+			action.moveCursor(mockInput, 5f);
 			// Inverted: -5.0 rounds to -5
 			Mockito.verify(mockInput).setCursorDeltaX(-5);
 		}
@@ -75,7 +75,7 @@ final class ToCursorActionTest {
 		@Test
 		@DisplayName("moves cursor on X axis by default")
 		void movesCursorOnXAxis() {
-			action.moveCursor(mockInput, 3.0f);
+			action.moveCursor(mockInput, 3f);
 			Mockito.verify(mockInput).setCursorDeltaX(3);
 		}
 
@@ -83,7 +83,7 @@ final class ToCursorActionTest {
 		@DisplayName("moves cursor on Y axis when axis is set to Y")
 		void movesCursorOnYAxis() {
 			action.setAxis(ToCursorAction.MouseAxis.Y);
-			action.moveCursor(mockInput, 3.0f);
+			action.moveCursor(mockInput, 3f);
 			Mockito.verify(mockInput).setCursorDeltaY(3);
 		}
 

@@ -64,14 +64,14 @@ final class ToScrollActionTest {
 		@DisplayName("inverts scroll direction when invert is true")
 		void invertsDirection() {
 			action.setInvert(true);
-			action.scroll(mockInput, 5.0f);
+			action.scroll(mockInput, 5f);
 			Mockito.verify(mockInput).setScrollClicks(-5);
 		}
 
 		@Test
 		@DisplayName("sends rounded scroll clicks to input")
 		void sendsRoundedScrollClicks() {
-			action.scroll(mockInput, 3.0f);
+			action.scroll(mockInput, 3f);
 			Mockito.verify(mockInput).setScrollClicks(3);
 		}
 
