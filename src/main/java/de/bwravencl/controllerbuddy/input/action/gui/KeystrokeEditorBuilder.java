@@ -444,6 +444,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 			filter = text;
 			list.firePropertyChange("fixedCellHeight", 0, -1);
+			list.ensureIndexIsVisible(0);
 		}
 	}
 
