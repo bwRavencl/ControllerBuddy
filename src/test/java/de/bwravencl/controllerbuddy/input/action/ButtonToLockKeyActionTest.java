@@ -106,7 +106,7 @@ final class ButtonToLockKeyActionTest {
 
 		@Test
 		@DisplayName("re-triggers after a release-press cycle")
-		void reTriggersAfterReleasePressycle() {
+		void reTriggersAfterReleasePressCycle() {
 			action.doAction(mockInput, 0, true, null);
 			onLockKeys.clear();
 
