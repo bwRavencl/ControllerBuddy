@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -73,7 +73,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		value = handleDelay(input, component, value);
 
 		if (value) {

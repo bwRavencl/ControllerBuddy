@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
@@ -40,7 +40,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 final class AxisToRelativeAxisActionTest {
 
 	@Mock
-	GamepadState gamepadState;
+	ControllerState controllerState;
 
 	@Mock
 	Input mockInput;
@@ -163,7 +163,7 @@ final class AxisToRelativeAxisActionTest {
 		@DisplayName("uses raw value when useRawValue is true")
 		void usesRawValue() {
 			action.setUseRawValue(true);
-			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1f });
+			Mockito.when(controllerState.getRawAxes()).thenReturn(new float[] { 1f });
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
 			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
@@ -171,7 +171,7 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
 
-			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, gamepadState);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, controllerState);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);

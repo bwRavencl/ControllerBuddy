@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
+import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ final class ModeTest {
 
 	@Nested
 	@DisplayName("Component.index() - swap disabled")
-	final class ComponentIndexNoSwapTests {
+	final class ControllerComponentIndexNoSwapTests {
 
 		@Test
 		@DisplayName("returns the original index unchanged for both AXIS and BUTTON types")
@@ -108,29 +108,29 @@ final class ModeTest {
 			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
 
 			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX).index());
-			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK,
-					new Mode.Component(mockMain, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK)
+					new ControllerComponent(mockMain, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX)
 							.index());
+			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, new ControllerComponent(mockMain,
+					ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK).index());
 		}
 	}
 
 	@Nested
 	@DisplayName("Component.index() - swap enabled")
-	final class ComponentIndexSwapTests {
+	final class ControllerComponentIndexSwapTests {
 
 		@Test
 		@DisplayName("returns a non-stick axis index unchanged")
 		void returnsNonStickAxisIndexUnchanged() {
-			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER).index());
+			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER, new ControllerComponent(mockMain,
+					ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER).index());
 		}
 
 		@Test
 		@DisplayName("returns a non-stick button index unchanged")
 		void returnsNonStickButtonIndexUnchanged() {
-			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
-					new Mode.Component(mockMain, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH).index());
+			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, new ControllerComponent(mockMain,
+					ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH).index());
 		}
 
 		@BeforeEach
@@ -141,45 +141,47 @@ final class ModeTest {
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_BUTTON_LEFT_STICK to SDL_GAMEPAD_BUTTON_RIGHT_STICK")
 		void swapsLeftStickButtonToRightStick() {
-			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK,
-					new Mode.Component(mockMain, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK)
-							.index());
+			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, new ControllerComponent(mockMain,
+					ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK).index());
 		}
 
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_AXIS_LEFTX to SDL_GAMEPAD_AXIS_RIGHTX")
 		void swapsLeftXToRightX() {
 			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX).index());
+					new ControllerComponent(mockMain, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX)
+							.index());
 		}
 
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_AXIS_LEFTY to SDL_GAMEPAD_AXIS_RIGHTY")
 		void swapsLeftYToRightY() {
 			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY).index());
+					new ControllerComponent(mockMain, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY)
+							.index());
 		}
 
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_BUTTON_RIGHT_STICK to SDL_GAMEPAD_BUTTON_LEFT_STICK")
 		void swapsRightStickButtonToLeftStick() {
-			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK,
-					new Mode.Component(mockMain, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK)
-							.index());
+			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, new ControllerComponent(mockMain,
+					ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK).index());
 		}
 
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_AXIS_RIGHTX to SDL_GAMEPAD_AXIS_LEFTX")
 		void swapsRightXToLeftX() {
 			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX).index());
+					new ControllerComponent(mockMain, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX)
+							.index());
 		}
 
 		@Test
 		@DisplayName("maps SDL_GAMEPAD_AXIS_RIGHTY to SDL_GAMEPAD_AXIS_LEFTY")
 		void swapsRightYToLeftY() {
 			Assertions.assertEquals(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
-					new Mode.Component(mockMain, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY).index());
+					new ControllerComponent(mockMain, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY)
+							.index());
 		}
 	}
 
@@ -256,20 +258,22 @@ final class ModeTest {
 
 	@Nested
 	@DisplayName("getComponentToActionsMap()")
-	final class GetComponentToActionsMapTests {
+	final class GetControllerComponentToActionsMapTests {
 
 		@Test
 		@DisplayName("returns the axisToActionsMap when type is AXIS")
 		void returnsAxisMapForAxisType() {
 			final var mode = createMode();
-			Assertions.assertSame(mode.getAxisToActionsMap(), mode.getComponentToActionsMap(ComponentType.AXIS));
+			Assertions.assertSame(mode.getAxisToActionsMap(),
+					mode.getComponentToActionsMap(ControllerComponentType.AXIS));
 		}
 
 		@Test
 		@DisplayName("returns the buttonToActionsMap when type is BUTTON")
 		void returnsButtonMapForButtonType() {
 			final var mode = createMode();
-			Assertions.assertSame(mode.getButtonToActionsMap(), mode.getComponentToActionsMap(ComponentType.BUTTON));
+			Assertions.assertSame(mode.getButtonToActionsMap(),
+					mode.getComponentToActionsMap(ControllerComponentType.BUTTON));
 		}
 	}
 

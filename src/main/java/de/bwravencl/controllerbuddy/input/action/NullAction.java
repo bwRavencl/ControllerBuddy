@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -38,7 +38,7 @@ public final class NullAction implements IAction<Constable> {
 
 	@Override
 	public void doAction(final Input input, final int component, final Constable value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 	}
 
 	@Override

@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -429,8 +428,8 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("returns false when no gamepad state exists for the selected gamepad")
-		void returnsFalseWhenNoGamepadStateForSelectedGamepad() {
+		@DisplayName("returns false when no controller state exists for the selected gamepad")
+		void returnsFalseWhenNoControllerStateForSelectedGamepad() {
 			final var input = createInput();
 			Assertions.assertFalse(input.poll());
 		}

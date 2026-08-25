@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -80,13 +80,13 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	@Override
 	public void doAction(final Input input, final int component, Float value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		if (input.isAxisSuspended(component)) {
 			return;
 		}
 
-		if (gamepadState != null) {
-			value = handleUseRawValue(component, value, gamepadState);
+		if (controllerState != null) {
+			value = handleUseRawValue(component, value, controllerState);
 		}
 
 		final var absValue = Math.abs(value);

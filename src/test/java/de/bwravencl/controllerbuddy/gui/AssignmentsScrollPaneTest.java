@@ -18,8 +18,8 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import com.formdev.flatlaf.ui.FlatButtonUI;
-import de.bwravencl.controllerbuddy.input.Mode.Component;
-import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
+import de.bwravencl.controllerbuddy.input.ControllerComponent;
+import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -51,14 +51,17 @@ final class AssignmentsScrollPaneTest {
 	/// Creates a `CompoundButton` (the only concrete sub-final class of the
 	/// private-abstract `CustomButton`) via reflection, using the left-stick button
 	/// component so the constructor follows the
-	/// [ComponentType#BUTTON]/[SDLGamepad#SDL_GAMEPAD_BUTTON_LEFT_STICK] branch.
+	/// [ControllerComponentType#BUTTON]/[SDLGamepad#SDL_GAMEPAD_BUTTON_LEFT_STICK]
+	/// branch.
 	private Object createCompoundButton() throws ReflectiveOperationException {
 		final var compoundButtonClass = Arrays.stream(AssignmentsScrollPane.class.getDeclaredClasses())
 				.filter(c -> "CompoundButton".equals(c.getSimpleName())).findFirst().orElseThrow();
-		final var constructor = compoundButtonClass.getDeclaredConstructor(Main.class, JPanel.class, Component.class);
+		final var constructor = compoundButtonClass.getDeclaredConstructor(Main.class, JPanel.class,
+				ControllerComponent.class);
 		constructor.setAccessible(true);
-		final var component = new Component(mockMain, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
-		return constructor.newInstance(mockMain, new JPanel(), component);
+		final var controllerComponent = new ControllerComponent(mockMain, ControllerComponentType.BUTTON,
+				SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
+		return constructor.newInstance(mockMain, new JPanel(), controllerComponent);
 	}
 
 	/// Invokes `CustomButton.paintText` (declared on the super-final class of

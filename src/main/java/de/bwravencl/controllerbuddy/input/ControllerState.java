@@ -26,7 +26,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// reads all axis and button values via SDL, applies optional transformations
 /// such as stick-swap and circular-to-square axis mapping, and stores the
 /// normalized results for use by the input pipeline on each polling cycle.
-public final class GamepadState {
+public final class ControllerState {
 
 	/// Normalized axis values for all SDL gamepad axes.
 	private final float[] axes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_COUNT];
@@ -47,13 +47,13 @@ public final class GamepadState {
 	/// Whether the left and right sticks should be swapped during input processing.
 	private final boolean swapLeftAndRightSticks;
 
-	/// Constructs a [GamepadState] for the given SDL gamepad handle.
+	/// Constructs a [ControllerState] for the given SDL gamepad handle.
 	///
 	/// @param sdlGamepad the native SDL gamepad handle
 	/// @param swapLeftAndRightSticks whether to swap the left and right stick axes
 	/// @param mapCircularAxesToSquareAxes whether to apply circular-to-square axis
 	/// mapping
-	GamepadState(final long sdlGamepad, final boolean swapLeftAndRightSticks,
+	ControllerState(final long sdlGamepad, final boolean swapLeftAndRightSticks,
 			final boolean mapCircularAxesToSquareAxes) {
 		this.sdlGamepad = sdlGamepad;
 		this.swapLeftAndRightSticks = swapLeftAndRightSticks;

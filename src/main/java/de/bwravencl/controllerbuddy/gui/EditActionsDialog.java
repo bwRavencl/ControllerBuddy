@@ -17,10 +17,10 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.input.ControllerComponent;
+import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.Mode.Component;
-import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
@@ -250,7 +250,7 @@ public final class EditActionsDialog extends JDialog {
 	/// The controller component whose actions are being edited, or `null` in
 	/// cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private @Nullable Component component;
+	private @Nullable ControllerComponent controllerComponent;
 
 	/// The cycle action whose sub-actions are being edited, or `null` in
 	/// component-editor mode.
@@ -315,13 +315,14 @@ public final class EditActionsDialog extends JDialog {
 	/// specific controller component within a profile.
 	///
 	/// @param main the main application instance owning this dialog
-	/// @param component the controller component whose actions are to be edited
+	/// @param controllerComponent the controller component whose actions are to be
+	/// edited
 	/// @param name the display name of the component, used in the dialog title
-	EditActionsDialog(final Main main, final Component component, final String name) {
+	EditActionsDialog(final Main main, final ControllerComponent controllerComponent, final String name) {
 		super(main);
 
 		this.main = main;
-		this.component = component;
+		this.controllerComponent = controllerComponent;
 
 		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
 
@@ -418,19 +419,19 @@ public final class EditActionsDialog extends JDialog {
 	/// @param maxValue the inclusive upper bound for the returned value
 	/// @return the first missing or next integer in the range 0 to maxValue
 	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
-		final var it = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
+		final var numbersIterator = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
-		if (!it.hasNext()) {
+		if (!numbersIterator.hasNext()) {
 			return 0;
 		}
 
-		var expected = it.nextInt();
+		var expected = numbersIterator.nextInt();
 		if (expected > maxValue) {
 			return maxValue;
 		}
 
-		while (it.hasNext()) {
-			final var current = it.nextInt();
+		while (numbersIterator.hasNext()) {
+			final var current = numbersIterator.nextInt();
 			if (current != expected + 1) {
 				final var candidate = expected + 1;
 				return Math.min(candidate, maxValue);
@@ -497,12 +498,13 @@ public final class EditActionsDialog extends JDialog {
 			cycleActions.add((IAction<Boolean>) action);
 		} else if (action instanceof final ButtonToModeAction buttonToModeAction) {
 			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-			buttonToModeActionsMap.computeIfAbsent(component.index(), _ -> new ArrayList<>()).add(buttonToModeAction);
+			buttonToModeActionsMap.computeIfAbsent(controllerComponent.index(), _ -> new ArrayList<>())
+					.add(buttonToModeAction);
 		} else {
 			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
 			final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
-					.getComponentToActionsMap(component.type());
-			componentToActionMap.computeIfAbsent(component.index(), _ -> new ArrayList<>()).add(action);
+					.getComponentToActionsMap(controllerComponent.type());
+			componentToActionMap.computeIfAbsent(controllerComponent.index(), _ -> new ArrayList<>()).add(action);
 		}
 
 		updateAvailableActions();
@@ -604,8 +606,8 @@ public final class EditActionsDialog extends JDialog {
 			return CYCLE_ACTION_CLASSES;
 		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
 			return ON_SCREEN_KEYBOARD_ACTION_CLASSES;
-		} else if (component.type() == ComponentType.AXIS) {
-			final var componentIndex = component.index();
+		} else if (controllerComponent.type() == ControllerComponentType.AXIS) {
+			final var componentIndex = controllerComponent.index();
 			if (componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
 					|| componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) {
 				return TRIGGER_ACTION_CLASSES;
@@ -636,14 +638,16 @@ public final class EditActionsDialog extends JDialog {
 			assignedActions.addAll(cycleActions);
 		} else {
 			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
-			final var componentActions = selectedMode.getComponentToActionsMap(component.type()).get(component.index());
+			final var componentActions = selectedMode.getComponentToActionsMap(controllerComponent.type())
+					.get(controllerComponent.index());
 			if (componentActions != null) {
 				assignedActions.addAll(((Collection<? extends IAction<?>>) componentActions));
 			}
 		}
 
-		if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
-			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index());
+		if (!cycleEditor && controllerComponent.type() == ControllerComponentType.BUTTON
+				&& Profile.defaultMode.equals(selectedMode)) {
+			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(controllerComponent.index());
 			if (buttonToModeActions != null) {
 				assignedActions.addAll(buttonToModeActions);
 			}
@@ -916,7 +920,7 @@ public final class EditActionsDialog extends JDialog {
 	/// @return `true` if this dialog is a cycle editor, `false` if it is a
 	/// component editor
 	public boolean isCycleEditor() {
-		return component == null;
+		return controllerComponent == null;
 	}
 
 	/// Performs common pre-initialization shared by all constructors: sets modal,
@@ -960,19 +964,19 @@ public final class EditActionsDialog extends JDialog {
 			cycleActions.remove(selectedAssignedAction);
 		} else if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
 			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-			buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
-			if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
-				buttonToModeActionsMap.remove(component.index());
+			buttonToModeActionsMap.get(controllerComponent.index()).remove(buttonToModeAction);
+			if (buttonToModeActionsMap.get(controllerComponent.index()).isEmpty()) {
+				buttonToModeActionsMap.remove(controllerComponent.index());
 			}
 		} else {
 			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
-			final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
+			final var componentToActionMap = selectedMode.getComponentToActionsMap(controllerComponent.type());
 			@SuppressWarnings("unchecked")
-			final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
+			final var actions = (List<IAction<?>>) componentToActionMap.get(controllerComponent.index());
 			actions.remove(selectedAssignedAction);
 
 			if (actions.isEmpty()) {
-				componentToActionMap.remove(component.index());
+				componentToActionMap.remove(controllerComponent.index());
 			}
 		}
 

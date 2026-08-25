@@ -27,6 +27,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
+import de.bwravencl.controllerbuddy.input.Controller;
 import de.bwravencl.controllerbuddy.input.HotSwappingButton;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -238,7 +239,6 @@ import org.freedesktop.dbus.types.Variant;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLError;
 import org.lwjgl.sdl.SDLEvents;
-import org.lwjgl.sdl.SDLGUID;
 import org.lwjgl.sdl.SDLGamepad;
 import org.lwjgl.sdl.SDLHints;
 import org.lwjgl.sdl.SDLInit;
@@ -248,7 +248,6 @@ import org.lwjgl.sdl.SDLSurface;
 import org.lwjgl.sdl.SDLTray;
 import org.lwjgl.sdl.SDLVideo;
 import org.lwjgl.sdl.SDL_Event;
-import org.lwjgl.sdl.SDL_GUID;
 import org.lwjgl.sdl.SDL_Surface;
 import org.lwjgl.system.MemoryStack;
 import org.w3c.dom.DOMException;
@@ -1816,7 +1815,7 @@ public final class Main extends JFrame {
 
 			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 			if (lastControllerGuid != null) {
-				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
+				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid())).findFirst()
 						.ifPresentOrElse(controller -> {
 							logger.info(
 									assembleControllerLoggingMessage("Found previously used controller ", controller));
@@ -1867,23 +1866,24 @@ public final class Main extends JFrame {
 	/// @param controller the controller to describe
 	/// @return a formatted string containing the controller name, instance ID, and
 	/// GUID
+	@SuppressWarnings("exports")
 	public static String assembleControllerLoggingMessage(final String prefix, final Controller controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix);
 
-		final var appendGamepadName = controller.name != null;
+		final var appendGamepadName = controller.name() != null;
 
 		if (appendGamepadName) {
-			sb.append(controller.name).append(" (");
+			sb.append(controller.name()).append(" (");
 		}
 
-		sb.append(controller.instanceId);
+		sb.append(controller.instanceId());
 
 		if (appendGamepadName) {
 			sb.append(")");
 		}
 
-		sb.append(" [").append(controller.guid).append("]");
+		sb.append(" [").append(controller.guid()).append("]");
 
 		return sb.toString();
 	}
@@ -2924,6 +2924,7 @@ public final class Main extends JFrame {
 	/// Returns the set of currently connected controllers.
 	///
 	/// @return the set of currently connected controllers
+	@SuppressWarnings("exports")
 	public Set<Controller> getControllers() {
 		return controllers;
 	}
@@ -3637,7 +3638,7 @@ public final class Main extends JFrame {
 	/// @return `true` if the specified controller is currently selected
 	private boolean isSelectedController(final int instanceId) {
 		final var selectedController = this.selectedController;
-		return selectedController != null && selectedController.instanceId == instanceId;
+		return selectedController != null && selectedController.instanceId() == instanceId;
 	}
 
 	/// Returns whether a server run mode is currently active.
@@ -4128,13 +4129,13 @@ public final class Main extends JFrame {
 				case SDLEvents.SDL_EVENT_GAMEPAD_REMOVED -> {
 					final var instanceId = sdlEvent.gdevice().which();
 
-					controllers.stream().filter(controller -> controller.instanceId == instanceId).findFirst()
+					controllers.stream().filter(controller -> controller.instanceId() == instanceId).findFirst()
 							.ifPresent(controller -> {
 								controllers.remove(controller);
 								logger.info(assembleControllerLoggingMessage("Disconnected controller ", controller));
 
 								final var selectedController = this.selectedController;
-								if (selectedController != null && selectedController.instanceId == instanceId) {
+								if (selectedController != null && selectedController.instanceId() == instanceId) {
 									this.selectedController = null;
 									if (input != null) {
 										input.deInit();
@@ -4448,7 +4449,7 @@ public final class Main extends JFrame {
 
 		if (controller != null) {
 			logger.info(assembleControllerLoggingMessage("Selected controller ", controller));
-			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
+			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid());
 		}
 	}
 
@@ -4457,6 +4458,7 @@ public final class Main extends JFrame {
 	///
 	/// @param controller the controller to select, or `null` to deselect
 	/// @param axes the axis values to restore, or `null` to use defaults
+	@SuppressWarnings("exports")
 	public void setSelectedControllerAndUpdateInput(final @Nullable Controller controller,
 			@SuppressWarnings("exports") final @Nullable Map<VirtualAxis, Integer> axes) {
 		stopLocalAndServer(true);
@@ -4791,7 +4793,7 @@ public final class Main extends JFrame {
 		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
 			final var menuItem = deviceMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
-			if (selectedController.instanceId == action.controller.instanceId) {
+			if (selectedController.instanceId() == action.controller.instanceId()) {
 				menuItem.setSelected(true);
 				break;
 			}
@@ -5805,51 +5807,6 @@ public final class Main extends JFrame {
 		}
 	}
 
-	/// Record representing a connected gamepad controller, identified by SDL
-	/// instance ID, name, and GUID.
-	///
-	/// Instances are created when SDL reports a gamepad connection event. The GUID
-	/// is derived from the SDL gamepad GUID and uniquely identifies the controller
-	/// model for database lookups.
-	///
-	/// @param instanceId the SDL instance ID of the controller
-	/// @param name the human-readable name of the controller
-	/// @param guid the globally unique ID string for the controller
-	public record Controller(int instanceId, @Nullable String name, String guid) {
-
-		/// Constructs a [Controller] by resolving the name and GUID from the given SDL
-		/// instance ID.
-		///
-		/// @param instanceId the SDL instance ID of the controller
-		private Controller(final int instanceId) {
-			this(instanceId, SDLGamepad.SDL_GetGamepadNameForID(instanceId), prepareGuid(instanceId));
-		}
-
-		/// Converts the SDL GUID for the given instance ID to a hex string.
-		///
-		/// Allocates a stack buffer, calls `SDL_GUIDToString`, and strips any
-		/// trailing null characters before returning the result.
-		///
-		/// @param instanceId the SDL instance ID whose GUID is requested
-		/// @return the GUID as a trimmed hex string
-		private static String prepareGuid(final int instanceId) {
-			String guid;
-			try (final var stack = MemoryStack.stackPush()) {
-				final var sdlGuid = SDL_GUID.malloc(stack);
-				SDLGamepad.SDL_GetGamepadGUIDForID(instanceId, sdlGuid);
-				final var guidByteBuffer = stack.calloc(33);
-				SDLGUID.SDL_GUIDToString(sdlGuid, guidByteBuffer);
-				guid = StandardCharsets.UTF_8.decode(guidByteBuffer).toString();
-				final var nullPos = guid.indexOf('\u0000');
-				if (nullPos != -1) {
-					guid = guid.substring(0, nullPos);
-				}
-			}
-
-			return guid;
-		}
-	}
-
 	/// Action that opens the donation page in the user's default browser.
 	///
 	/// Navigates to the `/donate` path of the ControllerBuddy website.
@@ -6624,9 +6581,9 @@ public final class Main extends JFrame {
 		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
-			putValue(NAME, controller.name);
+			putValue(NAME, controller.name());
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), controller.name));
+					MessageFormat.format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), controller.name()));
 		}
 
 		@Override
@@ -6634,7 +6591,7 @@ public final class Main extends JFrame {
 			Objects.requireNonNull(input, "Field input must not be null");
 
 			final var selectedController = Main.this.selectedController;
-			if (selectedController != null && selectedController.instanceId == controller.instanceId) {
+			if (selectedController != null && selectedController.instanceId() == controller.instanceId()) {
 				return;
 			}
 

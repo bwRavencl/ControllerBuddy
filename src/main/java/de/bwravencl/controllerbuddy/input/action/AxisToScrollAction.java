@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -49,7 +49,7 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			final var rateMultiplier = input.getRateMultiplier();
 

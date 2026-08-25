@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
+import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.constant.Constable;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.sdl.SDLGamepad;
 
 /// Represents an input mode that maps gamepad axes and buttons to actions.
 ///
@@ -132,8 +131,8 @@ public final class Mode implements Cloneable {
 	///
 	/// @param type the component type to retrieve actions for
 	/// @return the action map for the specified component type
-	public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
-		if (type == ComponentType.AXIS) {
+	public Map<Integer, ?> getComponentToActionsMap(final ControllerComponentType type) {
+		if (type == ControllerComponentType.AXIS) {
 			return axisToActionsMap;
 		}
 		return buttonToActionsMap;
@@ -175,53 +174,5 @@ public final class Mode implements Cloneable {
 	@Override
 	public String toString() {
 		return description != null ? description : uuid.toString();
-	}
-
-	/// Represents a gamepad component (axis or button) with stick-swapping support.
-	///
-	/// When stick swapping is enabled in the application, the [#index] accessor
-	/// transparently remaps left-stick and right-stick indices so that actions
-	/// follow the swap.
-	///
-	/// @param main the main application instance used to check stick-swapping state
-	/// @param type the type of component (axis or button)
-	/// @param index the SDL gamepad component index
-	public record Component(Main main, ComponentType type, int index) {
-
-		/// Returns the component index, swapping left and right sticks if enabled.
-		///
-		/// @return the component index, potentially swapped
-		@Override
-		public int index() {
-			if (main.isSwapLeftAndRightSticks()) {
-				return switch (type) {
-				case AXIS -> switch (index) {
-				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX;
-				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY;
-				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX;
-				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY;
-				default -> index;
-				};
-				case BUTTON -> switch (index) {
-				case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK;
-				case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK;
-				default -> index;
-				};
-				};
-			}
-
-			return index;
-		}
-
-		/// Enumerates the types of gamepad components.
-		///
-		/// Used by [Component] to distinguish between axis and button mappings when
-		/// resolving stick-swap indices.
-		public enum ComponentType {
-			/// A gamepad axis component.
-			AXIS,
-			/// A gamepad button component.
-			BUTTON
-		}
 	}
 }

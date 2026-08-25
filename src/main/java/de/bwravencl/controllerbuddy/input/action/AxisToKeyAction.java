@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -48,7 +48,7 @@ public final class AxisToKeyAction extends ToKeyAction<Float> implements IAxisTo
 
 	@Override
 	public void doAction(final Input input, final int component, Float value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		value = handleDelay(input, component, value);
 
 		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;

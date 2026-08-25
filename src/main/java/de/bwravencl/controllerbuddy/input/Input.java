@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAxisToDelayableAction;
@@ -110,8 +109,8 @@ public final class Input {
 	/// Lock keys that should be turned on this poll cycle.
 	private final Set<LockKey> onLockKeys = new HashSet<>();
 
-	/// Map from SDL gamepad handle to its current gamepad state.
-	private final Map<Long, GamepadState> sdlGamepadToGamepadStateMap = new HashMap<>();
+	/// Map from SDL gamepad handle to its current controller state.
+	private final Map<Long, ControllerState> sdlGamepadToControllerStateMap = new HashMap<>();
 
 	/// The controller selected for primary input.
 	private final @Nullable Controller selectedController;
@@ -244,7 +243,7 @@ public final class Input {
 			}
 		}
 
-		final var sdlGamepadsIterator = sdlGamepadToGamepadStateMap.keySet().iterator();
+		final var sdlGamepadsIterator = sdlGamepadToControllerStateMap.keySet().iterator();
 		while (sdlGamepadsIterator.hasNext()) {
 			final var sdlGamepad = sdlGamepadsIterator.next();
 			SDLGamepad.SDL_CloseGamepad(sdlGamepad);
@@ -413,7 +412,7 @@ public final class Input {
 
 		Objects.requireNonNull(runMode, "Field runMode must not be null");
 
-		sdlGamepadToGamepadStateMap.clear();
+		sdlGamepadToControllerStateMap.clear();
 		for (final var controller : main.getControllers()) {
 			if (!openController(controller) && controller.equals(selectedController)) {
 				Main.logSdlError("Could not open gamepad");
@@ -489,8 +488,8 @@ public final class Input {
 			return false;
 		}
 
-		sdlGamepadToGamepadStateMap.put(sdlGamepad,
-				new GamepadState(sdlGamepad, main.isSwapLeftAndRightSticks(), main.isMapCircularAxesToSquareAxes()));
+		sdlGamepadToControllerStateMap.put(sdlGamepad,
+				new ControllerState(sdlGamepad, main.isSwapLeftAndRightSticks(), main.isMapCircularAxesToSquareAxes()));
 		updateHotSwappingButtonId();
 
 		final var gamepadProperties = SDLGamepad.SDL_GetGamepadProperties(sdlGamepad);
@@ -544,21 +543,21 @@ public final class Input {
 
 		if (hotSwappingButtonId != HotSwappingButton.NONE.id
 				&& currentNanoTime - lastHotSwapPollNanoTime > HOT_SWAP_POLL_INTERVAL_NS) {
-			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
-			while (sdlGamepadToGamepadStateMapIterator.hasNext()) {
-				final var entry = sdlGamepadToGamepadStateMapIterator.next();
+			final var sdlGamepadToControllerStateMapIterator = sdlGamepadToControllerStateMap.entrySet().iterator();
+			while (sdlGamepadToControllerStateMapIterator.hasNext()) {
+				final var entry = sdlGamepadToControllerStateMapIterator.next();
 				final long sdlGamepad = entry.getKey();
 
 				if (sdlGamepad == selectedSdlGamepad) {
 					continue;
 				}
 
-				final var gamepadState = entry.getValue();
+				final var controllerState = entry.getValue();
 
-				if (gamepadState.update()) {
+				if (controllerState.update()) {
 					final var instanceId = SDLGamepad.SDL_GetGamepadID(sdlGamepad);
 
-					if (gamepadState.getButtons()[hotSwappingButtonId]) {
+					if (controllerState.getButtons()[hotSwappingButtonId]) {
 						hotSwappingButtonDownInstanceIds.add(instanceId);
 					} else if (hotSwappingButtonDownInstanceIds.contains(instanceId)) {
 						final var optionalController = main.getControllers().stream()
@@ -581,7 +580,7 @@ public final class Input {
 						}
 					}
 				} else {
-					sdlGamepadToGamepadStateMapIterator.remove();
+					sdlGamepadToControllerStateMapIterator.remove();
 					updateHotSwappingButtonId();
 				}
 			}
@@ -589,8 +588,8 @@ public final class Input {
 			lastHotSwapPollNanoTime = currentNanoTime;
 		}
 
-		final var gamepadState = sdlGamepadToGamepadStateMap.get(selectedSdlGamepad);
-		if (gamepadState == null || !gamepadState.update()) {
+		final var controllerState = sdlGamepadToControllerStateMap.get(selectedSdlGamepad);
+		if (controllerState == null || !controllerState.update()) {
 			return false;
 		}
 
@@ -644,7 +643,7 @@ public final class Input {
 		final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
 
 		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
-			final var axisValue = gamepadState.getAxes()[axis];
+			final var axisValue = controllerState.getAxes()[axis];
 
 			if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
 				axisToSuspensionInfoMap.remove(axis);
@@ -671,7 +670,7 @@ public final class Input {
 
 			if (actions != null) {
 				for (final var action : actions) {
-					action.doAction(this, axis, axisValue, gamepadState);
+					action.doAction(this, axis, axisValue, controllerState);
 				}
 			}
 		}
@@ -698,7 +697,7 @@ public final class Input {
 
 			if (actions != null) {
 				for (final var action : actions) {
-					action.doAction(this, button, gamepadState.getButtons()[button], gamepadState);
+					action.doAction(this, button, controllerState.getButtons()[button], controllerState);
 				}
 			}
 		}
@@ -708,7 +707,7 @@ public final class Input {
 				final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 				if (buttonToModeActions != null) {
 					for (final var action : buttonToModeActions) {
-						action.doAction(this, button, gamepadState.getButtons()[button], gamepadState);
+						action.doAction(this, button, controllerState.getButtons()[button], controllerState);
 					}
 				}
 			}
@@ -745,7 +744,7 @@ public final class Input {
 		lastPollNanoTime = 0L;
 		rateMultiplier = 0f;
 		buttons = new boolean[0];
-		sdlGamepadToGamepadStateMap.clear();
+		sdlGamepadToControllerStateMap.clear();
 		virtualAxisToTargetValueMap.clear();
 		axisToSuspensionInfoMap.clear();
 		hotSwappingButtonDownInstanceIds.clear();
@@ -952,7 +951,7 @@ public final class Input {
 	/// gamepads are currently connected, enabling or disabling hot-swap support
 	/// accordingly.
 	private void updateHotSwappingButtonId() {
-		final var hotSwappingPossible = sdlGamepadToGamepadStateMap.size() > 1;
+		final var hotSwappingPossible = sdlGamepadToControllerStateMap.size() > 1;
 
 		if (hotSwappingPossible && hotSwappingButtonId == HotSwappingButton.NONE.id) {
 			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();

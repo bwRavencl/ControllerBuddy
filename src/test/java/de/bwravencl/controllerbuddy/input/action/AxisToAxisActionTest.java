@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import org.jspecify.annotations.NullMarked;
@@ -39,7 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 final class AxisToAxisActionTest {
 
 	@Mock
-	GamepadState gamepadState;
+	ControllerState controllerState;
 
 	@Mock
 	Input mockInput;
@@ -120,8 +120,8 @@ final class AxisToAxisActionTest {
 		@DisplayName("uses raw value when useRawValue is true")
 		void usesRawValue() {
 			action.setUseRawValue(true);
-			Mockito.when(gamepadState.getRawAxes()).thenReturn(new float[] { 1f });
-			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, gamepadState);
+			Mockito.when(controllerState.getRawAxes()).thenReturn(new float[] { 1f });
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, controllerState);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),

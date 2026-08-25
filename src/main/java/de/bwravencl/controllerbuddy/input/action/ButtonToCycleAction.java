@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.GamepadState;
+import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -77,7 +77,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		value = handleDelay(input, component, value);
 
 		switch (activation) {
@@ -88,7 +88,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
-				doActionAndAdvanceIndex(input, component, gamepadState);
+				doActionAndAdvanceIndex(input, component, controllerState);
 			}
 		}
 		case ON_RELEASE -> {
@@ -100,7 +100,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				}
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
-				doActionAndAdvanceIndex(input, component, gamepadState);
+				doActionAndAdvanceIndex(input, component, controllerState);
 			}
 		}
 		}
@@ -114,12 +114,12 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	///
 	/// @param input the input instance
 	/// @param component the button component index
-	/// @param gamepadState the current gamepad state
+	/// @param controllerState the current gamepad state
 	private void doActionAndAdvanceIndex(final Input input, final int component,
-			final @Nullable GamepadState gamepadState) {
+			final @Nullable ControllerState controllerState) {
 		final var action = actions.get(index);
 
-		action.doAction(input, component, true, gamepadState);
+		action.doAction(input, component, true, controllerState);
 		if (action instanceof final ButtonToLockKeyAction buttonToLockKeyAction) {
 			buttonToLockKeyAction.resetWasUp();
 		}

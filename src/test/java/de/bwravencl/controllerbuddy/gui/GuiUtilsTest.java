@@ -453,7 +453,7 @@ final class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("wrapComponentInScrollPane()")
-	final class WrapComponentInScrollPaneTests {
+	final class WrapControllerComponentInScrollPaneTests {
 
 		@Test
 		@DisplayName("preferred size is not explicitly set when null is passed")

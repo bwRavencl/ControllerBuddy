@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
@@ -73,7 +72,7 @@ final class InputPipelineTest {
 
 	private static final long POLL_PERIOD_NANOS = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
 
-	private GamepadStateInjector injector;
+	private ControllerStateInjector injector;
 
 	private Input input;
 
@@ -306,9 +305,9 @@ final class InputPipelineTest {
 
 		sdlGamepadMock = Mockito.mockStatic(SDLGamepad.class);
 
-		injector = new GamepadStateInjector(input, sdlGamepadMock);
+		injector = new ControllerStateInjector(input, sdlGamepadMock);
 
-		sdlGamepadMock.when(() -> SDLGamepad.SDL_GamepadConnected(GamepadStateInjector.DUMMY_SDL_GAMEPAD_HANDLE))
+		sdlGamepadMock.when(() -> SDLGamepad.SDL_GamepadConnected(ControllerStateInjector.DUMMY_SDL_GAMEPAD_HANDLE))
 				.thenReturn(true);
 	}
 
@@ -367,13 +366,13 @@ final class InputPipelineTest {
 		sdlGamepadMock.close();
 	}
 
-	private static final class GamepadStateInjector {
+	private static final class ControllerStateInjector {
 
 		private static final long DUMMY_SDL_GAMEPAD_HANDLE = 1L;
 
 		private final MockedStatic<SDLGamepad> sdlGamepadMock;
 
-		private GamepadStateInjector(final Input input, final MockedStatic<SDLGamepad> sdlGamepadMock) {
+		private ControllerStateInjector(final Input input, final MockedStatic<SDLGamepad> sdlGamepadMock) {
 			this.sdlGamepadMock = sdlGamepadMock;
 
 			sdlGamepadMock.when(() -> SDLGamepad.SDL_OpenGamepad(Mockito.anyInt()))
@@ -4048,7 +4047,7 @@ final class InputPipelineTest {
 		@Test
 		@DisplayName("all reflected Input fields exist")
 		void allReflectedInputFieldsExist() {
-			final var fieldNames = new String[] { "sdlGamepadToGamepadStateMap", "selectedSdlGamepad", "initialized",
+			final var fieldNames = new String[] { "sdlGamepadToControllerStateMap", "selectedSdlGamepad", "initialized",
 					"lastPollNanoTime" };
 
 			for (final var fieldName : fieldNames) {
@@ -4063,15 +4062,15 @@ final class InputPipelineTest {
 
 		@SuppressWarnings({ "RethrowReflectiveOperationExceptionAsLinkageError", "ReturnValueIgnored" })
 		@Test
-		@DisplayName("GamepadState inner final class exists with expected fields")
-		void gamepadStateClassExists() {
+		@DisplayName("ControllerState inner final class exists with expected fields")
+		void controllerStateClassExists() {
 			try {
-				final var gamepadStateClass = Class.forName("de.bwravencl.controllerbuddy.input.GamepadState");
-				gamepadStateClass.getDeclaredField("axes");
-				gamepadStateClass.getDeclaredField("buttons");
-				gamepadStateClass.getDeclaredField("sdlGamepad");
+				final var controllerStateClass = Class.forName("de.bwravencl.controllerbuddy.input.ControllerState");
+				controllerStateClass.getDeclaredField("axes");
+				controllerStateClass.getDeclaredField("buttons");
+				controllerStateClass.getDeclaredField("sdlGamepad");
 			} catch (final ReflectiveOperationException e) {
-				throw new AssertionError("GamepadState inner final class or its fields not found", e);
+				throw new AssertionError("ControllerState inner final class or its fields not found", e);
 			}
 		}
 	}
