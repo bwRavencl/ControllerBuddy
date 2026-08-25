@@ -31,7 +31,7 @@ plugins {
   jacoco
   id("com.diffplug.spotless") version "8.10.0"
   id("com.github.spotbugs") version "6.5.11"
-  id("net.ltgt.errorprone") version "5.1.0"
+  id("net.ltgt.errorprone") version "5.1.1"
 }
 
 buildscript { dependencies { classpath("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0") } }
