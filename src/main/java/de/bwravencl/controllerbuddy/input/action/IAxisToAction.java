@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 /// Marker interface for actions that receive axis (float) input values.
 ///
-/// Extends [IAction] with a `Float` value type, identifying actions that
+/// Extends [IAction] with a [Float] value type, identifying actions that
 /// process continuous analog axis data from controller inputs.
 public interface IAxisToAction extends IAction<Float> {
 }

@@ -26,7 +26,7 @@ import java.util.Map;
 
 /// Interface for button-triggered actions that support an activation delay.
 ///
-/// Extends [IDelayableAction] with `Boolean` value type to provide delay
+/// Extends [IDelayableAction] with [Boolean] value type to provide delay
 /// handling for actions driven by button input. When a delay is configured, the
 /// action only fires after the button remains pressed for the specified
 /// duration. Delayed activation can also deny activation of co-located
