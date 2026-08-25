@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.10.4" sequence="0" timestamp="1787434297959" analysisTimestamp="1787434297959" release="">
+<BugCollection version="4.10.4" sequence="0" timestamp="1787669557843" analysisTimestamp="1787669557843" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/VersionUtils.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/MainLoop$TaskQueueEntry.class</Jar>
@@ -110,14 +110,15 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Input$SuspensionInfo.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/OverlayAxis.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/ControllerComponent$ControllerComponentType.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/LockKey.class</Jar>
-    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode$Component$ComponentType.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/OverlayAxis$OverlayAxisStyle.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/VirtualAxis.class</Jar>
-    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode$Component.class</Jar>
-    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/GamepadState.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/ControllerComponent.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Controller.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/OverlayAxis$OverlayAxisOrientation.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Scancode.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/ControllerState.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/runmode/ClientRunMode$ClientState.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/runmode/ClientRunMode$1.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/runmode/RunMode.class</Jar>
@@ -250,7 +251,6 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$Extensions.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/GuiUtils$6.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SelectIndicatorColorAction.class</Jar>
-    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$Controller.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/IndicatorProgressBar.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/module-info.class</Jar>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.11.0/a461452d3e31bebf2706323f8738ec44b19c96e1/commons-cli-1.11.0.jar</AuxClasspathEntry>
@@ -261,10 +261,10 @@
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.14.0/efc0e34ede4e3204eaefb84a00e55e8c86634382/gson-2.14.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.8.193/97622610cdd248a4e1a6d89ef922b49b660b4ab0/classgraph-4.8.193.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.1/3d60fd98eb8ade73004f4195c37b6317e02cf3d7/jspecify-1.0.1.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.2/38c7868a68154d8c6b2523ea29ffa7728398361/lwjgl-sdl-3.4.2.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.2/9ca6454242185ececea278e55e2ef8b4e74c6890/lwjgl-sdl-3.4.2-natives-linux.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.2/412d6b86ab1930b0e3c475cae55bd2c9fd54cf40/lwjgl-3.4.2.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.2/22bec359a38397872d15a0ab5029569e9574dd87/lwjgl-3.4.2-natives-linux.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.3/c02146735d6ff70d070c73532b435e5c893a346b/lwjgl-sdl-3.4.3.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.3/6ed1b80b7c211a491612c70e43f27ba1f42cccd0/lwjgl-sdl-3.4.3-natives-linux.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.3/7ab5265a73d8a959ed62332d546536ae6be2f0d5/lwjgl-3.4.3.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.3/2800e134537db1a175eba41c430b1018eddc48f0/lwjgl-3.4.3-natives-linux.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-jdk14/2.0.18/3d3f60c840928c408e2fc8f40aeff806ba396149/slf4j-jdk14-2.0.18.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.48.0/bbe30942a31d1778c74cb272321267eca82dc708/error_prone_annotations-2.48.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.18/78a9e7a37cd6360e0b818e86341b24123d28d4df/slf4j-api-2.0.18.jar</AuxClasspathEntry>
@@ -805,13 +805,13 @@
     <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
     <LongMessage>Unchecked/unconfirmed cast from java.awt.Graphics to java.awt.Graphics2D in de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1.paintIcon(Component, Graphics, int, int)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="772" end="843" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
-        <Message>At AssignmentsScrollPane.java:[lines 772-843]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="775" end="846" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
+        <Message>At AssignmentsScrollPane.java:[lines 775-846]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" name="paintIcon" signature="(Ljava/awt/Component;Ljava/awt/Graphics;II)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="799" end="843" startBytecode="0" endBytecode="182" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="802" end="846" startBytecode="0" endBytecode="182" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1.paintIcon(Component, Graphics, int, int)</Message>
     </Method>
     <Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
@@ -829,16 +829,16 @@
     <LocalVariable name="g" register="2" pc="0" role="LOCAL_VARIABLE_VALUE_OF">
       <Message>Value loaded from g</Message>
     </LocalVariable>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true" start="799" end="799" startBytecode="1" endBytecode="1" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
-      <Message>At AssignmentsScrollPane.java:[line 799]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true" start="802" end="802" startBytecode="1" endBytecode="1" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
+      <Message>At AssignmentsScrollPane.java:[line 802]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_EXIT" priority="3" rank="19" abbrev="Dm" category="BAD_PRACTICE" instanceHash="26ac90f1bc64f485125114499d48dec4" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="382">
     <ShortMessage>Method invokes System.exit(...)</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.terminate(int, Main) invokes System.exit(...), which shuts down the entire virtual machine</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="276" end="5682" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 276-5682]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 275-5684]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
@@ -854,51 +854,51 @@
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="276" end="5682" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 276-5682]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 275-5684]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4640" end="4649" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4642" end="4651" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4647" end="4647" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[line 4647]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4649" end="4649" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[line 4649]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_GC" priority="1" rank="16" abbrev="Dm" category="PERFORMANCE" instanceHash="6c5696b6dfa98672884356b7dc797ca2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.stopLocalAndServer(boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="276" end="5682" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 276-5682]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 275-5684]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="stopLocalAndServer" signature="(Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4720" end="4728" startBytecode="0" endBytecode="114" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4722" end="4730" startBytecode="0" endBytecode="114" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.stopLocalAndServer(boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4726" end="4726" startBytecode="28" endBytecode="28" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[line 4726]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4728" end="4728" startBytecode="28" endBytecode="28" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[line 4728]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2" rank="17" abbrev="SF" category="STYLE" instanceHash="401cd345ae2348cf4462e863fb0d6d1a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="484">
     <ShortMessage>Switch statement found where one case falls through to the next case</ShortMessage>
     <LongMessage>Switch statement found in de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection() where one case falls through to the next case</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5783" end="5805" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 5783-5805]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5785" end="5807" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 5785-5807]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" name="approveSelection" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5790" end="5805" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5792" end="5807" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="5797" end="5799" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[lines 5797-5799]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="5799" end="5801" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[lines 5799-5801]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="e46fc5addf2d33bbddd8ae5107b2747e" instanceOccurrenceNum="0" instanceOccurrenceMax="1" cweid="567">
@@ -1035,18 +1035,18 @@
       <Message>At OnScreenKeyboard.java:[line 1044]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="21141be4460b790d3daf93182d4ad091" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
+  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="65ae1e02cf618da15ac56ac7a8f0e342" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
     <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
     <LongMessage>This write of the 64-bit primitive variable &quot;selectedSdlGamepad&quot; may not be atomic</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="openController" signature="(Lde/bwravencl/controllerbuddy/gui/Main$Controller;)Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="485" end="519" startBytecode="0" endBytecode="399" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.Input.openController(Main$Controller)</Message>
+    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="openController" signature="(Lde/bwravencl/controllerbuddy/input/Controller;)Z" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="484" end="518" startBytecode="0" endBytecode="399" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.input.Input.openController(Controller)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="selectedSdlGamepad" signature="J" isStatic="false" primary="true">
       <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
@@ -1054,21 +1054,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.selectedSdlGamepad</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="499" end="499" startBytecode="77" endBytecode="77" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 499]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="498" end="498" startBytecode="77" endBytecode="77" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 498]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="fa8f361f8df230b2071ea57198bc1997" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
     <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
     <LongMessage>This write of the 64-bit primitive variable &quot;lastPollNanoTime&quot; may not be atomic</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="lastPollNanoTime" signature="J" isStatic="false" primary="true">
@@ -1077,21 +1077,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.lastPollNanoTime</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="745" end="745" startBytecode="22" endBytecode="22" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 745]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="744" end="744" startBytecode="22" endBytecode="22" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 744]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="c9fd0a2f53729b41e846078034869835" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
     <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
     <LongMessage>This write of the 64-bit primitive variable &quot;lastHotSwapPollNanoTime&quot; may not be atomic</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="resetLastHotSwapPollNanoTime" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="775" end="776" startBytecode="0" endBytecode="57" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="774" end="775" startBytecode="0" endBytecode="57" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.resetLastHotSwapPollNanoTime()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="lastHotSwapPollNanoTime" signature="J" isStatic="false" primary="true">
@@ -1100,21 +1100,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.lastHotSwapPollNanoTime</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="775" end="775" startBytecode="8" endBytecode="8" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 775]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="774" end="774" startBytecode="8" endBytecode="8" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 774]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="4474d066e3d01713fdb70a93c4a1447f" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;initialized&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="init" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="410" end="435" startBytecode="0" endBytecode="263" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="409" end="434" startBytecode="0" endBytecode="263" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.init()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="initialized" signature="Z" isStatic="false" primary="true">
@@ -1123,21 +1123,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.initialized</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="433" end="433" startBytecode="140" endBytecode="140" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 433]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="432" end="432" startBytecode="140" endBytecode="140" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 432]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="2308cb39b505b6c4cdbc5f4c54aa0430" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;minAxisStep&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="init" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="410" end="435" startBytecode="0" endBytecode="263" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="409" end="434" startBytecode="0" endBytecode="263" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.init()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="minAxisStep" signature="F" isStatic="false" primary="true">
@@ -1146,22 +1146,22 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.minAxisStep</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="425" end="425" startBytecode="117" endBytecode="117" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 425]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="424" end="424" startBytecode="117" endBytecode="117" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 424]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="b9c5a27e8d31f81560bcb32d183a107c" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
+  <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="e8fffdaf57b820327e12377392d647d" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;hapticFeedback&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="openController" signature="(Lde/bwravencl/controllerbuddy/gui/Main$Controller;)Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="485" end="519" startBytecode="0" endBytecode="399" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.Input.openController(Main$Controller)</Message>
+    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="openController" signature="(Lde/bwravencl/controllerbuddy/input/Controller;)Z" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="484" end="518" startBytecode="0" endBytecode="399" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.input.Input.openController(Controller)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="hapticFeedback" signature="Z" isStatic="false" primary="true">
       <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
@@ -1169,21 +1169,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.hapticFeedback</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="502" end="502" startBytecode="100" endBytecode="100" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 502]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="501" end="501" startBytecode="100" endBytecode="100" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 501]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="ea298f93c3477289cd216f6f4ad68304" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;hotSwappingButtonId&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="poll" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="526" end="731" startBytecode="0" endBytecode="2226" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="525" end="730" startBytecode="0" endBytecode="2226" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.poll()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="hotSwappingButtonId" signature="I" isStatic="false" primary="true">
@@ -1192,21 +1192,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.hotSwappingButtonId</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="573" end="573" startBytecode="337" endBytecode="337" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 573]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="572" end="572" startBytecode="337" endBytecode="337" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 572]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="cb002b9c54f4dd1d63e6efd418d54ed8" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;rateMultiplier&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="poll" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="526" end="731" startBytecode="0" endBytecode="2226" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="525" end="730" startBytecode="0" endBytecode="2226" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.poll()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="rateMultiplier" signature="F" isStatic="false" primary="true">
@@ -1215,21 +1215,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.rateMultiplier</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="543" end="543" startBytecode="97" endBytecode="97" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 543]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="542" end="542" startBytecode="97" endBytecode="97" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 542]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="e4eca7e11a19821b80edc57d6b9fde03" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;repeatModeActionWalk&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="repeatModeActionWalk" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="736" end="737" startBytecode="0" endBytecode="51" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="735" end="736" startBytecode="0" endBytecode="51" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.repeatModeActionWalk()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="repeatModeActionWalk" signature="Z" isStatic="false" primary="true">
@@ -1238,21 +1238,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.repeatModeActionWalk</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="736" end="736" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 736]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="735" end="735" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 735]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="68d473f2f8829309ac7e63cda4707aeb" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;clearOnNextPoll&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="clearOnNextPoll" signature="Z" isStatic="false" primary="true">
@@ -1261,21 +1261,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.clearOnNextPoll</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="757" end="757" startBytecode="98" endBytecode="98" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 757]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="756" end="756" startBytecode="98" endBytecode="98" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 756]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="dd20f15e9c06f32d0001d50c31f6445e" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;hotSwappingButtonId&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="hotSwappingButtonId" signature="I" isStatic="false" primary="true">
@@ -1284,21 +1284,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.hotSwappingButtonId</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="752" end="752" startBytecode="80" endBytecode="80" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 752]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="751" end="751" startBytecode="80" endBytecode="80" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 751]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="981c6b9982b68f77f1b1609cb7ad0a61" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;initialized&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="initialized" signature="Z" isStatic="false" primary="true">
@@ -1307,21 +1307,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.initialized</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="743" end="743" startBytecode="12" endBytecode="12" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 743]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="742" end="742" startBytecode="12" endBytecode="12" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 742]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="6ed69aff82c6a099fe8a11f4cbd2285d" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;rateMultiplier&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="rateMultiplier" signature="F" isStatic="false" primary="true">
@@ -1330,21 +1330,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.rateMultiplier</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="746" end="746" startBytecode="27" endBytecode="27" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 746]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="745" end="745" startBytecode="27" endBytecode="27" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 745]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="b38c0ecea0f8adbc2adcc76884b28113" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;repeatModeActionWalk&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="repeatModeActionWalk" signature="Z" isStatic="false" primary="true">
@@ -1353,21 +1353,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.repeatModeActionWalk</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="741" end="741" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 741]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="740" end="740" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 740]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="c23fc0d53e1f2f649243b3a93a4cc719" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;skipAxisInitialization&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="741" end="770" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="740" end="769" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="skipAxisInitialization" signature="Z" isStatic="false" primary="true">
@@ -1376,21 +1376,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.skipAxisInitialization</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="742" end="742" startBytecode="7" endBytecode="7" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 742]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="741" end="741" startBytecode="7" endBytecode="7" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 741]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="b7b9414c65bb19479bf51fc99aff15a9" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;clearOnNextPoll&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="scheduleClearOnNextPoll" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="781" end="782" startBytecode="0" endBytecode="51" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="780" end="781" startBytecode="0" endBytecode="51" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.scheduleClearOnNextPoll()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="clearOnNextPoll" signature="Z" isStatic="false" primary="true">
@@ -1399,21 +1399,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.clearOnNextPoll</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="781" end="781" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 781]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="780" end="780" startBytecode="2" endBytecode="2" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 780]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="a25681f105916e12b65417f2cf33648a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;hotSwappingButtonId&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="80" end="962" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 80-962]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="79" end="961" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+        <Message>At Input.java:[lines 79-961]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="updateHotSwappingButtonId" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="955" end="962" startBytecode="0" endBytecode="165" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="954" end="961" startBytecode="0" endBytecode="165" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.updateHotSwappingButtonId()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="hotSwappingButtonId" signature="I" isStatic="false" primary="true">
@@ -1422,11 +1422,11 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.hotSwappingButtonId</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="958" end="958" startBytecode="44" endBytecode="44" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 958]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="957" end="957" startBytecode="44" endBytecode="44" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+      <Message>At Input.java:[line 957]</Message>
     </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="960" end="960" startBytecode="74" endBytecode="74" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
-      <Message>Another occurrence at Input.java:[line 960]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="959" end="959" startBytecode="74" endBytecode="74" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
+      <Message>Another occurrence at Input.java:[line 959]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="MS_EXPOSE_REP" priority="2" rank="18" abbrev="MS" category="MALICIOUS_CODE" instanceHash="a88966d4e0fee453431eba20be17c149" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="493">
@@ -1999,15 +1999,15 @@ defined in an interface references a mutable
       <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1224)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Sat, 22 Aug 2026 23:31:37 +0200" total_classes="0" referenced_classes="0" total_bugs="71" total_size="0" num_packages="7" java_version="26.0.2.1" vm_version="26.0.2.1+1" cpu_seconds="33.59" clock_seconds="5.19" peak_mbytes="1166.35" alloc_mbytes="24048.00" gc_seconds="0.08" priority_3="35" priority_2="34" priority_1="2">
+  <FindBugsSummary timestamp="Tue, 25 Aug 2026 16:52:37 +0200" total_classes="0" referenced_classes="0" total_bugs="71" total_size="0" num_packages="7" java_version="26.0.2.1" vm_version="26.0.2.1+1" cpu_seconds="34.81" clock_seconds="5.52" peak_mbytes="1201.84" alloc_mbytes="24048.00" gc_seconds="0.08" priority_3="35" priority_2="34" priority_1="2">
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Kernel32.java" bugCount="1" size="0" bugHash="c4a890ae322e6b2dd1a2c9e549e41bd7"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Linux.java" bugCount="1" size="0" bugHash="15ef90e0db8612819ff97f6259893f73"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/User32.java" bugCount="3" size="0" bugHash="206b6d62345b52c9ab308493283565da"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" bugCount="25" size="0" bugHash="6b6191efcadea842f17f5f6f8c3085bf"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="2b2cdbaa7dc874a727950db043cd6c8d"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="4" size="0" bugHash="7f4bb2c69fd82f3629d7cffb399a9df0"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="aee7eca2c7afaa76cc52fcf1462b7de0"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="4" size="0" bugHash="880b2af199d2b6687ff004090c16d13b"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="6" size="0" bugHash="b94aed1454736e8855bcb77636819ba2"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17" size="0" bugHash="679210bd9fd0146b352d149dee9ccf13"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17" size="0" bugHash="fbee7cf355a7ea5062130e28cd4f9b7c"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java" bugCount="1" size="0" bugHash="900161eace06620fbfd83c0977066412"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/IAxisToDelayableAction.java" bugCount="2" size="0" bugHash="b6952faa0e1c088875cc917b970552d3"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/IButtonToDelayableAction.java" bugCount="2" size="0" bugHash="5eb388302ff247543cb919d60833c733"/>
