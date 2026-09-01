@@ -261,7 +261,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 | **UI & Graphics**    | [FlatLaf](https://www.formdev.com/flatlaf), [JSVG](https://github.com/weisJ/jsvg)                                                                                                                                                                      |
 | **Utilities**        | [Apache Commons CLI](https://commons.apache.org/proper/commons-cli), [ClassGraph](https://github.com/classgraph/classgraph), [dbus-java](https://hypfvieh.github.io/dbus-java), [Gson](https://github.com/google/gson), [SLF4J](https://www.slf4j.org) |
 | **Code Quality**     | [CleanThat](https://github.com/solven-eu/cleanthat), [Error Prone](https://errorprone.info), [JSpecify](https://jspecify.dev), [NullAway](https://github.com/uber/nullaway), [Spotbugs](https://spotbugs.github.io)                                    |
-| **Code Formatting**  | [Eclipse JDT](https://projects.eclipse.org/projects/eclipse.jdt), [Eclipse WTP](https://projects.eclipse.org/projects/webtools), [ktfmt](https://facebook.github.io/ktfmt), [Spotless](https://github.com/diffplug/spotless)                           |
+| **Code Formatting**  | [Eclipse JDT](https://projects.eclipse.org/projects/eclipse.jdt), [Eclipse WTP](https://projects.eclipse.org/projects/webtools), [ktfmt](https://kotlin.github.io/ktfmt), [Spotless](https://github.com/diffplug/spotless)                            |
 | **Testing**          | [JUnit](https://junit.org), [Mockito](https://mockito.org)                                                                                                                                                                                             |
 
 ## 🛠️ Building
