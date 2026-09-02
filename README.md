@@ -1,7 +1,7 @@
 # ControllerBuddy
 
 <!--suppress HtmlDeprecatedAttribute -->
-<img src="icon/icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/>
+<img src="icon/icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/> <!-- markdownlint-disable-line no-inline-html -->
 
 [![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
 
@@ -33,22 +33,26 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 #### 🪟 Windows x86-64
 
 1. First download and install [vJoy 2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0) on your system.
-2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
+2. [Download](https://github.com/bwRavencl/ControllerBuddy/releases/latest) the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
 #### 🐧 Linux x86-64 / aarch64
 
 1. Allow access to uinput:
+
     ```sh
     echo 'KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"' | sudo tee /etc/udev/rules.d/60-controllerbuddy.rules
     ```
+
 2. Load the uinput kernel module at boot:
+
     ```sh
     echo uinput | sudo tee /etc/modules-load.d/controllerbuddy.conf
     ```
+
 3. Reboot
-4. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
+4. [Download](https://github.com/bwRavencl/ControllerBuddy/releases/latest) the latest build of ControllerBuddy for Linux as a TGZ archive.
 5. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 6. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
 
@@ -72,8 +76,8 @@ Mappings are organized into **Modes** - distinct functional layers activated or 
 * **Profile Management:** Create, save, and switch between custom mapping profiles for different games or apps.
 * **Powerful UI:** A fast, clean and intuitive interface with full support for **light and dark themes**.
 * **In-Game Overlay:**
-    * Monitor the currently active **Mode**.
-    * Visualize the current position of **virtual axes**.
+  * Monitor the currently active **Mode**.
+  * Visualize the current position of **virtual axes**.
 * **Localization:** Fully localized in **English** and **German**.
 
 ### ⚙️ Modes of Operation
@@ -86,12 +90,12 @@ ControllerBuddy can be used as a standalone local tool or distributed over a net
 ### 🔌 Controller & OS Support
 
 * **Gamepad Compatibility:**
-    * **Xbox Series X|S**, **Xbox One**, and **Xbox 360 Controllers**
-    * **DualSense (PS5)** and **DualShock 3/4 (PS3/PS4)** controllers
-    * **Many more** via the [SDL GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project.
+  * **Xbox Series X|S**, **Xbox One**, and **Xbox 360 Controllers**
+  * **DualSense (PS5)** and **DualShock 3/4 (PS3/PS4)** controllers
+  * **Many more** via the [SDL GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project.
 * **Operating Systems:**
-    * **Windows & Linux:** Full support (Local, Client, and Server).
-    * **macOS:** Server-only support (no binaries provided).
+  * **Windows & Linux:** Full support (Local, Client, and Server).
+  * **macOS:** Server-only support (no binaries provided).
 
 ## 🗃️ Profiles
 
@@ -168,8 +172,8 @@ This inheritance persists across multiple Mode levels, as illustrated by the fol
 
 Two different switching behaviors can be configured:
 
-- **Momentary (Default):** The Mode remains active only while the button is held (similar to a **Shift key**).
-- **Toggle:** Press once to activate, press again to deactivate (similar to **Caps Lock**).
+* **Momentary (Default):** The Mode remains active only while the button is held (similar to a **Shift key**).
+* **Toggle:** Press once to activate, press again to deactivate (similar to **Caps Lock**).
 
 ## 🏛️ Architecture
 
@@ -205,6 +209,7 @@ flowchart LR
 
 ## 🖼️ Screenshots
 
+<!-- markdownlint-disable no-inline-html -->
 ![Modes Tab](screenshots/modes_tab.png)  
 *<small>Modes Tab</small>*
 
@@ -225,6 +230,7 @@ flowchart LR
 
 ![Overlay and On-Screen Keyboard](screenshots/overlay_and_osk.png)  
 *<small>Overlay and On-Screen Keyboard</small>*
+<!-- markdownlint-enable no-inline-html -->
 
 ## ⌨️ Command Line Parameters
 
@@ -261,8 +267,8 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 | **UI & Graphics**    | [FlatLaf](https://www.formdev.com/flatlaf), [JSVG](https://github.com/weisJ/jsvg)                                                                                                                                                                      |
 | **Utilities**        | [Apache Commons CLI](https://commons.apache.org/proper/commons-cli), [ClassGraph](https://github.com/classgraph/classgraph), [dbus-java](https://hypfvieh.github.io/dbus-java), [Gson](https://github.com/google/gson), [SLF4J](https://www.slf4j.org) |
 | **Code Quality**     | [CleanThat](https://github.com/solven-eu/cleanthat), [Error Prone](https://errorprone.info), [JSpecify](https://jspecify.dev), [NullAway](https://github.com/uber/nullaway), [Spotbugs](https://spotbugs.github.io)                                    |
-| **Code Formatting**  | [Eclipse JDT](https://projects.eclipse.org/projects/eclipse.jdt), [Eclipse WTP](https://projects.eclipse.org/projects/webtools), [ktfmt](https://kotlin.github.io/ktfmt), [Spotless](https://github.com/diffplug/spotless)                            |
-| **Testing**          | [JaCoCo](https://www.jacoco.org/jacoco), [JUnit](https://junit.org), [Mockito](https://mockito.org)                                                                                                                                                                                             |
+| **Code Formatting**  | [Eclipse JDT](https://projects.eclipse.org/projects/eclipse.jdt), [Eclipse WTP](https://projects.eclipse.org/projects/webtools), [ktfmt](https://kotlin.github.io/ktfmt), [Spotless](https://github.com/diffplug/spotless)                             |
+| **Testing**          | [JaCoCo](https://www.jacoco.org/jacoco), [JUnit](https://junit.org), [Mockito](https://mockito.org)                                                                                                                                                    |
 
 ## 🛠️ Building
 
