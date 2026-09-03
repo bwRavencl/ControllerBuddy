@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file line-length -->
 # AGENTS.md
 
 This file provides guidance to AI coding agents working with code in this repository.

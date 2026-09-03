@@ -7,7 +7,21 @@ permissions:
   contents: write
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Lint Markdown Files
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff #v24
+        with:
+          globs: |
+            **/*.md
+            !CLAUDE.md
+            !SDL_GameControllerDB/**
+
   build:
+    needs: check
     strategy:
       fail-fast: true
       matrix:
