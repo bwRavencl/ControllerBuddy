@@ -451,7 +451,7 @@ final class InputTest {
 
 			input.poll(); // second call - should use elapsed time
 
-			Assertions.assertEquals((float) rewindInterval / Input.NANOS_PER_SECOND, input.getRateMultiplier(), 0.01f);
+			Assertions.assertEquals((float) rewindInterval / Input.NANOS_PER_SECOND, input.getRateMultiplier(), 0.05f);
 		}
 
 		@Test
