@@ -608,6 +608,7 @@ tasks.register("generateModuleInfo") {
         	requires java.prefs;
         	requires org.apache.commons.cli;
         	requires org.freedesktop.dbus;
+        	requires org.freedesktop.dbus.transport.jre;
         	requires transitive org.jspecify;
         	requires org.lwjgl;
         	requires org.lwjgl.natives;
