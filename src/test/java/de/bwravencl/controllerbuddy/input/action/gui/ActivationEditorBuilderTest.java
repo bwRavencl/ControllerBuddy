@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -34,7 +35,7 @@ final class ActivationEditorBuilderTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var ignored = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var ignored = Main.strings;
 	}
 
 	@Nested
