@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import java.util.Arrays;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +58,7 @@ final class ServerRunModeTest {
 			final var key1 = ServerRunMode.deriveKey(mockMain, salt);
 			Mockito.when(mockMain.getPassword()).thenReturn("password-two");
 			final var key2 = ServerRunMode.deriveKey(mockMain, salt);
-			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
 		}
 
 		@Test
@@ -69,7 +70,7 @@ final class ServerRunModeTest {
 			salt2[0] = 1;
 			final var key1 = ServerRunMode.deriveKey(mockMain, salt1);
 			final var key2 = ServerRunMode.deriveKey(mockMain, salt2);
-			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
 		}
 
 		@Test
