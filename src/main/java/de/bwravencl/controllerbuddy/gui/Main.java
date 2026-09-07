@@ -5899,8 +5899,7 @@ public final class Main extends JFrame {
 	/// File chooser with an enlarged preferred size for better usability.
 	///
 	/// Overrides `setup` to set the preferred dialog size to the standard
-	/// application dialog dimensions, preventing the default compact file chooser
-	/// layout on high-resolution displays.
+	/// application dialog dimensions.
 	private static class LargeFileChooser extends JFileChooser {
 
 		@Serial
