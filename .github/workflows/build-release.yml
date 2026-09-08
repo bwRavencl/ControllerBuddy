@@ -43,35 +43,35 @@ jobs:
         run: |
           case ${{ matrix.os }} in
             windows-latest)
-                echo jdk_os=windows >> "$GITHUB_OUTPUT"
-                echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=zip >> "$GITHUB_OUTPUT"
-                echo dist_os=windows >> "$GITHUB_OUTPUT"
-                echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
-                echo gradle_task=distZip >> "$GITHUB_OUTPUT"
-                ;;
+              echo jdk_os=windows >> "$GITHUB_OUTPUT"
+              echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
+              echo jdk_archive_type=zip >> "$GITHUB_OUTPUT"
+              echo dist_os=windows >> "$GITHUB_OUTPUT"
+              echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
+              echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
+              echo gradle_task=distZip >> "$GITHUB_OUTPUT"
+              ;;
             ubuntu-latest)
-                echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
-                echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
-                echo dist_os=linux >> "$GITHUB_OUTPUT"
-                echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
-                echo gradle_task=distTar >> "$GITHUB_OUTPUT"
-                ;;
+              echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
+              echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
+              echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
+              echo dist_os=linux >> "$GITHUB_OUTPUT"
+              echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
+              echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
+              echo gradle_task=distTar >> "$GITHUB_OUTPUT"
+              ;;
             ubuntu-24.04-arm)
-                echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
-                echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
-                echo dist_os=linux >> "$GITHUB_OUTPUT"
-                echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
-                echo gradle_task=distTar >> "$GITHUB_OUTPUT"
-                ;;
+              echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
+              echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
+              echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
+              echo dist_os=linux >> "$GITHUB_OUTPUT"
+              echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
+              echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
+              echo gradle_task=distTar >> "$GITHUB_OUTPUT"
+              ;;
             *)
-                exit 1
-                ;;
+              exit 1
+              ;;
           esac
       - name: Setup Gradle Init Script
         run: |
@@ -174,13 +174,13 @@ jobs:
           files=$(find . -iname 'ControllerBuddy-*' -mindepth 2 -maxdepth 2 -type f)
           if [ -z "$files" ]
           then
-              echo "Error: No artifact files found."
-              exit 1
+            echo "Error: No artifact files found."
+            exit 1
           fi
           echo "files<<EOF" >> "$GITHUB_OUTPUT"
           while IFS= read -r line
           do
-              echo "$line" >> "$GITHUB_OUTPUT"
+            echo "$line" >> "$GITHUB_OUTPUT"
           done <<< "$files"
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: Check Tag
