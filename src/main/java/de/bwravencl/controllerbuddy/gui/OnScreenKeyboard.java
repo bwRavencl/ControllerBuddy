@@ -122,6 +122,9 @@ public final class OnScreenKeyboard extends JFrame {
 	/// Row index of the currently selected keyboard button.
 	private volatile int selectedRow;
 
+	/// Flag that tracks if the `STEAM_GAME` Xlib window property has been added
+	private boolean steamGameX11WindowPropertyAdded;
+
 	/// Constructs an [OnScreenKeyboard] and lays out all key rows.
 	///
 	/// @param main the main application instance
@@ -469,7 +472,13 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 		}
 
-		EventQueue.invokeLater(() -> super.setVisible(b));
+		EventQueue.invokeLater(() -> {
+			super.setVisible(b);
+
+			if (Main.IS_X11_TOOLKIT && b && !steamGameX11WindowPropertyAdded) {
+				steamGameX11WindowPropertyAdded = GuiUtils.addSteamGameX11WindowProperty(this);
+			}
+		});
 	}
 
 	/// Toggles the lock state of the currently selected keyboard button.

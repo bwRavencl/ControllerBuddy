@@ -320,6 +320,9 @@ public final class Main extends JFrame {
 	/// Default overlay scaling factor applied when no preference is stored.
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 
+	/// Whether the current AWT toolkit is the Xlib toolkit.
+	static final boolean IS_X11_TOOLKIT;
+
 	/// Signature light blue color.
 	static final Color LIGHT_BLUE_COLOR = new Color(68, 138, 222);
 
@@ -350,9 +353,6 @@ public final class Main extends JFrame {
 	/// Classpath resource paths for the application window icon at various sizes.
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
-
-	/// Whether the current AWT toolkit is the X11 toolkit.
-	private static final boolean IS_X11_TOOLKIT;
 
 	/// Border used around items in list panels.
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
@@ -3503,6 +3503,10 @@ public final class Main extends JFrame {
 		updateOverlayAlignment(prevTotalDisplayBounds);
 
 		overlayFrame.setVisible(true);
+
+		if (IS_X11_TOOLKIT) {
+			GuiUtils.addSteamGameX11WindowProperty(overlayFrame);
+		}
 	}
 
 	/// Initializes the active profile from the command line or the last-used

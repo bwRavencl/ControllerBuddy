@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.ffi.Kernel32;
 import de.bwravencl.controllerbuddy.ffi.User32;
+import de.bwravencl.controllerbuddy.ffi.Xlib;
 import de.bwravencl.controllerbuddy.input.Mode;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -34,8 +35,11 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -124,6 +128,91 @@ public final class GuiUtils {
 		modePanel.add(modeComboBox);
 
 		return modeComboBox;
+	}
+
+	/// Adds the `STEAM_GAME` Xlib window property to the specified frame's native
+	/// Xlib window peer using the Steam App ID.
+	///
+	/// This method reads the `SteamAppId` environment variable and sets the
+	/// `STEAM_GAME` Xlib window property on the underlying Xlib window handle
+	/// associated with the frame to that value.
+	///
+	/// This instructs the gamescope compositor to display the window on top of the
+	/// game.
+	///
+	/// @param frame the frame to whose window peer the property shall be added
+	/// @return `true` if the property was successfully added
+	public static boolean addSteamGameX11WindowProperty(final Frame frame) {
+		if (!Main.IS_X11_TOOLKIT) {
+			throw new UnsupportedOperationException();
+		}
+
+		final var steamAppId = System.getenv("SteamAppId");
+		if (steamAppId == null || steamAppId.isBlank()) {
+			return false;
+		}
+
+		if (!frame.isDisplayable()) {
+			throw new IllegalStateException("Frame is not displayable");
+		}
+
+		final long windowId;
+		try {
+			@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
+			final var awtAccessorClass = Class.forName("sun.awt.AWTAccessor");
+
+			final var getComponentAccessor = awtAccessorClass.getMethod("getComponentAccessor");
+			final var componentAccessor = getComponentAccessor.invoke(null);
+
+			final var getPeerMethod = componentAccessor.getClass().getMethod("getPeer", Component.class);
+			getPeerMethod.setAccessible(true);
+			final var peer = getPeerMethod.invoke(componentAccessor, frame);
+
+			if (peer == null) {
+				throw new IllegalStateException("Could not retrieve native Xlib window peer");
+			}
+
+			final var getWindowMethod = peer.getClass().getMethod("getWindow");
+			windowId = (Long) getWindowMethod.invoke(peer);
+		} catch (final ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+
+		if (windowId == 0) {
+			throw new IllegalStateException("Could not retrieve native Xlib window ID");
+		}
+
+		try (final var arena = Arena.ofConfined()) {
+			final var display = (MemorySegment) Xlib.XOpenDisplay.invokeExact(MemorySegment.NULL);
+			if (MemorySegment.NULL.equals(display)) {
+				throw new RuntimeException("Failed to open Xlib display");
+			}
+
+			try {
+				final var propNameSeg = arena.allocateFrom("STEAM_GAME", StandardCharsets.UTF_8);
+				final var typeNameSeg = arena.allocateFrom("CARDINAL", StandardCharsets.UTF_8);
+
+				final var propertyAtom = (long) Xlib.XInternAtom.invokeExact(display, propNameSeg, 0);
+				final var cardinalTypeAtom = (long) Xlib.XInternAtom.invokeExact(display, typeNameSeg, 0);
+
+				final var dataBuffer = arena.allocate(ValueLayout.JAVA_LONG);
+				dataBuffer.set(ValueLayout.JAVA_LONG, 0, Long.parseLong(steamAppId));
+
+				Xlib.XChangeProperty.invokeExact(display, windowId, propertyAtom, cardinalTypeAtom, 32, 0, dataBuffer,
+						1);
+				Xlib.XFlush.invokeExact(display);
+
+				return true;
+			} finally {
+				Xlib.XCloseDisplay.invokeExact(display);
+			}
+		} catch (final NumberFormatException e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
+
+		return false;
 	}
 
 	/// Creates a non-editable, non-focusable editor pane configured for displaying
