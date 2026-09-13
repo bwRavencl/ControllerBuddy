@@ -48,29 +48,33 @@ public final class User32 {
 	/// window.
 	public static final int SWP_NOSIZE = 1;
 
-	/// Native linker used to bind to User32 functions.
-	private static final Linker LINKER = Linker.nativeLinker();
-
-	/// Symbol lookup for the User32 native library.
-	private static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.libraryLookup(System.mapLibraryName("User32"),
-			Arena.global());
-
 	/// Method handle for the `GetKeyState` native function.
-	private static final MethodHandle GET_KEY_STATE_METHOD_HANDLE = LINKER.downcallHandle(
-			SYMBOL_LOOKUP.findOrThrow("GetKeyState"),
-			FunctionDescriptor.of(ValueLayout.JAVA_SHORT, ValueLayout.JAVA_INT), Option.critical(false));
+	private static final MethodHandle GET_KEY_STATE_METHOD_HANDLE;
 
 	/// Method handle for the `SendInput` native function.
-	private static final MethodHandle SEND_INPUT_METHOD_HANDLE = LINKER
-			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("SendInput"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT), Option.critical(false));
+	private static final MethodHandle SEND_INPUT_METHOD_HANDLE;
 
 	/// Method handle for the `SetWindowPos` native function.
-	private static final MethodHandle SET_WINDOW_POS_METHOD_HANDLE = LINKER
-			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("SetWindowPos"),
-					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS,
-							ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
-							ValueLayout.JAVA_INT));
+	private static final MethodHandle SET_WINDOW_POS_METHOD_HANDLE;
+
+	static {
+		final var linker = Linker.nativeLinker();
+		final var symbolLookup = SymbolLookup.libraryLookup(System.mapLibraryName("User32"), Arena.global());
+
+		GET_KEY_STATE_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("GetKeyState"),
+				FunctionDescriptor.of(ValueLayout.JAVA_SHORT, ValueLayout.JAVA_INT), Option.critical(false));
+
+		SEND_INPUT_METHOD_HANDLE = linker
+				.downcallHandle(
+						symbolLookup.findOrThrow("SendInput"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
+								ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
+						Option.critical(false));
+
+		SET_WINDOW_POS_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("SetWindowPos"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS,
+						ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+						ValueLayout.JAVA_INT));
+	}
 
 	/// Prevents instantiation.
 	private User32() {

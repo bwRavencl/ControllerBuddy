@@ -33,16 +33,16 @@ import java.lang.invoke.MethodHandle;
 @SuppressWarnings({ "exports", "restricted" })
 public final class Kernel32 {
 
-	/// The native linker used to create method handles for native calls.
-	private static final Linker LINKER = Linker.nativeLinker();
-
-	/// Symbol lookup for the Kernel32 library.
-	private static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.libraryLookup(System.mapLibraryName("Kernel32"),
-			Arena.global());
-
 	/// Method handle for the native `GetLastError` function.
-	private static final MethodHandle GET_LAST_ERROR_METHOD_HANDLE = LINKER
-			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("GetLastError"), FunctionDescriptor.of(ValueLayout.JAVA_INT));
+	private static final MethodHandle GET_LAST_ERROR_METHOD_HANDLE;
+
+	static {
+		final var linker = Linker.nativeLinker();
+		final var symbolLookup = SymbolLookup.libraryLookup(System.mapLibraryName("Kernel32"), Arena.global());
+
+		GET_LAST_ERROR_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("GetLastError"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT));
+	}
 
 	/// Prevents instantiation.
 	private Kernel32() {

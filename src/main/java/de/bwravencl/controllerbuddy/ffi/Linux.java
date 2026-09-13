@@ -45,6 +45,9 @@ public final class Linux {
 	/// Maximum length of a uinput device name.
 	public static final int UINPUT_MAX_NAME_SIZE = 80;
 
+	/// Method handle for the native `close` function.
+	private static final MethodHandle CLOSE_METHOD_HANDLE;
+
 	/// Name of the `errno` field in the call state capture layout.
 	private static final String ERRNO_NAME = "errno";
 
@@ -55,35 +58,17 @@ public final class Linux {
 	/// Linker option that captures the `errno` value after each native call.
 	private static final Linker.Option ERRNO_CAPTURE_CALL_STATE = Linker.Option.captureCallState(ERRNO_NAME);
 
-	/// The native linker used to create method handles for native calls.
-	private static final Linker LINKER = Linker.nativeLinker();
-
 	/// Method handle for the native `ioctl` function with errno capture.
-	private static final MethodHandle IOCTL_METHOD_HANDLE = LINKER.downcallHandle(
-			LINKER.defaultLookup().findOrThrow("ioctl"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
-			ERRNO_CAPTURE_CALL_STATE, Linker.Option.firstVariadicArg(2));
-
-	/// Method handle for the native `close` function.
-	private static final MethodHandle CLOSE_METHOD_HANDLE = LINKER.downcallHandle(
-			LINKER.defaultLookup().findOrThrow("close"),
-			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), Linker.Option.critical(false));
+	private static final MethodHandle IOCTL_METHOD_HANDLE;
 
 	/// Method handle for the native `open` function.
-	private static final MethodHandle OPEN_METHOD_HANDLE = LINKER.downcallHandle(
-			LINKER.defaultLookup().findOrThrow("open"),
-			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
-			Linker.Option.critical(false));
+	private static final MethodHandle OPEN_METHOD_HANDLE;
 
 	/// The ioctl base character for uinput ioctl commands.
 	private static final byte UINPUT_IOCTL_BASE = 'U';
 
 	/// Method handle for the native `write` function.
-	private static final MethodHandle WRITE_METHOD_HANDLE = LINKER
-			.downcallHandle(
-					LINKER.defaultLookup().findOrThrow("write"), FunctionDescriptor.of(ValueLayout.JAVA_LONG,
-							ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG),
-					Linker.Option.critical(false));
+	private static final MethodHandle WRITE_METHOD_HANDLE;
 
 	/// Linux `_IOC_NONE` direction value (no data transfer).
 	private static final int _IOC_NONE = 0;
@@ -131,6 +116,29 @@ public final class Linux {
 	/// Linux `UI_DEV_SETUP` ioctl command to configure a uinput device before
 	/// creation.
 	public static final int UI_DEV_SETUP = _IOW(UINPUT_IOCTL_BASE, 3, (int) uinput_setup.LAYOUT.byteSize());
+
+	static {
+		final var linker = Linker.nativeLinker();
+		final var symbolLookup = linker.defaultLookup();
+
+		CLOSE_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("close"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), Linker.Option.critical(false));
+
+		IOCTL_METHOD_HANDLE = linker.downcallHandle(
+				symbolLookup.findOrThrow("ioctl"), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+						ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
+				ERRNO_CAPTURE_CALL_STATE, Linker.Option.firstVariadicArg(2));
+
+		OPEN_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("open"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
+				Linker.Option.critical(false));
+
+		WRITE_METHOD_HANDLE = linker
+				.downcallHandle(
+						symbolLookup.findOrThrow("write"), FunctionDescriptor.of(ValueLayout.JAVA_LONG,
+								ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG),
+						Linker.Option.critical(false));
+	}
 
 	/// Prevents instantiation.
 	private Linux() {

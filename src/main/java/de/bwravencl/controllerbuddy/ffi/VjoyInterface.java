@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 ///
 /// Uses the Foreign Function and Memory API to interface with the vJoy driver.
 /// Functions are loaded dynamically at runtime via [#init].
-@SuppressWarnings({ "exports", "restricted" })
+@SuppressWarnings("exports")
 public final class VjoyInterface {
 
 	/// HID usage value for the RX (rotation X) axis.
@@ -66,9 +66,6 @@ public final class VjoyInterface {
 
 	/// Filename of the vJoy native library.
 	public static final String VJOY_LIBRARY_FILENAME = "vJoyInterface.dll";
-
-	/// Native linker used to bind to vJoy library functions.
-	private static final Linker LINKER = Linker.nativeLinker();
 
 	/// Placeholder [MethodHandle] used as the initial value of `methodHandle`
 	/// before [#init] is called. Accepts any number of arguments (via
@@ -302,60 +299,62 @@ public final class VjoyInterface {
 	/// vJoy installation directory.
 	///
 	/// @param main the application main instance providing the vJoy directory
+	@SuppressWarnings("restricted")
 	public static void init(final Main main) {
 		final var vJoyPath = main.getVJoyDirectory();
 		final var libraryPathFile = new File(vJoyPath, GetVJoyArchFolderName());
 
 		logger.info("Using vJoy library path: " + libraryPathFile.getAbsolutePath());
 
+		final var linker = Linker.nativeLinker();
 		final var symbolLookup = SymbolLookup.libraryLookup(libraryPathFile.toPath().resolve(VJOY_LIBRARY_FILENAME),
 				Arena.global());
 
-		AcquireVJDMethodHandle = LINKER.downcallHandle(symbolLookup.find("AcquireVJD").orElseThrow(),
+		AcquireVJDMethodHandle = linker.downcallHandle(symbolLookup.find("AcquireVJD").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		DriverMatchMethodHandle = LINKER.downcallHandle(symbolLookup.find("DriverMatch").orElseThrow(),
+		DriverMatchMethodHandle = linker.downcallHandle(symbolLookup.find("DriverMatch").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-		GetVJDAxisExistMethodHandle = LINKER.downcallHandle(symbolLookup.find("GetVJDAxisExist").orElseThrow(),
+		GetVJDAxisExistMethodHandle = linker.downcallHandle(symbolLookup.find("GetVJDAxisExist").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		GetVJDAxisMaxMethodHandle = LINKER.downcallHandle(symbolLookup.find("GetVJDAxisMax").orElseThrow(),
+		GetVJDAxisMaxMethodHandle = linker.downcallHandle(symbolLookup.find("GetVJDAxisMax").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
 						ValueLayout.ADDRESS));
 
-		GetVJDAxisMinMethodHandle = LINKER.downcallHandle(symbolLookup.find("GetVJDAxisMin").orElseThrow(),
+		GetVJDAxisMinMethodHandle = linker.downcallHandle(symbolLookup.find("GetVJDAxisMin").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
 						ValueLayout.ADDRESS));
 
-		GetVJDButtonNumberMethodHandle = LINKER.downcallHandle(symbolLookup.find("GetVJDButtonNumber").orElseThrow(),
+		GetVJDButtonNumberMethodHandle = linker.downcallHandle(symbolLookup.find("GetVJDButtonNumber").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		GetVJDStatusMethodHandle = LINKER.downcallHandle(symbolLookup.find("GetVJDStatus").orElseThrow(),
+		GetVJDStatusMethodHandle = linker.downcallHandle(symbolLookup.find("GetVJDStatus").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		RelinquishVJDMethodHandle = LINKER.downcallHandle(symbolLookup.find("RelinquishVJD").orElseThrow(),
+		RelinquishVJDMethodHandle = linker.downcallHandle(symbolLookup.find("RelinquishVJD").orElseThrow(),
 				FunctionDescriptor.ofVoid(ValueLayout.JAVA_INT));
 
-		ResetButtonsMethodHandle = LINKER.downcallHandle(symbolLookup.find("ResetButtons").orElseThrow(),
+		ResetButtonsMethodHandle = linker.downcallHandle(symbolLookup.find("ResetButtons").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		ResetVJDMethodHandle = LINKER.downcallHandle(symbolLookup.find("ResetVJD").orElseThrow(),
+		ResetVJDMethodHandle = linker.downcallHandle(symbolLookup.find("ResetVJD").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
 
-		SetAxisMethodHandle = LINKER
+		SetAxisMethodHandle = linker
 				.downcallHandle(
 						symbolLookup.find("SetAxis").orElseThrow(), FunctionDescriptor.of(ValueLayout.JAVA_INT,
 								ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT),
 						Option.critical(false));
 
-		SetBtnMethodHandle = LINKER
+		SetBtnMethodHandle = linker
 				.downcallHandle(
 						symbolLookup.find("SetBtn").orElseThrow(), FunctionDescriptor.of(ValueLayout.JAVA_INT,
 								ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_BYTE),
 						Option.critical(false));
 
-		vJoyEnabled = LINKER.downcallHandle(symbolLookup.find("vJoyEnabled").orElseThrow(),
+		vJoyEnabled = linker.downcallHandle(symbolLookup.find("vJoyEnabled").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT));
 
 		initialized = true;
