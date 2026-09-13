@@ -33,7 +33,7 @@ import java.lang.invoke.VarHandle;
 /// This class exposes native `open`, `close`, `write`, and `ioctl` operations,
 /// as well as memory layout definitions for uinput data structures used to
 /// create and manage virtual input devices.
-@SuppressWarnings({ "exports", "restricted", "SameParameterValue" })
+@SuppressWarnings({ "restricted", "SameParameterValue" })
 public final class Linux {
 
 	/// Linux `O_NONBLOCK` flag for non-blocking I/O.

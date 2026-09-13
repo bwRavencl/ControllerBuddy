@@ -30,7 +30,7 @@ import java.lang.invoke.MethodHandle;
 /// All native functions are loaded at class initialization time via a
 /// global [Arena] and exposed as static methods. This class cannot
 /// be instantiated.
-@SuppressWarnings({ "exports", "restricted" })
+@SuppressWarnings("restricted")
 public final class Kernel32 {
 
 	/// Method handle for the native `GetLastError` function.

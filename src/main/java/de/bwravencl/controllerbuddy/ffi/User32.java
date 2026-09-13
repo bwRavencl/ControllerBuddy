@@ -33,7 +33,7 @@ import java.lang.invoke.VarHandle;
 ///
 /// Uses the Foreign Function and Memory API to expose functions for keyboard
 /// and mouse input simulation, key state retrieval, and window positioning.
-@SuppressWarnings({ "exports", "restricted", "UnusedReturnValue" })
+@SuppressWarnings({ "restricted", "UnusedReturnValue" })
 public final class User32 {
 
 	/// Windows `HWND_TOPMOST` constant for placing a window at the top of the Z

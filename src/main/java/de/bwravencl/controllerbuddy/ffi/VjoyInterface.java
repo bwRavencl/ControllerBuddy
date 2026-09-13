@@ -34,7 +34,6 @@ import java.util.logging.Logger;
 ///
 /// Uses the Foreign Function and Memory API to interface with the vJoy driver.
 /// Functions are loaded dynamically at runtime via [#init].
-@SuppressWarnings("exports")
 public final class VjoyInterface {
 
 	/// HID usage value for the RX (rotation X) axis.
