@@ -54,7 +54,7 @@ application {
 
 val javaToolchainSpec =
     Action<JavaToolchainSpec> {
-      languageVersion.set(JavaLanguageVersion.of(26))
+      languageVersion.set(JavaLanguageVersion.of(27))
       vendor.set(JvmVendorSpec.AZUL)
     }
 
@@ -73,7 +73,6 @@ val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
     listOf(
-        "-XX:+UseCompactObjectHeaders",
         "-XX:TieredStopAtLevel=1",
         "-XX:ReservedCodeCacheSize=32m",
     )
