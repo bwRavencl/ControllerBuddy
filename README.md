@@ -4,7 +4,7 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <img src="icon/icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/> <!-- markdownlint-disable-line no-inline-html -->
 
-[![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
+[![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/build-release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/build-release.yml)
 
 Visit the [ControllerBuddy Homepage](https://controllerbuddy.org) to get started.  
 Join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp) for support and community discussions.
