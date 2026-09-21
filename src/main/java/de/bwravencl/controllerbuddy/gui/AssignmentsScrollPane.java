@@ -612,9 +612,10 @@ final class AssignmentsScrollPane extends JScrollPane {
 			contentAreaFilled = b;
 		}
 
-		/// Refreshes all cached theme colors from the current [UIManager] look-and-feel
-		/// settings.
-		private void updateTheme() {
+		@Override
+		public final void updateUI() {
+			super.updateUI();
+
 			focusedBackground = UIManager.getColor("Button.focusedBackground");
 			hoverBackground = UIManager.getColor("Button.hoverBackground");
 			pressedBackground = UIManager.getColor("Button.pressedBackground");
@@ -631,13 +632,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 				borderColor = Color.BLACK;
 				hoverBorderColor = Color.GRAY;
 			}
-		}
-
-		@Override
-		public final void updateUI() {
-			super.updateUI();
-
-			updateTheme();
 
 			final var background = FlatButtonUI.buttonStateColor(this, getBackground(), null, focusedBackground,
 					hoverBackground, pressedBackground);
