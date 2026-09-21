@@ -195,7 +195,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -5531,8 +5530,6 @@ public final class Main extends JFrame {
 		profileFileChooser.updateUI();
 		statusPanelPopupMenu.updateUI();
 		toggleDonateCheckBoxMenuItem.updateUI();
-
-		SwingUtilities.updateComponentTreeUI(assignmentsScrollPane);
 
 		updateVisualizationPanel();
 	}
