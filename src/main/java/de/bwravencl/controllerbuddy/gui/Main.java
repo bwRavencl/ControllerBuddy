@@ -746,17 +746,20 @@ public final class Main extends JFrame {
 	/// Panel holding the list of profile mode entries.
 	private final JPanel modesListPanel;
 
+	/// Panel containing the controls for managing modes.
+	private final JPanel modesPanel;
+
 	/// Scroll pane wrapping the modes list panel.
 	private final JScrollPane modesScrollPane;
-
-	/// Panel containing the controls for adding a new mode.
-	private final JPanel newModePanel;
 
 	/// The on-screen keyboard overlay window.
 	private final OnScreenKeyboard onScreenKeyboard;
 
 	/// Action that handles opening a profile file.
 	private final OpenAction openAction = new OpenAction();
+
+	/// Panel containing the controls for configuring the overlay.
+	private final JPanel overlayPanel;
 
 	/// Persistent user preferences store for this application.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -1162,7 +1165,7 @@ public final class Main extends JFrame {
 		tabbedPane.setForeground(LIGHT_BLUE_COLOR);
 		getContentPane().add(tabbedPane);
 
-		final var modesPanel = new JPanel(new BorderLayout());
+		modesPanel = new JPanel(new BorderLayout());
 		final var globalSettingsScrollPane = new JScrollPane();
 		tabbedPane.addTab(strings.getString("MODES_TAB"), modesPanel);
 
@@ -1172,7 +1175,7 @@ public final class Main extends JFrame {
 		modesScrollPane = new JScrollPane();
 		modesPanel.add(modesScrollPane, BorderLayout.CENTER);
 
-		newModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, LOWER_BUTTONS_HGAP, LOWER_BUTTONS_VGAP));
+		final var newModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, LOWER_BUTTONS_HGAP, LOWER_BUTTONS_VGAP));
 		final var newModeButton = new JButton(new NewModeAction());
 		newModeButton.setPreferredSize(rectButtonDimension);
 		newModePanel.add(newModeButton);
@@ -1181,7 +1184,7 @@ public final class Main extends JFrame {
 		assignmentsScrollPane = new AssignmentsScrollPane(this);
 		tabbedPane.addTab(strings.getString("ASSIGNMENTS_TAB"), assignmentsScrollPane);
 
-		final var overlayPanel = new JPanel(new BorderLayout());
+		overlayPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(strings.getString("OVERLAY_TAB"), overlayPanel);
 
 		indicatorsListPanel = new JPanel();
@@ -5219,22 +5222,21 @@ public final class Main extends JFrame {
 	/// Updates the enabled state of all editor panels according to the given
 	/// running state.
 	///
-	/// Disables the modes list, new-mode panel, assignments scroll pane,
-	/// indicators list, profile settings panel, and global settings panel while
-	/// a run mode is active. Re-enables and refreshes them when the run mode
-	/// stops.
+	/// Disables the modes panel, assignments scroll pane, overlay panel, profile
+	/// settings panel, and global settings panel while a run mode is active.
+	/// Re-enables and refreshes them when the run mode stops.
 	///
 	/// @param running `true` if a run mode is currently active, `false`
 	/// otherwise
 	private void updatePanelAccess(final boolean running) {
-		GuiUtils.setEnabledRecursive(modesListPanel, !running);
-		GuiUtils.setEnabledRecursive(newModePanel, !running);
+		GuiUtils.setEnabledRecursive(modesPanel, !running);
 
 		assignmentsScrollPane.setEnabled(!running);
 
 		if (running || (input != null && !input.getProfile().isShowOverlay())) {
-			GuiUtils.setEnabledRecursive(indicatorsListPanel, false);
+			GuiUtils.setEnabledRecursive(overlayPanel, false);
 		} else {
+			GuiUtils.setEnabledRecursive(overlayPanel, true);
 			updateOverlayPanel();
 		}
 
