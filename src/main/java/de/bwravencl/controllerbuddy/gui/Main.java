@@ -704,8 +704,8 @@ public final class Main extends JFrame {
 		}
 	}
 
-	/// Component that displays the current mode's button-to-action assignments.
-	private final AssignmentsScrollPane assignmentsScrollPane;
+	/// Panel wrapping the [AssignmentsScrollPane].
+	private final JPanel assignmentsPanel;
 
 	/// Set of currently connected controllers discovered via SDL.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -767,7 +767,11 @@ public final class Main extends JFrame {
 	/// File chooser pre-configured for profile JSON files.
 	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
 
-	/// Panel containing per-profile settings controls.
+	/// Inner panel containing per-profile settings controls.
+	private final JPanel profileSettingsInnerPanel;
+
+	/// Outer panel wrapping the scroll pane that holds the
+	/// [profileSettingsInnerPanel]
 	private final JPanel profileSettingsPanel;
 
 	/// Action that handles quitting the application.
@@ -1164,7 +1168,7 @@ public final class Main extends JFrame {
 		tabbedPane.setForeground(LIGHT_BLUE_COLOR);
 		getContentPane().add(tabbedPane);
 
-		modesPanel = new JPanel(new BorderLayout());
+		modesPanel = new LockableSettingsPanel(this);
 		final var globalSettingsScrollPane = new JScrollPane();
 		tabbedPane.addTab(strings.getString("MODES_TAB"), modesPanel);
 
@@ -1180,17 +1184,17 @@ public final class Main extends JFrame {
 		newModePanel.add(newModeButton);
 		modesPanel.add(newModePanel, BorderLayout.SOUTH);
 
-		assignmentsScrollPane = new AssignmentsScrollPane(this);
-		tabbedPane.addTab(strings.getString("ASSIGNMENTS_TAB"), assignmentsScrollPane);
+		assignmentsPanel = new LockableSettingsPanel(this);
+		assignmentsPanel.add(new AssignmentsScrollPane(this));
+		tabbedPane.addTab(strings.getString("ASSIGNMENTS_TAB"), assignmentsPanel);
 
-		overlayPanel = new JPanel(new BorderLayout());
+		overlayPanel = new LockableSettingsPanel(this);
 		tabbedPane.addTab(strings.getString("OVERLAY_TAB"), overlayPanel);
 
-		indicatorsListPanel = new JPanel();
-		indicatorsListPanel.setLayout(new GridBagLayout());
+		indicatorsListPanel = new JPanel(new GridBagLayout());
 
 		indicatorsScrollPane = new JScrollPane();
-		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
+		overlayPanel.add(indicatorsScrollPane);
 
 		visualizationPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(strings.getString("VISUALIZATION_TAB"), visualizationPanel);
@@ -1229,17 +1233,17 @@ public final class Main extends JFrame {
 		exportPanel.add(exportButton);
 		visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
 
-		profileSettingsPanel = new JPanel();
-		profileSettingsPanel.setLayout(new GridBagLayout());
+		profileSettingsPanel = new LockableSettingsPanel(this);
+		profileSettingsInnerPanel = new JPanel(new GridBagLayout());
+		final var profileSettingsScrollPane = new JScrollPane(profileSettingsInnerPanel);
+		profileSettingsPanel.add(profileSettingsScrollPane);
+		tabbedPane.addTab(strings.getString("PROFILE_SETTINGS_TAB"), profileSettingsPanel);
 
-		final var profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
-		tabbedPane.addTab(strings.getString("PROFILE_SETTINGS_TAB"), profileSettingsScrollPane);
-
-		globalSettingsPanel = new JPanel();
-		globalSettingsPanel.setLayout(new GridBagLayout());
-
-		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
-		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
+		globalSettingsPanel = new LockableSettingsPanel(this);
+		final var globalSettingsInnerPanel = new JPanel(new GridBagLayout());
+		globalSettingsScrollPane.setViewportView(globalSettingsInnerPanel);
+		globalSettingsPanel.add(globalSettingsScrollPane);
+		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsPanel);
 
 		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, gridBagItemInsets, 0, 5);
@@ -1248,7 +1252,7 @@ public final class Main extends JFrame {
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
-		globalSettingsPanel.add(inputSettingsPanel, constraints);
+		globalSettingsInnerPanel.add(inputSettingsPanel, constraints);
 
 		final var minPollingRatePanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(minPollingRatePanel);
@@ -1424,7 +1428,7 @@ public final class Main extends JFrame {
 			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.Y_AXIS));
 			vJoySettingsPanel
 					.setBorder(BorderFactory.createTitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
-			globalSettingsPanel.add(vJoySettingsPanel, constraints);
+			globalSettingsInnerPanel.add(vJoySettingsPanel, constraints);
 
 			final var vJoyDirectoryPanel = new JPanel(defaultFlowLayout);
 			vJoySettingsPanel.add(vJoyDirectoryPanel);
@@ -1460,7 +1464,7 @@ public final class Main extends JFrame {
 		appearanceSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
-		globalSettingsPanel.add(appearanceSettingsPanel, constraints);
+		globalSettingsInnerPanel.add(appearanceSettingsPanel, constraints);
 
 		final var themePanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(themePanel);
@@ -1533,7 +1537,7 @@ public final class Main extends JFrame {
 		touchpadSettingsPanel.setLayout(new BoxLayout(touchpadSettingsPanel, BoxLayout.Y_AXIS));
 		touchpadSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("TOUCHPAD_SETTINGS_BORDER_TITLE")));
-		globalSettingsPanel.add(touchpadSettingsPanel, constraints);
+		globalSettingsInnerPanel.add(touchpadSettingsPanel, constraints);
 
 		final var touchpadPanel = new JPanel(defaultFlowLayout);
 		touchpadSettingsPanel.add(touchpadPanel);
@@ -1586,7 +1590,7 @@ public final class Main extends JFrame {
 		});
 		touchpadPanel.add(touchpadEnabledCheckBox);
 
-		addGlueToSettingsPanel(globalSettingsPanel);
+		addGlueToSettingsPanel(globalSettingsInnerPanel);
 
 		updateTouchpadSettings();
 		updateTitle();
@@ -5230,7 +5234,7 @@ public final class Main extends JFrame {
 	private void updatePanelAccess(final boolean running) {
 		GuiUtils.setEnabledRecursive(modesPanel, !running);
 
-		assignmentsScrollPane.setEnabled(!running);
+		GuiUtils.setEnabledRecursive(assignmentsPanel, !running);
 
 		if (running || (input != null && !input.getProfile().isShowOverlay())) {
 			GuiUtils.setEnabledRecursive(overlayPanel, false);
@@ -5274,7 +5278,7 @@ public final class Main extends JFrame {
 	/// Does nothing if the panel has not yet been created or no input is
 	/// available.
 	private void updateProfileSettingsPanel() {
-		profileSettingsPanel.removeAll();
+		profileSettingsInnerPanel.removeAll();
 
 		if (input == null) {
 			return;
@@ -5287,7 +5291,7 @@ public final class Main extends JFrame {
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
-		profileSettingsPanel.add(inputSettingsPanel, constraints);
+		profileSettingsInnerPanel.add(inputSettingsPanel, constraints);
 
 		final var keyRepeatRatePanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(keyRepeatRatePanel, constraints);
@@ -5311,7 +5315,7 @@ public final class Main extends JFrame {
 		appearanceSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
-		profileSettingsPanel.add(appearanceSettingsPanel, constraints);
+		profileSettingsInnerPanel.add(appearanceSettingsPanel, constraints);
 
 		final var overlaySettingsPanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(overlaySettingsPanel, constraints);
@@ -5330,7 +5334,7 @@ public final class Main extends JFrame {
 		});
 		overlaySettingsPanel.add(showOverlayCheckBox);
 
-		addGlueToSettingsPanel(profileSettingsPanel);
+		addGlueToSettingsPanel(profileSettingsInnerPanel);
 	}
 
 	/// Updates the enabled state of the "show window" system tray entry.

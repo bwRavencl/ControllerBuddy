@@ -403,11 +403,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 		throw new NotSerializableException(AssignmentsScrollPane.class.getName());
 	}
 
-	@Override
-	public void setEnabled(final boolean enabled) {
-		GuiUtils.setEnabledRecursive(assignmentsPanel, enabled);
-	}
-
 	/// Prevents serialization.
 	///
 	/// @param ignoredStream unused
