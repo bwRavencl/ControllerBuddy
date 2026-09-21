@@ -30,7 +30,7 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
-          - ubuntu-24.04-arm
+          - ubuntu-26.04-arm
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -60,7 +60,7 @@ jobs:
               echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
               echo gradle_task=distTar >> "$GITHUB_OUTPUT"
               ;;
-            ubuntu-24.04-arm)
+            ubuntu-26.04-arm)
               echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
               echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
               echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
