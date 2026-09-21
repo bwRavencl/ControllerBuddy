@@ -475,7 +475,13 @@ public final class OnScreenKeyboard extends JFrame {
 		EventQueue.invokeLater(() -> {
 			super.setVisible(b);
 
-			if (Main.IS_X11_TOOLKIT && b && !steamGameX11WindowPropertyAdded) {
+			if (!b) {
+				return;
+			}
+
+			repaint();
+
+			if (Main.IS_X11_TOOLKIT && !steamGameX11WindowPropertyAdded) {
 				steamGameX11WindowPropertyAdded = GuiUtils.addSteamGameX11WindowProperty(this);
 			}
 		});
