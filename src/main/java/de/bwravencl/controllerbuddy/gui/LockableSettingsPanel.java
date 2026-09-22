@@ -180,66 +180,54 @@ final class LockableSettingsPanel extends JPanel {
 
 			@Override
 			public void eventDispatched(final AWTEvent e, final JLayer<? extends JComponent> l) {
-				if (!isEnabled() && e instanceof final MouseEvent mouseEvent) {
-					final var point = SwingUtilities.convertPoint(mouseEvent.getComponent(), mouseEvent.getPoint(), l);
-					final var isHovered = stopHintBounds != null && stopHintBounds.contains(point);
-					final var isLeftButton = SwingUtilities.isLeftMouseButton(mouseEvent);
+				if (isEnabled() || !(e instanceof final MouseEvent mouseEvent)) {
+					super.eventDispatched(e, l);
+					return;
+				}
 
-					var needsRepaint = false;
+				final var point = SwingUtilities.convertPoint(mouseEvent.getComponent(), mouseEvent.getPoint(), l);
+				final var isHovered = stopHintBounds != null && stopHintBounds.contains(point);
+				final var isLeftButton = SwingUtilities.isLeftMouseButton(mouseEvent);
 
-					if (stopHintHovered != isHovered) {
-						stopHintHovered = isHovered;
+				var needsRepaint = false;
+				var triggerStop = false;
+
+				if (stopHintHovered != isHovered) {
+					stopHintHovered = isHovered;
+					needsRepaint = true;
+				}
+
+				if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED && isLeftButton) {
+					if (isHovered != stopHintPressed) {
+						stopHintPressed = isHovered;
+						needsRepaint = true;
+					}
+				} else if (mouseEvent.getID() == MouseEvent.MOUSE_RELEASED && isLeftButton) {
+					final var wasPressed = stopHintPressed;
+					if (stopHintPressed) {
+						stopHintPressed = false;
 						needsRepaint = true;
 					}
 
-					if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED && isLeftButton) {
-						if (isHovered != stopHintPressed) {
-							stopHintPressed = isHovered;
-							needsRepaint = true;
-						}
-					} else if (mouseEvent.getID() == MouseEvent.MOUSE_RELEASED && isLeftButton) {
-						final var wasPressed = stopHintPressed;
-						if (stopHintPressed) {
-							stopHintPressed = false;
-							needsRepaint = true;
-						}
-
-						if (wasPressed && isHovered) {
-							main.stopAll(true, true, false);
-							mouseEvent.consume();
-							return;
-						}
-					} else if (mouseEvent.getID() == MouseEvent.MOUSE_DRAGGED) {
-						final var shouldBePressed = isLeftButton && isHovered;
-						if (stopHintPressed != shouldBePressed) {
-							stopHintPressed = shouldBePressed;
-							needsRepaint = true;
-						}
+					triggerStop = wasPressed && isHovered;
+				} else if (mouseEvent.getID() == MouseEvent.MOUSE_DRAGGED) {
+					final var shouldBePressed = isLeftButton && isHovered;
+					if (stopHintPressed != shouldBePressed) {
+						stopHintPressed = shouldBePressed;
+						needsRepaint = true;
 					}
+				}
 
-					if (needsRepaint) {
-						l.repaint();
-					}
+				if (needsRepaint) {
+					l.repaint();
+				}
 
-					if (isHovered) {
-						l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				l.setCursor(isHovered ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
-						if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED
-								|| mouseEvent.getID() == MouseEvent.MOUSE_RELEASED
-								|| mouseEvent.getID() == MouseEvent.MOUSE_CLICKED) {
-							mouseEvent.consume();
-						}
-						return;
-					}
+				mouseEvent.consume();
 
-					l.setCursor(Cursor.getDefaultCursor());
-					if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED
-							|| mouseEvent.getID() == MouseEvent.MOUSE_RELEASED
-							|| mouseEvent.getID() == MouseEvent.MOUSE_CLICKED) {
-						mouseEvent.consume();
-					}
-				} else {
-					super.eventDispatched(e, l);
+				if (triggerStop) {
+					main.stopAll(true, true, false);
 				}
 			}
 
