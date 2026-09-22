@@ -106,15 +106,15 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Documentation comments: follow the rules below for all Javadoc comments.
   - **Language** use American English, not British English.
   - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.
-  - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a doc comment. The only exceptions are `serialVersionUID` fields and `Logger` fields named `LOGGER`, which must not be documented.
+  - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a Javadoc comment. The only exceptions are methods that override a superclass or interface method, `serialVersionUID` fields and `Logger` fields named `LOGGER`, which must not be documented.
   - **Summary line:** starts with a third-person verb (e.g., "Returns", "Sets", "Creates"). Use "Returns the/whether..." for getters and "Sets the/whether..." for setters.
-  - **Structure:** doc comments for classes, interfaces, records, and enums must have both a short summary sentence and a separate extended description providing additional detail. Separate the summary from the extended description with a blank `///` line.
+  - **Structure:** Javadoc comments for classes, interfaces, records, and enums must have both a short summary sentence and a separate extended description providing additional detail. Separate the summary from the extended description with a blank `///` line.
   - **Periods:** full sentences end with a period. Short label-style descriptions for enum constants or similar identifiers (e.g., `/// 'A' key`) may omit the period.
   - **Inline code:** use backticks (`` `null` ``, `` `true` ``, `` `false` ``), not `{@code ...}`.
   - **Cross-references:** use Markdown links (`[ClassName]`, `[#methodName]`), not `{@link ...}`.
-  - **Line wrapping:** do not manually wrap lines within continuous text - write each sentence or clause as a single long line and let Spotless re-wrap to the correct width. Only insert explicit line breaks where they serve a structural formatting purpose (e.g., between paragraphs, before tags, or to separate list items). When editing an existing doc comment, first unwrap all lines back into continuous text, re-add only the intentional formatting breaks, and then let Spotless re-wrap to the correct width.
+  - **Line wrapping:** do not manually wrap lines within continuous text - write each sentence or clause as a single long line and let Spotless re-wrap to the correct width. Only insert explicit line breaks where they serve a structural formatting purpose (e.g., between paragraphs, before tags, or to separate list items). When editing an existing Javadoc comment, first unwrap all lines back into continuous text, re-add only the intentional formatting breaks, and then let Spotless re-wrap to the correct width.
   - **Tags:** include `@param`, `@return`, and `@throws` tags where applicable. Tag descriptions start lowercase. Separate the summary from tags with a blank `///` line. For overridden methods, do not repeat tags that are already documented in the superclass or interface with the same meaning - only include tags whose function differs from the inherited documentation.
-  - **Records:** document `@param` tags for record components on the record's own doc comment, not on the accessor methods.
+  - **Records:** document `@param` tags for record components on the record's own Javadoc comment, not on the accessor methods.
   - **`@param <V>`:** include a type parameter tag on generic classes and interfaces (e.g., `/// @param <V> the input value type`).
 
 ## Test Conventions
