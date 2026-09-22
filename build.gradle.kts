@@ -155,7 +155,7 @@ dependencies {
   implementation("org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion:natives-$lwjglPlatform")
-  implementation("org.slf4j:slf4j-jdk14:2.0.19")
+  implementation("org.slf4j:slf4j-jdk14:2.0.20")
 
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
