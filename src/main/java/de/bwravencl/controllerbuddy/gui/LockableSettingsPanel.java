@@ -59,6 +59,9 @@ import org.jspecify.annotations.Nullable;
 /// and thus unlocks the panel.
 final class LockableSettingsPanel extends JPanel {
 
+	/// Alpha channel value of the stop-execution hint background
+	public static final int HINT_BACKGROUND_ALPHA = 164;
+
 	/// Convolution operator that blurs the tile buffer used to render the
 	/// disabled-state background.
 	private static final ConvolveOp BLUR_OP;
@@ -444,12 +447,17 @@ final class LockableSettingsPanel extends JPanel {
 
 		final var buttonBackground = UIManager.getColor("Button.background");
 		hintBackground = new Color(buttonBackground.getRed(), buttonBackground.getGreen(), buttonBackground.getBlue(),
-				192);
+				HINT_BACKGROUND_ALPHA);
 
 		hintForeground = UIManager.getColor("Button.foreground");
 
-		hintHoverBackground = UIManager.getColor("Button.hoverBackground");
-		hintPressedBackground = UIManager.getColor("Button.pressedBackground");
+		final var buttonHoverBackground = UIManager.getColor("Button.hoverBackground");
+		hintHoverBackground = new Color(buttonHoverBackground.getRed(), buttonHoverBackground.getGreen(),
+				buttonHoverBackground.getBlue(), HINT_BACKGROUND_ALPHA);
+
+		final var buttonPressedBackground = UIManager.getColor("Button.pressedBackground");
+		hintPressedBackground = new Color(buttonPressedBackground.getRed(), buttonPressedBackground.getGreen(),
+				buttonPressedBackground.getBlue(), HINT_BACKGROUND_ALPHA);
 	}
 
 	/// Prevents serialization.
