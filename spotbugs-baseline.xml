@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.10.4" sequence="0" timestamp="1787669557843" analysisTimestamp="1787669557843" release="">
+<BugCollection version="4.10.4" sequence="0" timestamp="1790106516643" analysisTimestamp="1790106516643" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/VersionUtils.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/MainLoop$TaskQueueEntry.class</Jar>
@@ -143,6 +143,7 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux$uinput_setup.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/User32$INPUT$MOUSEINPUT.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/User32.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Xlib.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux$input_id.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/json/ProfileTypeAdapterFactory.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/json/ProfileTypeAdapterFactory$4.class</Jar>
@@ -166,6 +167,7 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$IconLabel.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SetOverlayAxisStyleAction.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ShowAboutDialogAction.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel$1.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$QuitAction.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane$CompoundButton$CompoundButtonLocation.class</Jar>
@@ -204,6 +206,7 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$2.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$ShiftableKeyboardButton.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$InvertIndicatorAction.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel$2.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$LargeFileChooser.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane$2.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/SVGPanel.class</Jar>
@@ -227,6 +230,7 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ExportAction.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$OKAction.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$RemoveModeAction.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ProfileFileChooser.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StartServerAction.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane$1.class</Jar>
@@ -255,19 +259,19 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/module-info.class</Jar>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.11.0/a461452d3e31bebf2706323f8738ec44b19c96e1/commons-cli-1.11.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/3.7.2/fcf9f3f276b11c7f5fc525838073ddcd80abda6a/flatlaf-3.7.2.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.hypfvieh/dbus-java-transport-native-unixsocket/5.2.0/6ef0e26cd6b1c1cf8046e1cc0949821d29e4f487/dbus-java-transport-native-unixsocket-5.2.0.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.hypfvieh/dbus-java-core/5.2.0/32a76bec4c9e6576b6e049a90d8ad9384253e7f1/dbus-java-core-5.2.0.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.weisj/jsvg/2.1.0/c1a403f318de302fa81e4403fe8fb4bd6056a41f/jsvg-2.1.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.hypfvieh/dbus-java-transport-native-unixsocket/5.2.1/8d76288e5fc7e78b7bf54b86b2171e7c6ccf550b/dbus-java-transport-native-unixsocket-5.2.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.hypfvieh/dbus-java-core/5.2.1/62aeadb1ceafba7eba3aa5d216a3c5d050493644/dbus-java-core-5.2.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.github.weisj/jsvg/2.2.0/ccf2f88dfa794e5ec5aa14d6af81f739b7e1e9bd/jsvg-2.2.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.14.0/efc0e34ede4e3204eaefb84a00e55e8c86634382/gson-2.14.0.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.8.193/97622610cdd248a4e1a6d89ef922b49b660b4ab0/classgraph-4.8.193.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.8.195/672bbe4f03b36e47eb957e6059f8fdc0e184a320/classgraph-4.8.195.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.1/3d60fd98eb8ade73004f4195c37b6317e02cf3d7/jspecify-1.0.1.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.3/c02146735d6ff70d070c73532b435e5c893a346b/lwjgl-sdl-3.4.3.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-sdl/3.4.3/6ed1b80b7c211a491612c70e43f27ba1f42cccd0/lwjgl-sdl-3.4.3-natives-linux.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.3/7ab5265a73d8a959ed62332d546536ae6be2f0d5/lwjgl-3.4.3.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.4.3/2800e134537db1a175eba41c430b1018eddc48f0/lwjgl-3.4.3-natives-linux.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-jdk14/2.0.18/3d3f60c840928c408e2fc8f40aeff806ba396149/slf4j-jdk14-2.0.18.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-jdk14/2.0.19/87b514b0ddcd37132339a3aed159e0a486008ac0/slf4j-jdk14-2.0.19.jar</AuxClasspathEntry>
     <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.48.0/bbe30942a31d1778c74cb272321267eca82dc708/error_prone_annotations-2.48.0.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.18/78a9e7a37cd6360e0b818e86341b24123d28d4df/slf4j-api-2.0.18.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/matteo/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.19/efad9817997b3a6ce9e058f92e612917a744c290/slf4j-api-2.0.19.jar</AuxClasspathEntry>
     <SrcDir>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/src/main/resources</SrcDir>
     <SrcDir>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/src/main/java</SrcDir>
   </Project>
@@ -275,8 +279,8 @@
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.Kernel32.GetLastError() doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.Kernel32" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Kernel32" start="37" end="58" sourcefile="Kernel32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Kernel32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Kernel32.java">
-        <Message>At Kernel32.java:[lines 37-58]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Kernel32" start="40" end="58" sourcefile="Kernel32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Kernel32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Kernel32.java">
+        <Message>At Kernel32.java:[lines 40-58]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.Kernel32</Message>
     </Class>
@@ -292,72 +296,72 @@
     <ShortMessage>Class names should start with an upper case letter</ShortMessage>
     <LongMessage>The class name de.bwravencl.controllerbuddy.ffi.Linux$timeval doesn&apos;t start with an upper case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.Linux$timeval" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Linux$timeval" start="396" end="401" sourcefile="Linux.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Linux.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Linux.java" synthetic="true">
-        <Message>At Linux.java:[lines 396-401]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Linux$timeval" start="404" end="409" sourcefile="Linux.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Linux.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Linux.java" synthetic="true">
+        <Message>At Linux.java:[lines 404-409]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.Linux$timeval</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Linux$timeval" start="396" end="401" sourcefile="Linux.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Linux.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Linux.java" synthetic="true">
-      <Message>At Linux.java:[lines 396-401]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.Linux$timeval" start="404" end="409" sourcefile="Linux.java" sourcepath="de/bwravencl/controllerbuddy/ffi/Linux.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/Linux.java" synthetic="true">
+      <Message>At Linux.java:[lines 404-409]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE" instanceHash="982e913cf96ee50d8206a99fa225d0b9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.User32.GetKeyState(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.User32" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="124" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
-        <Message>At User32.java:[lines 41-124]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="128" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
+        <Message>At User32.java:[lines 41-128]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.User32</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.User32" name="GetKeyState" signature="(I)S" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="85" end="87" startBytecode="0" endBytecode="97" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="89" end="91" startBytecode="0" endBytecode="97" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.User32.GetKeyState(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="85" end="87" startBytecode="0" endBytecode="97" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
-      <Message>At User32.java:[lines 85-87]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="89" end="91" startBytecode="0" endBytecode="97" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
+      <Message>At User32.java:[lines 89-91]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE" instanceHash="f7fe5434dbfdd261a14b87e84d250ac4" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.User32.SendInput(int, MemorySegment, int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.User32" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="124" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
-        <Message>At User32.java:[lines 41-124]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="128" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
+        <Message>At User32.java:[lines 41-128]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.User32</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.User32" name="SendInput" signature="(ILjava/lang/foreign/MemorySegment;I)I" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="102" end="104" startBytecode="0" endBytecode="119" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="106" end="108" startBytecode="0" endBytecode="119" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.User32.SendInput(int, MemorySegment, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="102" end="104" startBytecode="0" endBytecode="119" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
-      <Message>At User32.java:[lines 102-104]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="106" end="108" startBytecode="0" endBytecode="119" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
+      <Message>At User32.java:[lines 106-108]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="2" rank="16" abbrev="Nm" category="BAD_PRACTICE" instanceHash="5d50c3df45811455e9a053ffeaac5f66" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.User32.SetWindowPos(MemorySegment, MemorySegment, int, int, int, int, int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.User32" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="124" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
-        <Message>At User32.java:[lines 41-124]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="41" end="128" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java">
+        <Message>At User32.java:[lines 41-128]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.User32</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.User32" name="SetWindowPos" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;IIIII)I" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="122" end="124" startBytecode="0" endBytecode="168" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="126" end="128" startBytecode="0" endBytecode="168" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.User32.SetWindowPos(MemorySegment, MemorySegment, int, int, int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="122" end="124" startBytecode="0" endBytecode="168" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
-      <Message>At User32.java:[lines 122-124]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.User32" start="126" end="128" startBytecode="0" endBytecode="168" sourcefile="User32.java" sourcepath="de/bwravencl/controllerbuddy/ffi/User32.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/User32.java" synthetic="true">
+      <Message>At User32.java:[lines 126-128]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_FIELD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="3dec7e8fc3f13e0432608ff128434aae" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.AcquireVJDMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -375,8 +379,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.DriverMatchMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -394,8 +398,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisExistMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -413,8 +417,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMaxMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -432,8 +436,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMinMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -451,8 +455,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDButtonNumberMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -470,8 +474,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDStatusMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -489,8 +493,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.RelinquishVJDMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -508,8 +512,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetButtonsMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -527,8 +531,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetVJDMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -546,8 +550,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetAxisMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -565,8 +569,8 @@
     <ShortMessage>Non-final field names should start with a lower case letter, final fields should be uppercase with words separated by underscores</ShortMessage>
     <LongMessage>The field name de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetBtnMethodHandle is not conform to the naming convention. If final, it should be ALL_CAPS, otherwise lowerCamelCase.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
@@ -584,234 +588,234 @@
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.AcquireVJD(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="AcquireVJD" signature="(I)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="140" end="142" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="136" end="138" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.AcquireVJD(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="140" end="142" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 140-142]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="136" end="138" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 136-138]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="5bf3b0a26839b3b13a3bb7f2d568cf66" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.DriverMatch(MemorySegment, MemorySegment) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="DriverMatch" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="153" end="155" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="149" end="151" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.DriverMatch(MemorySegment, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="153" end="155" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 153-155]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="149" end="151" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 149-151]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="9da45239e4ab5e5b63dbb7f1f0e55583" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisExist(int, int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJDAxisExist" signature="(II)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="166" end="168" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="162" end="164" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisExist(int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="166" end="168" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 166-168]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="162" end="164" startBytecode="0" endBytecode="119" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 162-164]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="69698bee0d2337a0a45ed37ff1ccae18" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMax(int, int, MemorySegment) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJDAxisMax" signature="(IILjava/lang/foreign/MemorySegment;)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="181" end="183" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="177" end="179" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMax(int, int, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="181" end="183" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 181-183]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="177" end="179" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 177-179]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="eb8dad59df4f203247e5cb80196f04b4" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMin(int, int, MemorySegment) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJDAxisMin" signature="(IILjava/lang/foreign/MemorySegment;)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="196" end="198" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="192" end="194" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDAxisMin(int, int, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="196" end="198" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 196-198]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="192" end="194" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 192-194]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="8182b28e87d6199454d019f361c3cfe8" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDButtonNumber(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJDButtonNumber" signature="(I)I" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="208" end="210" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="204" end="206" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDButtonNumber(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="208" end="210" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 208-210]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="204" end="206" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 204-206]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="a58fa1ae3ae26b0374ba342bec434230" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDStatus(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJDStatus" signature="(I)I" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="220" end="222" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="216" end="218" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJDStatus(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="220" end="222" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 220-222]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="216" end="218" startBytecode="0" endBytecode="97" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 216-218]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="b45689da80f87cc2311c56696327978" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJoyArchFolderName() doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="GetVJoyArchFolderName" signature="()Ljava/lang/String;" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="230" end="234" startBytecode="0" endBytecode="58" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="226" end="230" startBytecode="0" endBytecode="58" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.GetVJoyArchFolderName()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="230" end="234" startBytecode="0" endBytecode="58" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 230-234]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="226" end="230" startBytecode="0" endBytecode="58" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 226-230]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="d0e82058121a5a08e1d4a0ed3407fb06" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.RelinquishVJD(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="RelinquishVJD" signature="(I)V" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="242" end="246" startBytecode="0" endBytecode="109" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="238" end="242" startBytecode="0" endBytecode="109" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.RelinquishVJD(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="242" end="246" startBytecode="0" endBytecode="109" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 242-246]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="238" end="242" startBytecode="0" endBytecode="109" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 238-242]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="81355e392334dc8d099fc11354444729" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetButtons(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="ResetButtons" signature="(I)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="255" end="257" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="251" end="253" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetButtons(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="255" end="257" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 255-257]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="251" end="253" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 251-253]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="434dafa5d5ba19041f45b3a428fee182" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetVJD(int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="ResetVJD" signature="(I)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="267" end="269" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="263" end="265" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.ResetVJD(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="267" end="269" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 267-269]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="263" end="265" startBytecode="0" endBytecode="108" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 263-265]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="3ed1c0790fdfa64718f63d582de64be2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetAxis(int, int, int) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="SetAxis" signature="(III)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="281" end="283" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="277" end="279" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetAxis(int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="281" end="283" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 281-283]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="277" end="279" startBytecode="0" endBytecode="130" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 277-279]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="490d30b7acadeed29fac253212afe33e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetBtn(boolean, int, byte) doesn&apos;t start with a lower case letter</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="71" end="378" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
-        <Message>At VjoyInterface.java:[lines 71-378]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="76" end="376" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java">
+        <Message>At VjoyInterface.java:[lines 76-376]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.ffi.VjoyInterface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" name="SetBtn" signature="(ZIB)Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="295" end="297" startBytecode="0" endBytecode="156" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="291" end="293" startBytecode="0" endBytecode="156" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.ffi.VjoyInterface.SetBtn(boolean, int, byte)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="295" end="297" startBytecode="0" endBytecode="156" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
-      <Message>At VjoyInterface.java:[lines 295-297]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.ffi.VjoyInterface" start="291" end="293" startBytecode="0" endBytecode="156" sourcefile="VjoyInterface.java" sourcepath="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" relSourcepath="java/de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" synthetic="true">
+      <Message>At VjoyInterface.java:[lines 291-293]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="b0a5466ca14f9d99a2619a9ae07c0b70" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
     <LongMessage>Unchecked/unconfirmed cast from java.awt.Graphics to java.awt.Graphics2D in de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1.paintIcon(Component, Graphics, int, int)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="775" end="846" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
-        <Message>At AssignmentsScrollPane.java:[lines 775-846]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="764" end="835" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
+        <Message>At AssignmentsScrollPane.java:[lines 764-835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" name="paintIcon" signature="(Ljava/awt/Component;Ljava/awt/Graphics;II)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="802" end="846" startBytecode="0" endBytecode="182" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" start="791" end="835" startBytecode="0" endBytecode="182" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1.paintIcon(Component, Graphics, int, int)</Message>
     </Method>
     <Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
@@ -829,89 +833,153 @@
     <LocalVariable name="g" register="2" pc="0" role="LOCAL_VARIABLE_VALUE_OF">
       <Message>Value loaded from g</Message>
     </LocalVariable>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true" start="802" end="802" startBytecode="1" endBytecode="1" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
-      <Message>At AssignmentsScrollPane.java:[line 802]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsScrollPane$CompoundButton$1" primary="true" start="791" end="791" startBytecode="1" endBytecode="1" sourcefile="AssignmentsScrollPane.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java">
+      <Message>At AssignmentsScrollPane.java:[line 791]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="5a479e363c902c586a00123552e78282" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
+    <LongMessage>Unchecked/unconfirmed cast from javax.swing.JComponent to javax.swing.JLayer in de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1.installUI(JComponent)</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" start="176" end="256" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java">
+        <Message>At LockableSettingsPanel.java:[lines 176-256]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1</Message>
+    </Class>
+    <Method classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" name="installUI" signature="(Ljavax/swing/JComponent;)V" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" start="248" end="250" startBytecode="0" endBytecode="7" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1.installUI(JComponent)</Message>
+    </Method>
+    <Type descriptor="Ljavax/swing/JComponent;" role="TYPE_FOUND">
+      <SourceLine classname="javax.swing.JComponent" start="228" end="5664" sourcefile="JComponent.java" sourcepath="javax/swing/JComponent.java">
+        <Message>At JComponent.java:[lines 228-5664]</Message>
+      </SourceLine>
+      <Message>Actual type javax.swing.JComponent</Message>
+    </Type>
+    <Type descriptor="Ljavax/swing/JLayer;" role="TYPE_EXPECTED">
+      <SourceLine classname="javax.swing.JLayer" start="150" end="746" sourcefile="JLayer.java" sourcepath="javax/swing/JLayer.java">
+        <Message>At JLayer.java:[lines 150-746]</Message>
+      </SourceLine>
+      <Message>Expected javax.swing.JLayer</Message>
+    </Type>
+    <LocalVariable name="c" register="1" pc="5" role="LOCAL_VARIABLE_VALUE_OF">
+      <Message>Value loaded from c</Message>
+    </LocalVariable>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" primary="true" start="249" end="249" startBytecode="6" endBytecode="6" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java">
+      <Message>At LockableSettingsPanel.java:[line 249]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="94b9b8af00c3e2bc5bd63928c08e13a9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
+    <LongMessage>Unchecked/unconfirmed cast from javax.swing.JComponent to javax.swing.JLayer in de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1.uninstallUI(JComponent)</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" start="176" end="256" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java">
+        <Message>At LockableSettingsPanel.java:[lines 176-256]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1</Message>
+    </Class>
+    <Method classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" name="uninstallUI" signature="(Ljavax/swing/JComponent;)V" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" start="254" end="256" startBytecode="0" endBytecode="7" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1.uninstallUI(JComponent)</Message>
+    </Method>
+    <Type descriptor="Ljavax/swing/JComponent;" role="TYPE_FOUND">
+      <SourceLine classname="javax.swing.JComponent" start="228" end="5664" sourcefile="JComponent.java" sourcepath="javax/swing/JComponent.java">
+        <Message>At JComponent.java:[lines 228-5664]</Message>
+      </SourceLine>
+      <Message>Actual type javax.swing.JComponent</Message>
+    </Type>
+    <Type descriptor="Ljavax/swing/JLayer;" role="TYPE_EXPECTED">
+      <SourceLine classname="javax.swing.JLayer" start="150" end="746" sourcefile="JLayer.java" sourcepath="javax/swing/JLayer.java">
+        <Message>At JLayer.java:[lines 150-746]</Message>
+      </SourceLine>
+      <Message>Expected javax.swing.JLayer</Message>
+    </Type>
+    <LocalVariable name="c" register="1" pc="0" role="LOCAL_VARIABLE_VALUE_OF">
+      <Message>Value loaded from c</Message>
+    </LocalVariable>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.LockableSettingsPanel$1" primary="true" start="254" end="254" startBytecode="1" endBytecode="1" sourcefile="LockableSettingsPanel.java" sourcepath="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java">
+      <Message>At LockableSettingsPanel.java:[line 254]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_EXIT" priority="3" rank="19" abbrev="Dm" category="BAD_PRACTICE" instanceHash="26ac90f1bc64f485125114499d48dec4" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="382">
     <ShortMessage>Method invokes System.exit(...)</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.terminate(int, Main) invokes System.exit(...), which shuts down the entire virtual machine</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 275-5684]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="274" end="5691" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 274-5691]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="terminate" signature="(ILde/bwravencl/controllerbuddy/gui/Main;)V" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2392" end="2409" startBytecode="0" endBytecode="184" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2398" end="2415" startBytecode="0" endBytecode="184" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.terminate(int, Main)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="2408" end="2408" startBytecode="71" endBytecode="71" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[line 2408]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="2414" end="2414" startBytecode="71" endBytecode="71" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[line 2414]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_GC" priority="1" rank="16" abbrev="Dm" category="PERFORMANCE" instanceHash="8bb6fee0f6655bafb52751c3d836ad10" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 275-5684]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="274" end="5691" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 274-5691]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4642" end="4651" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4652" end="4661" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4649" end="4649" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[line 4649]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4659" end="4659" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[line 4659]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_GC" priority="1" rank="16" abbrev="Dm" category="PERFORMANCE" instanceHash="6c5696b6dfa98672884356b7dc797ca2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.stopLocalAndServer(boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="275" end="5684" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 275-5684]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="274" end="5691" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 274-5691]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="stopLocalAndServer" signature="(Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4722" end="4730" startBytecode="0" endBytecode="114" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="4732" end="4740" startBytecode="0" endBytecode="114" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.stopLocalAndServer(boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4728" end="4728" startBytecode="28" endBytecode="28" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[line 4728]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="4738" end="4738" startBytecode="28" endBytecode="28" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[line 4738]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2" rank="17" abbrev="SF" category="STYLE" instanceHash="401cd345ae2348cf4462e863fb0d6d1a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="484">
     <ShortMessage>Switch statement found where one case falls through to the next case</ShortMessage>
     <LongMessage>Switch statement found in de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection() where one case falls through to the next case</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5785" end="5807" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-        <Message>At Main.java:[lines 5785-5807]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5792" end="5814" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+        <Message>At Main.java:[lines 5792-5814]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" name="approveSelection" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5792" end="5807" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="5799" end="5814" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="5799" end="5801" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-      <Message>At Main.java:[lines 5799-5801]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="5806" end="5808" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+      <Message>At Main.java:[lines 5806-5808]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="e46fc5addf2d33bbddd8ae5107b2747e" instanceOccurrenceNum="0" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="566" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 72-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="581" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 72-581]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="406" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="371" end="409" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedColumn" signature="I" isStatic="false" primary="true">
@@ -920,21 +988,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="391" end="391" startBytecode="133" endBytecode="133" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 391]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="394" end="394" startBytecode="133" endBytecode="133" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 394]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="e46fc5addf2d33bbddd8ae5107b2747e" instanceOccurrenceNum="1" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="566" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 72-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="581" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 72-581]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="406" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="371" end="409" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedColumn" signature="I" isStatic="false" primary="true">
@@ -943,21 +1011,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="398" end="398" startBytecode="184" endBytecode="184" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 398]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="401" end="401" startBytecode="184" endBytecode="184" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 401]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="96165ccd9c45b8078fbc06fbf74432b3" instanceOccurrenceNum="0" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="566" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 72-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="581" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 72-581]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="406" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="371" end="409" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedRow" signature="I" isStatic="false" primary="true">
@@ -966,21 +1034,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="373" end="373" startBytecode="54" endBytecode="54" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 373]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="376" end="376" startBytecode="54" endBytecode="54" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 376]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="96165ccd9c45b8078fbc06fbf74432b3" instanceOccurrenceNum="1" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="566" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 72-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="72" end="581" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 72-581]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="406" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="371" end="409" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedRow" signature="I" isStatic="false" primary="true">
@@ -989,50 +1057,50 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="382" end="382" startBytecode="100" endBytecode="100" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 382]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="385" end="385" startBytecode="100" endBytecode="100" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 385]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="2e31bb0d5c8b7ed48be7246ed47c85c5" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>An overridable method is called from a constructor</ShortMessage>
     <LongMessage>Overridable method getText() is called from constructor new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard, String, String).</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="995" end="1009" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 995-1009]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="1010" end="1024" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 1010-1024]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Ljava/lang/String;Ljava/lang/String;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="995" end="1000" startBytecode="0" endBytecode="107" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="1010" end="1015" startBytecode="0" endBytecode="107" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard, String, String)</Message>
     </Method>
     <Method classname="javax.swing.AbstractButton" name="getText" signature="()Ljava/lang/String;" isStatic="false" role="METHOD_CALLED">
       <SourceLine classname="javax.swing.AbstractButton" start="291" end="291" startBytecode="0" endBytecode="46" sourcefile="AbstractButton.java" sourcepath="javax/swing/AbstractButton.java"/>
       <Message>Called method javax.swing.AbstractButton.getText()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" primary="true" start="998" end="998" startBytecode="18" endBytecode="18" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 998]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" primary="true" start="1013" end="1013" startBytecode="18" endBytecode="18" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 1013]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="2213a28d836709f6aabd16438e58d492" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>An overridable method is called from a constructor</ShortMessage>
     <LongMessage>Overridable method toggleLock() is called from constructor new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard, LockKey).</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1024" end="1091" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 1024-1091]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1039" end="1106" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 1039-1106]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Lde/bwravencl/controllerbuddy/input/LockKey;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1036" end="1045" startBytecode="0" endBytecode="175" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1051" end="1060" startBytecode="0" endBytecode="175" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard, LockKey)</Message>
     </Method>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" name="toggleLock" signature="()V" isStatic="false" role="METHOD_CALLED">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1082" end="1091" startBytecode="0" endBytecode="190" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1097" end="1106" startBytecode="0" endBytecode="190" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>Called method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton.toggleLock()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" primary="true" start="1044" end="1044" startBytecode="59" endBytecode="59" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 1044]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" primary="true" start="1059" end="1059" startBytecode="59" endBytecode="59" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 1059]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="65ae1e02cf618da15ac56ac7a8f0e342" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
@@ -1999,14 +2067,15 @@ defined in an interface references a mutable
       <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1224)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Tue, 25 Aug 2026 16:52:37 +0200" total_classes="0" referenced_classes="0" total_bugs="71" total_size="0" num_packages="7" java_version="26.0.2.1" vm_version="26.0.2.1+1" cpu_seconds="34.81" clock_seconds="5.52" peak_mbytes="1201.84" alloc_mbytes="24048.00" gc_seconds="0.08" priority_3="35" priority_2="34" priority_1="2">
+  <FindBugsSummary timestamp="Tue, 22 Sep 2026 21:48:36 +0200" total_classes="0" referenced_classes="0" total_bugs="73" total_size="0" num_packages="7" java_version="27" vm_version="27+35" cpu_seconds="34.56" clock_seconds="5.23" peak_mbytes="939.79" alloc_mbytes="24048.00" gc_seconds="0.08" priority_3="37" priority_2="34" priority_1="2">
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Kernel32.java" bugCount="1" size="0" bugHash="c4a890ae322e6b2dd1a2c9e549e41bd7"/>
-    <FileStats path="de/bwravencl/controllerbuddy/ffi/Linux.java" bugCount="1" size="0" bugHash="15ef90e0db8612819ff97f6259893f73"/>
-    <FileStats path="de/bwravencl/controllerbuddy/ffi/User32.java" bugCount="3" size="0" bugHash="206b6d62345b52c9ab308493283565da"/>
-    <FileStats path="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" bugCount="25" size="0" bugHash="6b6191efcadea842f17f5f6f8c3085bf"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="aee7eca2c7afaa76cc52fcf1462b7de0"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="4" size="0" bugHash="880b2af199d2b6687ff004090c16d13b"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="6" size="0" bugHash="b94aed1454736e8855bcb77636819ba2"/>
+    <FileStats path="de/bwravencl/controllerbuddy/ffi/Linux.java" bugCount="1" size="0" bugHash="91bbc897c675c6e3338f0fc097b2269b"/>
+    <FileStats path="de/bwravencl/controllerbuddy/ffi/User32.java" bugCount="3" size="0" bugHash="67a9bee27fbee123d0e4ab43accb66e0"/>
+    <FileStats path="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" bugCount="25" size="0" bugHash="65c51ce1eba20ee5bd11765455dabd97"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="3245cb9624c44e9c985ff10c95e6bbb2"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" bugCount="2" size="0" bugHash="3e230ae7ef0b493a3d2af6e829445ce1"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="4" size="0" bugHash="3b962840eba3493e238914951cccbe00"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="6" size="0" bugHash="691642ce104395cf4891e1b22c93d4a9"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17" size="0" bugHash="fbee7cf355a7ea5062130e28cd4f9b7c"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java" bugCount="1" size="0" bugHash="900161eace06620fbfd83c0977066412"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/IAxisToDelayableAction.java" bugCount="2" size="0" bugHash="b6952faa0e1c088875cc917b970552d3"/>
