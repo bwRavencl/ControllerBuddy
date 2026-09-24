@@ -11,19 +11,19 @@ Join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp) for support an
 
 ## 📖 Description
 
-ControllerBuddy is an advanced gamepad mapping software that supports the creation of input profiles for complex target applications such as flight simulators.
+ControllerBuddy is an **advanced gamepad mapping software** designed for **bindings-heavy applications** like **flight simulators**.
 
-In addition to the simple mapping of buttons and axes of a physical game controller to keyboard and mouse input, ControllerBuddy also supports feeding input commands to a virtual joystick device (vJoy/uinput).
+In addition to the simple mapping of buttons and axes of a physical game controller to keyboard and mouse input, ControllerBuddy also **supports feeding input commands to a virtual joystick device** (vJoy/uinput).
 
-ControllerBuddy eliminates the need for an expensive HOTAS setup to enjoy your favorite simulators.
+ControllerBuddy **eliminates the need for an expensive HOTAS setup** to enjoy your favorite simulators.
 It gives you full control using just a gamepad - without even needing a keyboard or mouse.
 
 ## ⬇️ Download and Installation
 
 ### 📜 Install-Script
 
-For the easiest way to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
-It automates all the steps below and much more!
+For the **easiest way** to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
+It **automates all the steps below** and much more!
 
 ### 📦 Flatpak
 
