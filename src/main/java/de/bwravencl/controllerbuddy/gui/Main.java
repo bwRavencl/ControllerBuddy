@@ -2583,6 +2583,7 @@ public final class Main extends JFrame {
 
 		horizontalIndicatorPanel = null;
 		currentModeLabel = null;
+		currentModePanel = null;
 		virtualAxisToProgressBarMap.clear();
 	}
 
