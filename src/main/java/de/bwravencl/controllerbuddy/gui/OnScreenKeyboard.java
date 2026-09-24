@@ -49,7 +49,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
@@ -63,7 +62,7 @@ import javax.swing.border.Border;
 /// hold, and lock operations. It renders a standard QWERTY layout with function
 /// keys, numpad, and modifier keys.
 @SuppressWarnings("exports")
-public final class OnScreenKeyboard extends JFrame {
+public final class OnScreenKeyboard extends HideableCursorFrame {
 
 	/// The mode associated with the on-screen keyboard.
 	public static final Mode onScreenKeyboardMode;
@@ -453,6 +452,21 @@ public final class OnScreenKeyboard extends JFrame {
 	/// Releases the currently selected keyboard button.
 	public void releaseSelectedButton() {
 		getSelectedButton().release();
+	}
+
+	@Override
+	void setCursorInvisible(final boolean cursorInvisible) {
+		if (this.cursorInvisible == cursorInvisible) {
+			return;
+		}
+
+		super.setCursorInvisible(cursorInvisible);
+
+		for (final var row : keyboardButtons) {
+			for (final var keyboardButton : row) {
+				keyboardButton.setRolloverEnabled(!cursorInvisible);
+			}
+		}
 	}
 
 	@Override

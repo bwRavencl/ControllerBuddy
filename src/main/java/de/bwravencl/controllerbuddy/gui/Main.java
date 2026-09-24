@@ -888,7 +888,7 @@ public final class Main extends JFrame {
 	private @Nullable ScheduledExecutorService overlayExecutorService;
 
 	/// The floating overlay window shown during an active run mode.
-	private @Nullable JFrame overlayFrame;
+	private @Nullable HideableCursorFrame overlayFrame;
 
 	/// Drag listener that allows the overlay window to be repositioned.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -3325,7 +3325,7 @@ public final class Main extends JFrame {
 			return;
 		}
 
-		overlayFrame = new JFrame("Overlay");
+		overlayFrame = new HideableCursorFrame("Overlay");
 		final var overlayFrameRootPane = overlayFrame.getRootPane();
 		overlayFrameRootPane.setWindowDecorationStyle(JRootPane.NONE);
 		overlayFrameRootPane.setBackground(TRANSPARENT);
@@ -3469,15 +3469,21 @@ public final class Main extends JFrame {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				if (!IS_MAC) {
-					totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-					updateOverlayAlignment(totalDisplayBounds);
+				if (IS_MAC || isCursorHidden()) {
+					return;
 				}
+
+				totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+				updateOverlayAlignment(totalDisplayBounds);
 			}
 
 			@Override
 			public void mousePressed(final MouseEvent e) {
 				super.mousePressed(e);
+
+				if (isCursorHidden()) {
+					return;
+				}
 
 				overlayFrameRootPane.setBorder(ALTERNATING_BORDER);
 			}
@@ -3485,6 +3491,10 @@ public final class Main extends JFrame {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
+
+				if (isCursorHidden()) {
+					return;
+				}
 
 				overlayFrameRootPane.setBorder(null);
 
@@ -4434,7 +4444,8 @@ public final class Main extends JFrame {
 				return;
 			}
 
-			currentModeLabel.setText(mode.getDescription());
+			final var description = mode.getDescription();
+			currentModeLabel.setText(description);
 
 			final var modeLabelWidth = calculateCurrentModeLabelWidth(mode);
 			currentModeLabel.setMinimumSize(new Dimension(modeLabelWidth, currentModeLabel.getMinimumSize().height));
@@ -4444,6 +4455,11 @@ public final class Main extends JFrame {
 			final var currentModePanelBounds = currentModePanel.getBounds();
 			overlayFrameContentPane.repaint(currentModePanelBounds.x, currentModePanelBounds.y,
 					currentModePanelBounds.width, currentModePanelBounds.height);
+
+			final var cursorInvisible = mode.getAllActions().stream()
+					.anyMatch(action -> action instanceof ToCursorAction<?>) && !"Mouse".equals(description);
+			overlayFrame.setCursorInvisible(cursorInvisible);
+			onScreenKeyboard.setCursorInvisible(cursorInvisible);
 		});
 	}
 
