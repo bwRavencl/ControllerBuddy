@@ -23,7 +23,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -224,8 +223,6 @@ final class LockableSettingsPanel extends JPanel {
 				if (needsRepaint) {
 					l.repaint();
 				}
-
-				l.setCursor(isHovered ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
 				mouseEvent.consume();
 
