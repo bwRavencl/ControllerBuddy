@@ -3403,13 +3403,13 @@ public final class Main extends JFrame {
 				}
 			});
 
-			if (horizontalIndicatorPanel.getComponents().length > 0) {
+			final var hasHorizontalIndicatorPanel = horizontalIndicatorPanel.getComponents().length > 0;
+			if (hasHorizontalIndicatorPanel) {
 				overlayFrame.add(horizontalIndicatorPanel, BorderLayout.NORTH);
 			}
-
-			if (verticalIndicatorPanel.getComponents().length > 0) {
-				overlayFrame.add(verticalIndicatorPanel, BorderLayout.CENTER);
-			}
+			final var hasVerticalIndicatorPanel = verticalIndicatorPanel.getComponents().length > 0;
+			overlayFrame.add(hasVerticalIndicatorPanel ? verticalIndicatorPanel : Box.createVerticalStrut(5),
+					BorderLayout.CENTER);
 		}
 
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
