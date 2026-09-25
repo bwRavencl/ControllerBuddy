@@ -636,6 +636,7 @@ tasks.withType<JavaCompile>().configureEach {
       options.isDeprecation = true
 
       options.errorprone {
+        error("JSpecifyUnrecognizedAnnotationLocation")
         error("MissingBraces")
         error("RequireExplicitNullMarking")
 
