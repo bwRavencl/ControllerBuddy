@@ -455,21 +455,6 @@ public final class OnScreenKeyboard extends HideableCursorFrame {
 	}
 
 	@Override
-	void setCursorInvisible(final boolean cursorInvisible) {
-		if (this.cursorInvisible == cursorInvisible) {
-			return;
-		}
-
-		super.setCursorInvisible(cursorInvisible);
-
-		for (final var row : keyboardButtons) {
-			for (final var keyboardButton : row) {
-				keyboardButton.setRolloverEnabled(!cursorInvisible);
-			}
-		}
-	}
-
-	@Override
 	public void setVisible(final boolean b) {
 		synchronized (keyboardButtons) {
 			if (b) {

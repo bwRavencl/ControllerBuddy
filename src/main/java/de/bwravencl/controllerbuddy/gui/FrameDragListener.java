@@ -52,11 +52,6 @@ class FrameDragListener extends MouseAdapter {
 		this.frame = frame;
 	}
 
-	boolean isCursorHidden() {
-		return frame instanceof final HideableCursorFrame hideableCursorFrame
-				&& hideableCursorFrame.isCursorInvisible();
-	}
-
 	/// Returns whether a drag operation is currently in progress.
 	///
 	/// @return `true` if the user is actively dragging the frame
@@ -66,7 +61,7 @@ class FrameDragListener extends MouseAdapter {
 
 	@Override
 	public void mouseDragged(final MouseEvent e) {
-		if (mouseDownLocation == null || isCursorHidden()) {
+		if (mouseDownLocation == null) {
 			return;
 		}
 
@@ -80,20 +75,12 @@ class FrameDragListener extends MouseAdapter {
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		if (isCursorHidden()) {
-			return;
-		}
-
 		mouseDownLocation = e.getPoint();
 	}
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		mouseDownLocation = null;
-
-		if (isCursorHidden()) {
-			return;
-		}
 
 		final var frameLocation = frame.getLocation();
 		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);

@@ -3469,7 +3469,7 @@ public final class Main extends JFrame {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				if (IS_MAC || isCursorHidden()) {
+				if (IS_MAC) {
 					return;
 				}
 
@@ -3481,20 +3481,12 @@ public final class Main extends JFrame {
 			public void mousePressed(final MouseEvent e) {
 				super.mousePressed(e);
 
-				if (isCursorHidden()) {
-					return;
-				}
-
 				overlayFrameRootPane.setBorder(ALTERNATING_BORDER);
 			}
 
 			@Override
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
-
-				if (isCursorHidden()) {
-					return;
-				}
 
 				overlayFrameRootPane.setBorder(null);
 
