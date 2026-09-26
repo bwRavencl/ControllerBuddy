@@ -116,7 +116,7 @@ dependencies {
   errorprone("com.uber.nullaway:nullaway:0.14.2")
   spotbugs("com.github.spotbugs:spotbugs:4.10.4")
 
-  val dbusJavaVersion = "5.2.1"
+  val dbusJavaVersion = "5.2.2"
   val lwjglVersion = "3.4.3"
   val mockitoVersion = "5.24.0"
 
