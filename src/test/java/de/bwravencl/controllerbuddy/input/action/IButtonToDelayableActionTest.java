@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -49,7 +50,7 @@ final class IButtonToDelayableActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested

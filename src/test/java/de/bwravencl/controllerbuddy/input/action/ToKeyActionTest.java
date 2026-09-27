@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
@@ -44,7 +45,7 @@ final class ToKeyActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested

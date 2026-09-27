@@ -17,12 +17,14 @@
 
 package de.bwravencl.controllerbuddy.json;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -39,7 +41,7 @@ import org.lwjgl.sdl.SDLGamepad;
 @NullMarked
 final class ProfileTypeAdapterFactoryTest {
 
-	private static com.google.gson.Gson createGson() {
+	private static Gson createGson() {
 		return new GsonBuilder().registerTypeAdapterFactory(new ProfileTypeAdapterFactory())
 				.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
 	}
@@ -180,8 +182,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("does not override orientation when it is already set")
 		void doesNotOverrideExistingOrientation() {
 			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{\"orientation\": \"HORIZONTAL\"}",
-					de.bwravencl.controllerbuddy.input.OverlayAxis.class);
+			final var overlayAxis = gson.fromJson("{\"orientation\": \"HORIZONTAL\"}", OverlayAxis.class);
 			Assertions.assertEquals(OverlayAxisOrientation.HORIZONTAL, overlayAxis.getOrientation());
 		}
 
@@ -189,8 +190,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("does not override style when it is already set")
 		void doesNotOverrideExistingStyle() {
 			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{\"style\": \"LINE\"}",
-					de.bwravencl.controllerbuddy.input.OverlayAxis.class);
+			final var overlayAxis = gson.fromJson("{\"style\": \"LINE\"}", OverlayAxis.class);
 			Assertions.assertEquals(OverlayAxisStyle.LINE, overlayAxis.getStyle());
 		}
 
@@ -198,7 +198,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("sets orientation to VERTICAL when it is null after deserialization")
 		void setsOrientationToVerticalWhenNull() {
 			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{}", de.bwravencl.controllerbuddy.input.OverlayAxis.class);
+			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
 			Assertions.assertEquals(OverlayAxisOrientation.VERTICAL, overlayAxis.getOrientation());
 		}
 
@@ -206,7 +206,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("sets style to SOLID when it is null after deserialization")
 		void setsStyleToSolidWhenNull() {
 			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{}", de.bwravencl.controllerbuddy.input.OverlayAxis.class);
+			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
 			Assertions.assertEquals(OverlayAxisStyle.SOLID, overlayAxis.getStyle());
 		}
 	}

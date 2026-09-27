@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
@@ -41,7 +42,7 @@ final class ToButtonActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.ControllerState;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lwjgl.sdl.SDLGamepad;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,7 +52,7 @@ final class AxisToRelativeAxisActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested
@@ -106,7 +108,7 @@ final class AxisToRelativeAxisActionTest {
 
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 
-			final var valueCaptor = org.mockito.ArgumentCaptor.forClass(Float.class);
+			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			Assertions.assertTrue(valueCaptor.getValue() <= 1f);
@@ -143,7 +145,7 @@ final class AxisToRelativeAxisActionTest {
 
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 
-			final var valueCaptor = org.mockito.ArgumentCaptor.forClass(Float.class);
+			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			// Positive input with invert=true should result in negative movement

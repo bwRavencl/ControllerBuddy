@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ final class ButtonToLockKeyActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested

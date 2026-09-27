@@ -23,6 +23,7 @@ import de.bwravencl.controllerbuddy.input.ControllerComponent;
 import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -787,7 +788,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 				}
 
 				@Override
-				public void paintIcon(final java.awt.Component c, final Graphics g, final int x, final int y) {
+				public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
 					final var g2d = (Graphics2D) g;
 
 					if (contentAreaFilled) {

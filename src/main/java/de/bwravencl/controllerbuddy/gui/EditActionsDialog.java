@@ -36,6 +36,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.IUpdatableEditorComponent;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -379,8 +380,7 @@ public final class EditActionsDialog extends JDialog {
 	/// @param component the component whose colors are updated
 	/// @param list the list providing selection and default colors
 	/// @param isSelected whether the item is currently selected
-	private static void applyListColors(final java.awt.Component component, final JList<?> list,
-			final boolean isSelected) {
+	private static void applyListColors(final Component component, final JList<?> list, final boolean isSelected) {
 		if (isSelected) {
 			component.setBackground(list.getSelectionBackground());
 			component.setForeground(list.getSelectionForeground());
@@ -929,7 +929,7 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// @param parentComponent the component used to derive the dialog's initial
 	/// position and as the offset reference
-	private void preInit(final java.awt.Component parentComponent) {
+	private void preInit(final Component parentComponent) {
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
 
