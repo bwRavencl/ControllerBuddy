@@ -17,9 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import java.util.HashSet;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,7 +41,7 @@ final class IActivatableActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
+		final var _ = Main.strings;
 	}
 
 	@Nested
@@ -49,7 +51,7 @@ final class IActivatableActionTest {
 		@Test
 		@DisplayName("each activation has a distinct non-empty symbol")
 		void eachActivationHasDistinctSymbol() {
-			final var symbols = new java.util.HashSet<String>();
+			final var symbols = new HashSet<String>();
 			for (final var activation : Activation.values()) {
 				final var symbol = activation.getSymbol();
 				Assertions.assertNotNull(symbol);
