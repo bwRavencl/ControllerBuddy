@@ -501,6 +501,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		final void beginBorder(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					!square ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
 			g2d.setStroke(BORDER_STROKE);
 
