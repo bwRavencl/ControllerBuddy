@@ -80,7 +80,7 @@ val runJvmArgs =
     commonJvmArgs +
         listOf(
             "-Xms24m",
-            "-Xmx48m",
+            "-Xmx64m",
             "--add-exports=java.base/jdk.internal.misc=org.lwjgl",
             "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
             "--illegal-final-field-mutation=deny",
