@@ -1169,7 +1169,6 @@ public final class Main extends JFrame {
 		getContentPane().add(tabbedPane);
 
 		modesPanel = new LockableSettingsPanel(this);
-		final var globalSettingsScrollPane = new JScrollPane();
 		tabbedPane.addTab(strings.getString("MODES_TAB"), modesPanel);
 
 		modesListPanel = new JPanel();
@@ -1235,14 +1234,12 @@ public final class Main extends JFrame {
 
 		profileSettingsPanel = new LockableSettingsPanel(this);
 		profileSettingsInnerPanel = new JPanel(new GridBagLayout());
-		final var profileSettingsScrollPane = new JScrollPane(profileSettingsInnerPanel);
-		profileSettingsPanel.add(profileSettingsScrollPane);
+		profileSettingsPanel.add(GuiUtils.wrapComponentInScrollPane(profileSettingsInnerPanel));
 		tabbedPane.addTab(strings.getString("PROFILE_SETTINGS_TAB"), profileSettingsPanel);
 
 		globalSettingsPanel = new LockableSettingsPanel(this);
 		final var globalSettingsInnerPanel = new JPanel(new GridBagLayout());
-		globalSettingsScrollPane.setViewportView(globalSettingsInnerPanel);
-		globalSettingsPanel.add(globalSettingsScrollPane);
+		globalSettingsPanel.add(GuiUtils.wrapComponentInScrollPane(globalSettingsInnerPanel));
 		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsPanel);
 
 		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
@@ -2149,9 +2146,7 @@ public final class Main extends JFrame {
 						Constants.APPLICATION_NAME)), BorderLayout.NORTH);
 				final var textArea = new JTextArea(stringWriter.toString());
 				textArea.setEditable(false);
-				final var scrollPane = new JScrollPane(textArea);
-				scrollPane.setPreferredSize(new Dimension(600, 400));
-				panel.add(scrollPane, BorderLayout.CENTER);
+				panel.add(GuiUtils.wrapComponentInScrollPane(textArea, new Dimension(600, 400)), BorderLayout.CENTER);
 				GuiUtils.showMessageDialog(main, main, panel, strings.getString("ERROR_DIALOG_TITLE"),
 						JOptionPane.ERROR_MESSAGE);
 
@@ -6994,9 +6989,7 @@ public final class Main extends JFrame {
 		@Override
 		public void actionPerformed(final ActionEvent actionEvent) {
 			final var editorPane = GuiUtils.createHtmlViewerEditorPane();
-
-			final var scrollPane = new JScrollPane(editorPane);
-			scrollPane.setPreferredSize(new Dimension(650, 400));
+			final var scrollPane = GuiUtils.wrapComponentInScrollPane(editorPane, new Dimension(650, 400));
 
 			editorPane.addHyperlinkListener(hyperlinkEvent -> {
 				if (hyperlinkEvent.getEventType() != EventType.ACTIVATED) {
