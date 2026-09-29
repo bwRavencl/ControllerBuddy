@@ -1169,6 +1169,9 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -3862365536659647863L;
 
+		/// Foreground color of disabled labels.
+		private @Nullable Color disabledForeground;
+
 		@Override
 		protected void paintComponent(final Graphics g) {
 			super.paintComponent(g);
@@ -1176,7 +1179,7 @@ public final class EditActionsDialog extends JDialog {
 			if (getModel().getSize() == 0) {
 				final var g2d = (Graphics2D) g;
 				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-				g2d.setColor(UIManager.getColor("Label.disabledForeground"));
+				g2d.setColor(disabledForeground);
 
 				final var fontMetrics = g2d.getFontMetrics();
 				final var text = Main.strings.getString("NO_ASSIGNED_ACTIONS_PLACEHOLDER");
@@ -1190,6 +1193,13 @@ public final class EditActionsDialog extends JDialog {
 
 				g2d.drawString(text, x, y);
 			}
+		}
+
+		@Override
+		public void updateUI() {
+			super.updateUI();
+
+			disabledForeground = UIManager.getColor("Label.disabledForeground");
 		}
 	}
 
