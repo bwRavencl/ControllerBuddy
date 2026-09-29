@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import java.awt.Color;
@@ -83,6 +84,8 @@ final class IndicatorProgressBar extends JProgressBar {
 
 		final var overlayScaling = main.getOverlayScaling();
 		subdivisionScale = Math.round(overlayScaling);
+
+		putClientProperty(FlatClientProperties.PROGRESS_BAR_SQUARE, true);
 
 		setBorder(GuiUtils.createOverlayBorder());
 

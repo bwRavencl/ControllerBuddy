@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatButtonUI;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import de.bwravencl.controllerbuddy.input.ControllerComponent;
@@ -269,8 +270,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// @param controllerComponent the controller component this button represents
 	/// @return the configured button
 	private JButton createComponentButton(final String name, final ControllerComponent controllerComponent) {
-		final boolean round;
-		final JButton button;
+		final AssignmentsButton button;
 		if (controllerComponent.type() == ControllerComponentType.BUTTON
 				&& (controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_EAST
@@ -279,8 +279,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_BACK
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_START
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)) {
-			round = true;
-			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent)) {
+			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent), false) {
 
 				@Serial
 				private static final long serialVersionUID = 8467379031897370934L;
@@ -293,11 +292,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 				private int getDiameter() {
 					return Math.min(getWidth(), getHeight());
-				}
-
-				@Override
-				boolean isBorderAntialiasingNeeded() {
-					return true;
 				}
 
 				@Override
@@ -373,13 +367,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 				}
 			};
 		} else {
-			round = false;
-			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent));
+			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent), true);
 		}
 
 		final Dimension dimension;
 		if (controllerComponent.type() == ControllerComponentType.BUTTON
-				&& (round || controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN
+				&& (!button.square || controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP)) {
@@ -429,6 +422,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Main main;
 
+		/// Whether the button has square corners.
+		private final boolean square;
+
 		/// Whether the content area of this button should be painted.
 		boolean contentAreaFilled = true;
 
@@ -465,6 +461,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// @param main the main application instance
 		private AssignmentsButton(final Main main) {
 			this.main = main;
+			square = false;
 			super();
 		}
 
@@ -472,9 +469,15 @@ final class AssignmentsScrollPane extends JScrollPane {
 		///
 		/// @param main the main application instance
 		/// @param action the action to associate with this button
-		private AssignmentsButton(final Main main, final Action action) {
+		/// @param square `true` to make the button square, `false` for round corners
+		private AssignmentsButton(final Main main, final Action action, final boolean square) {
 			this.main = main;
+			this.square = square;
 			super(action);
+
+			if (square) {
+				putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_SQUARE);
+			}
 		}
 
 		/// Configures the graphics context for painting the button's background by
@@ -484,10 +487,10 @@ final class AssignmentsScrollPane extends JScrollPane {
 		final void beginBackground(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-			final var background = FlatButtonUI.buttonStateColor(this, getBackground(), disabledBackground,
-					focusedBackground, hoverBackground, pressedBackground);
-
-			g2d.setColor(FlatUIUtils.deriveColor(background, getBackground()));
+			final var baseColor = getBackground();
+			final var background = FlatButtonUI.buttonStateColor(this, baseColor, disabledBackground, focusedBackground,
+					hoverBackground, pressedBackground);
+			g2d.setColor(background != null ? FlatUIUtils.deriveColor(background, baseColor) : baseColor);
 		}
 
 		/// Configures the graphics context for painting the button's border by
@@ -495,11 +498,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// color.
 		///
 		/// @param g2d the graphics context to configure
-		/// @see #isBorderAntialiasingNeeded()
 		final void beginBorder(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					isBorderAntialiasingNeeded() ? RenderingHints.VALUE_ANTIALIAS_ON
-							: RenderingHints.VALUE_ANTIALIAS_OFF);
+					!square ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
 			g2d.setStroke(BORDER_STROKE);
 
@@ -516,34 +517,37 @@ final class AssignmentsScrollPane extends JScrollPane {
 			g2d.setColor(getForeground());
 		}
 
-		/// Returns whether antialiasing is needed for painting the button's border. By
-		/// default, this returns `false`, but round buttons should override it to
-		/// enable smoother edges.
-		///
-		/// @return `true` if antialiasing is needed for painting the border, `false`
-		/// otherwise
-		boolean isBorderAntialiasingNeeded() {
-			return false;
-		}
-
 		@Override
 		protected void paintBorder(final Graphics g) {
 			if (!isBorderPainted()) {
 				return;
 			}
 
-			final var g2d = (Graphics2D) g;
-			beginBorder(g2d);
+			final var g2d = (Graphics2D) g.create();
+			try {
+				FlatUIUtils.setRenderingHints(g2d);
+				beginBorder(g2d);
 
-			final int lineWidth;
-			if (!(g2d.getStroke() instanceof final BasicStroke basicStroke)) {
-				throw new UnsupportedOperationException();
+				if (!(g2d.getStroke() instanceof final BasicStroke basicStroke)) {
+					throw new UnsupportedOperationException();
+				}
+
+				final var lineWidth = basicStroke.getLineWidth();
+				final var halfLineWidth = lineWidth / 2f;
+
+				final var focusWidth = FlatUIUtils.getBorderFocusWidth(this);
+				final var arc = FlatUIUtils.getBorderArc(this);
+
+				final var outlineArc = Math.max(0f, arc - lineWidth);
+				final var inset = focusWidth + halfLineWidth;
+
+				final var outline = FlatUIUtils.createComponentRectangle(inset, inset, getWidth() - 2f * inset,
+						getHeight() - 2f * inset, outlineArc);
+
+				g2d.draw(outline);
+			} finally {
+				g2d.dispose();
 			}
-			lineWidth = Math.round(basicStroke.getLineWidth());
-			final var halfLineWidth = lineWidth / 2;
-
-			// noinspection SuspiciousNameCombination
-			g2d.drawRect(halfLineWidth, halfLineWidth, getWidth() - lineWidth, getHeight() - lineWidth);
 		}
 
 		/// Paints the given text within the specified rectangle, wrapping it onto
@@ -897,11 +901,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 				outerArea.subtract(new Area(innerShape));
 				shape = outerArea;
 			}
-		}
-
-		@Override
-		boolean isBorderAntialiasingNeeded() {
-			return true;
 		}
 
 		@Override

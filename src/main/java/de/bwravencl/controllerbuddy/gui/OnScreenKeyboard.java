@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -664,6 +665,8 @@ public final class OnScreenKeyboard extends JFrame {
 		/// @param text the button label
 		private AbstractKeyboardButton(final String text) {
 			super(text);
+
+			putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_SQUARE);
 
 			updateTheme();
 			setMargin(new Insets(1, 1, 1, 1));

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.formdev.flatlaf.ui.FlatUIUtils;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -27,11 +28,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -64,10 +65,6 @@ final class LockableSettingsPanel extends JPanel {
 	/// Convolution operator that blurs the tile buffer used to render the
 	/// disabled-state background.
 	private static final ConvolveOp BLUR_OP;
-
-	/// Corner radius, in pixels, of the stop-execution hint's rounded rectangle
-	/// background.
-	private static final float HINT_CORNER_RADIUS = 24f;
 
 	/// Font size, in points, used for the stop-execution hint text.
 	private static final float HINT_FONT_SIZE = 16f;
@@ -138,6 +135,10 @@ final class LockableSettingsPanel extends JPanel {
 	/// Reusable transform applied to [#bufferGraphics] while rendering each tile.
 	private final AffineTransform tileTransform = new AffineTransform();
 
+	/// Corner arc diameter, in pixels, of the stop-execution hint's rounded
+	/// rectangle background.
+	private float hintArc;
+
 	/// Background color of the stop-execution hint in its default state.
 	private @Nullable Color hintBackground;
 
@@ -158,7 +159,7 @@ final class LockableSettingsPanel extends JPanel {
 	/// Bounds of the stop-execution hint's background rectangle, or `null` if the
 	/// hint has not been painted yet.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private @Nullable RoundRectangle2D stopHintBounds;
+	private @Nullable Shape stopHintBounds;
 
 	/// Whether the pointer currently hovers over the stop-execution hint.
 	private boolean stopHintHovered;
@@ -354,13 +355,12 @@ final class LockableSettingsPanel extends JPanel {
 		final var rectWidth = textWidth + (HINT_PADDING * 2);
 		final var rectHeight = textHeight + (HINT_PADDING * 2);
 
-		stopHintBounds = new RoundRectangle2D.Float(rectX, rectY, rectWidth, rectHeight, HINT_CORNER_RADIUS,
-				HINT_CORNER_RADIUS);
+		stopHintBounds = FlatUIUtils.createComponentRectangle(rectX, rectY, rectWidth, rectHeight, hintArc);
 
 		final Color currentBackground;
-		if (stopHintPressed) {
+		if (stopHintPressed && hintPressedBackground != null) {
 			currentBackground = hintPressedBackground;
-		} else if (stopHintHovered) {
+		} else if (stopHintHovered && hintHoverBackground != null) {
 			currentBackground = hintHoverBackground;
 		} else {
 			currentBackground = hintBackground;
@@ -376,8 +376,10 @@ final class LockableSettingsPanel extends JPanel {
 		g2d.setColor(hintForeground);
 
 		final var strokeOffset = HINT_STROKE_WIDTH / 2f;
-		final var outline = new RoundRectangle2D.Float(rectX + strokeOffset, rectY + strokeOffset,
-				rectWidth - HINT_STROKE_WIDTH, rectHeight - HINT_STROKE_WIDTH, HINT_CORNER_RADIUS, HINT_CORNER_RADIUS);
+		final var outlineArc = Math.max(0f, hintArc - HINT_STROKE_WIDTH);
+
+		final var outline = FlatUIUtils.createComponentRectangle(rectX + strokeOffset, rectY + strokeOffset,
+				rectWidth - HINT_STROKE_WIDTH, rectHeight - HINT_STROKE_WIDTH, outlineArc);
 		g2d.draw(outline);
 	}
 
@@ -449,12 +451,18 @@ final class LockableSettingsPanel extends JPanel {
 		hintForeground = UIManager.getColor("Button.foreground");
 
 		final var buttonHoverBackground = UIManager.getColor("Button.hoverBackground");
-		hintHoverBackground = new Color(buttonHoverBackground.getRed(), buttonHoverBackground.getGreen(),
-				buttonHoverBackground.getBlue(), HINT_BACKGROUND_ALPHA);
+		if (buttonHoverBackground != null) {
+			hintHoverBackground = new Color(buttonHoverBackground.getRed(), buttonHoverBackground.getGreen(),
+					buttonHoverBackground.getBlue(), HINT_BACKGROUND_ALPHA);
+		}
 
 		final var buttonPressedBackground = UIManager.getColor("Button.pressedBackground");
-		hintPressedBackground = new Color(buttonPressedBackground.getRed(), buttonPressedBackground.getGreen(),
-				buttonPressedBackground.getBlue(), HINT_BACKGROUND_ALPHA);
+		if (buttonPressedBackground != null) {
+			hintPressedBackground = new Color(buttonPressedBackground.getRed(), buttonPressedBackground.getGreen(),
+					buttonPressedBackground.getBlue(), HINT_BACKGROUND_ALPHA);
+		}
+
+		hintArc = (float) UIManager.getInt("Button.arc");
 	}
 
 	/// Prevents serialization.
