@@ -203,6 +203,16 @@ jobs:
           prerelease: false
           files: ${{ steps.collect-files.outputs.files }}
       - name: Trigger Release Monitoring Check
+        id: release-monitoring
         run: |
           sleep 20
-          curl https://release-monitoring.org/api/v2/versions/ -H "Authorization: token ${{ secrets.RELEASE_MONITORING_TOKEN }}" -H 'Content-Type: application/json' -d '{"id": "376393", "dry_run": "false"}'
+          response=$(curl -s -w "%{http_code}" https://release-monitoring.org/api/v2/versions/ -H "Authorization: token ${{ secrets.RELEASE_MONITORING_TOKEN }}" -H 'Content-Type: application/json' -d '{"id": "376393", "dry_run": "false"}')
+          echo "$response" | sed '$d'
+          echo "http_status=$(echo "$response" | tail -n 1)" >> $GITHUB_OUTPUT
+      - name: Trigger Flatpak Update Check
+        if: steps.release-monitoring.outputs.http_status == '200'
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: bwRavencl/ControllerBuddy-Flatpak
+          event-type: new-release
