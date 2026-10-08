@@ -1113,7 +1113,7 @@ public final class EditActionsDialog extends JDialog {
 		if (descriptionLabel != null && !descriptionLabel.isBlank()) {
 			try {
 				description = Main.strings.getString(descriptionLabel);
-			} catch (final MissingResourceException _) {
+			} catch (MissingResourceException _) {
 				// handled below
 			}
 		}

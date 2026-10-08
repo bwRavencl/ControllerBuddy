@@ -77,7 +77,7 @@ final class GuiUtilsTest {
 		private static void triggerPopupShow(final JPopupMenu popup) {
 			try {
 				popup.show(null, 0, 0);
-			} catch (final Exception _) {
+			} catch (Exception _) {
 				// super.show() throws in headless mode; action states are set before it
 			}
 		}

@@ -458,7 +458,7 @@ public final class GuiUtils {
 					try {
 						location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
 						location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
-					} catch (final NumberFormatException _) {
+					} catch (NumberFormatException _) {
 						// ignore an invalid location string that does not contain numeric values
 					}
 				}

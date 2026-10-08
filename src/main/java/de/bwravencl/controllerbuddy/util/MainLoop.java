@@ -104,7 +104,7 @@ public final class MainLoop {
 					try {
 						// noinspection BusyWait
 						Thread.sleep(10L);
-					} catch (final InterruptedException _) {
+					} catch (InterruptedException _) {
 						return;
 					}
 				} else {
@@ -114,7 +114,7 @@ public final class MainLoop {
 								wait();
 							}
 						}
-					} catch (final InterruptedException _) {
+					} catch (InterruptedException _) {
 						return;
 					}
 				}
@@ -221,7 +221,7 @@ public final class MainLoop {
 			resultFuture.get();
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
-		} catch (final InterruptedException _) {
+		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -243,7 +243,7 @@ public final class MainLoop {
 			return Optional.ofNullable((V) resultFuture.get());
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
-		} catch (final InterruptedException _) {
+		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		}
 
@@ -273,7 +273,7 @@ public final class MainLoop {
 			try {
 				// noinspection BusyWait
 				Thread.sleep(10L);
-			} catch (final InterruptedException _) {
+			} catch (InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -297,7 +297,7 @@ public final class MainLoop {
 			try {
 				// noinspection BusyWait
 				Thread.sleep(10L);
-			} catch (final InterruptedException _) {
+			} catch (InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 		}

@@ -207,7 +207,7 @@ public final class ServerRunMode extends RunMode {
 						try {
 							serverSocket.receive(receivePacket);
 							break;
-						} catch (final SocketTimeoutException _) {
+						} catch (SocketTimeoutException _) {
 							// expected when waiting for a client
 						}
 
@@ -367,7 +367,7 @@ public final class ServerRunMode extends RunMode {
 										}
 									}
 								}
-							} catch (final SocketTimeoutException _) {
+							} catch (SocketTimeoutException _) {
 								// handled below
 							}
 						}
@@ -398,7 +398,7 @@ public final class ServerRunMode extends RunMode {
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-		} catch (final InterruptedException _) {
+		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} finally {
 			input.reset();

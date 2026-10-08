@@ -166,7 +166,7 @@ public final class LocalRunMode extends OutputRunMode {
 			}
 		} catch (final IOException e) {
 			handleIOException(e);
-		} catch (final InterruptedException _) {
+		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} finally {
 			deInit();

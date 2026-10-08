@@ -260,7 +260,7 @@ final class InputPipelineTest {
 		if (lastPollNanoTime > 0L && currentTime - lastPollNanoTime < POLL_PERIOD_NANOS + 1_000_000L) {
 			try {
 				Thread.sleep(POLL_PERIOD_NANOS / 1_000_000, (int) (POLL_PERIOD_NANOS % 1_000_000));
-			} catch (final InterruptedException _) {
+			} catch (InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 		}

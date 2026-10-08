@@ -1005,7 +1005,7 @@ public final class Main extends JFrame {
 
 					try {
 						Files.deleteIfExists(tempLockFilePath);
-					} catch (final IOException _) {
+					} catch (IOException _) {
 						logger.log(Level.WARNING, e.getMessage(), e);
 					}
 				}
@@ -2286,7 +2286,7 @@ public final class Main extends JFrame {
 
 				return;
 			}
-		} catch (final ParseException _) {
+		} catch (ParseException _) {
 			// handled below
 		}
 
@@ -2394,7 +2394,7 @@ public final class Main extends JFrame {
 			if (main.trayMenu != 0L && main.mainLoop.isAvailable()) {
 				try {
 					main.mainLoop.runSync(() -> SDLTray.SDL_DestroyTray(main.tray));
-				} catch (final IllegalStateException _) {
+				} catch (IllegalStateException _) {
 					// ignore main loop is no longer able to process tasks
 				}
 			}
@@ -2568,7 +2568,7 @@ public final class Main extends JFrame {
 
 				try {
 					Thread.sleep(100L);
-				} catch (final InterruptedException _) {
+				} catch (InterruptedException _) {
 					Thread.currentThread().interrupt();
 				}
 			}
@@ -3131,7 +3131,7 @@ public final class Main extends JFrame {
 		if (port != null) {
 			try {
 				preferences.putInt(PREFERENCES_PORT, Integer.parseInt(port));
-			} catch (final NumberFormatException _) {
+			} catch (NumberFormatException _) {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
@@ -3145,7 +3145,7 @@ public final class Main extends JFrame {
 		if (timeout != null) {
 			try {
 				preferences.putInt(PREFERENCES_TIMEOUT, Integer.parseInt(timeout));
-			} catch (final NumberFormatException _) {
+			} catch (NumberFormatException _) {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
@@ -4744,7 +4744,7 @@ public final class Main extends JFrame {
 			try {
 				// noinspection ResultOfMethodCallIgnored
 				overlayExecutorService.awaitTermination(2L, TimeUnit.SECONDS);
-			} catch (final InterruptedException _) {
+			} catch (InterruptedException _) {
 				Thread.currentThread().interrupt();
 			} finally {
 				overlayExecutorService = null;
@@ -5565,7 +5565,7 @@ public final class Main extends JFrame {
 		if (tray != 0L && mainLoop.isAvailable()) {
 			try {
 				mainLoop.runSync(() -> updateTrayIconToolTip(-1));
-			} catch (final IllegalStateException _) {
+			} catch (IllegalStateException _) {
 				// ignore main loop is no longer able to process tasks
 			}
 		}

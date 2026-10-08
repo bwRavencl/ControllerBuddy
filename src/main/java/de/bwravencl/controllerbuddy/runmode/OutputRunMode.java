@@ -1059,7 +1059,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else {
 					forceStop = true;
 				}
-			} catch (final InterruptedException _) {
+			} catch (InterruptedException _) {
 				// handled below
 			} catch (final ExecutionException e) {
 				throw new RuntimeException(e);
