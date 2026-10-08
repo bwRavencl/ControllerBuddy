@@ -34,11 +34,11 @@ public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger logger = Logger.getLogger(LocalRunMode.class.getName());
 
-	/// Set of normal (non-modifier) scancodes active in the current output cycle.
-	private final HashSet<Scancode> sourceKeyCodes = new HashSet<>();
-
 	/// Set of modifier scancodes active in the current output cycle.
-	private final HashSet<Scancode> sourceModifiersCodes = new HashSet<>();
+	private final HashSet<Scancode> sourceModifiers = new HashSet<>();
+
+	/// Set of normal (non-modifier) scancodes active in the current output cycle.
+	private final HashSet<Scancode> sourceNormalKeys = new HashSet<>();
 
 	/// Constructs a [LocalRunMode].
 	///
@@ -107,15 +107,15 @@ public final class LocalRunMode extends OutputRunMode {
 		downUpMouseButtons.addAll(inputDownUpMouseButtons);
 		inputDownUpMouseButtons.clear();
 
-		sourceModifiersCodes.clear();
-		sourceKeyCodes.clear();
+		sourceModifiers.clear();
+		sourceNormalKeys.clear();
 		input.getDownKeystrokes().forEach(keystroke -> {
-			sourceModifiersCodes.addAll(Arrays.asList(keystroke.getModifierCodes()));
-			sourceKeyCodes.addAll(Arrays.asList(keystroke.getKeyCodes()));
+			sourceModifiers.addAll(Arrays.asList(keystroke.getModifierCodes()));
+			sourceNormalKeys.addAll(Arrays.asList(keystroke.getKeyCodes()));
 		});
 
-		updateOutputSets(sourceModifiersCodes, oldDownModifiers, newUpModifiers, newDownModifiers, false);
-		updateOutputSets(sourceKeyCodes, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
+		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
+		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
 		downUpKeystrokes.clear();
 		final var inputDownUpKeystrokes = input.getDownUpKeystrokes();
