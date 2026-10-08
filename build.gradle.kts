@@ -92,10 +92,9 @@ val windowsJvmArgs =
     )
 val linuxJvmArgs =
     listOf(
-        "--add-opens=java.desktop/sun.awt=$mainModule",
+        "--add-opens=java.desktop/java.awt=$mainModule",
         "--add-opens=java.desktop/sun.awt.AWTAccessor=$mainModule",
         "--add-opens=java.desktop/sun.awt.X11=$mainModule",
-        "--add-opens=java.desktop/java.awt=$mainModule",
     )
 
 val sdlGameControllerDBDir = "$projectDir/SDL_GameControllerDB"

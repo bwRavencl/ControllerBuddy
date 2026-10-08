@@ -340,6 +340,11 @@ public final class ClientRunMode extends OutputRunMode {
 								updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys,
 										newDownNormalKeys, true);
 
+								if (kGlobalAccel != null) {
+									keepKdeGlobalShortcutsBlocked = (!inputDownModifiers.isEmpty()
+											|| !inputDownNormalKeys.isEmpty()) && !isOnScreenKeyboardModeActive();
+								}
+
 								downUpKeystrokes.clear();
 								downUpKeystrokes.addAll((Set<Keystroke>) objectInputStream.readObject());
 

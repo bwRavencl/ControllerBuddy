@@ -24,6 +24,7 @@ import de.bwravencl.controllerbuddy.ffi.User32.INPUT.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -52,10 +53,18 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import org.freedesktop.dbus.annotations.DBusInterfaceName;
+import org.freedesktop.dbus.annotations.DBusMemberName;
+import org.freedesktop.dbus.annotations.MethodNoReply;
+import org.freedesktop.dbus.connections.impl.DBusConnection;
+import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
+import org.freedesktop.dbus.errors.ServiceUnknown;
+import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLVideo;
 
@@ -69,6 +78,14 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// The default vJoy device index.
 	public static final int VJOY_DEFAULT_DEVICE = 1;
+
+	/// Grace period in nanoseconds that must elapse after the last emitted keyboard
+	/// event before the KDE global shortcuts are unblocked again.
+	///
+	/// The uinput events and the D-Bus unblock call take independent paths (kernel
+	/// to KWin vs. kglobalacceld), so unblocking immediately could let a shortcut
+	/// slip through before KWin has processed the key events.
+	private static final long KDE_SHORTCUT_UNBLOCK_GRACE_NANOS = 250_000_000L;
 
 	/// Filename of the sysfs brightness file for keyboard LEDs.
 	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
@@ -163,17 +180,34 @@ public abstract class OutputRunMode extends RunMode {
 	/// Flag indicating that the output loop should stop immediately.
 	boolean forceStop;
 
+	/// D-Bus interface for blocking KDE global keyboard shortcuts.
+	@Nullable
+	KGlobalAccel kGlobalAccel;
+
+	/// Whether the KDE global keyboard shortcuts should be kept blocked.
+	boolean keepKdeGlobalShortcutsBlocked;
+
 	/// Number of scroll wheel clicks to emit this output cycle.
 	int scrollClicks;
 
 	/// Buffer used when writing brightness values to sysfs LED files.
 	private @Nullable ByteBuffer brightnessByteBuffer;
 
+	/// D-Bus connection for blocking KDE global keyboard shortcuts.
+	private @Nullable DBusConnection dbusConnection;
+
 	/// uinput device representing the virtual joystick.
 	private @Nullable UinputDevice joystickUinputDevice;
 
+	/// Whether the KDE global keyboard shortcuts are currently blocked.
+	private boolean kdeGlobalShortcutsBlocked;
+
 	/// uinput device representing the virtual keyboard.
 	private @Nullable UinputDevice keyboardUinputDevice;
+
+	/// Timestamp of the last keyboard event emitted while the KDE global shortcuts
+	/// were blocked.
+	private long lastKeyboardEventNanos;
 
 	/// Maps lock keys to the sysfs file channels used to control their LEDs.
 	private @Nullable Map<LockKey, FileChannel> lockKeyToBrightnessFileChannelMap;
@@ -264,6 +298,20 @@ public abstract class OutputRunMode extends RunMode {
 		oldDownSet.addAll(newDownSet);
 	}
 
+	/// Closes the D-Bus connection and releases related resources.
+	private void closeDBusConnection() {
+		kGlobalAccel = null;
+
+		if (dbusConnection != null) {
+			try {
+				dbusConnection.close();
+			} catch (final Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}
+			dbusConnection = null;
+		}
+	}
+
 	/// Tears down the output device, releases all held keys and mouse buttons,
 	/// relinquishes the virtual device, and schedules any necessary follow-up
 	/// actions on the event dispatch thread.
@@ -323,20 +371,37 @@ public abstract class OutputRunMode extends RunMode {
 
 			EventQueue.invokeLater(
 					() -> main.setStatusBarText(Main.strings.getString("STATUS_DISCONNECTED_FROM_UINPUT_DEVICES")));
-		}
 
-		if (lockKeyToBrightnessFileChannelMap != null) {
-			lockKeyToBrightnessFileChannelMap.values().stream().filter(AbstractInterruptibleChannel::isOpen)
-					.forEach(channel -> {
+			if (lockKeyToBrightnessFileChannelMap != null) {
+				lockKeyToBrightnessFileChannelMap.values().stream().filter(AbstractInterruptibleChannel::isOpen)
+						.forEach(channel -> {
+							try {
+								channel.close();
+							} catch (final IOException e) {
+								logger.log(Level.WARNING, e.getMessage(), e);
+							}
+						});
+				lockKeyToBrightnessFileChannelMap = null;
+			}
+			brightnessByteBuffer = null;
+
+			if (kGlobalAccel != null) {
+				if (kdeGlobalShortcutsBlocked) {
+					final var remainingNanos = KDE_SHORTCUT_UNBLOCK_GRACE_NANOS
+							- (System.nanoTime() - lastKeyboardEventNanos);
+					if (remainingNanos > 0L) {
 						try {
-							channel.close();
-						} catch (final IOException e) {
-							logger.log(Level.WARNING, e.getMessage(), e);
+							TimeUnit.NANOSECONDS.sleep(remainingNanos);
+						} catch (final InterruptedException _) {
+							Thread.currentThread().interrupt();
 						}
-					});
-			lockKeyToBrightnessFileChannelMap = null;
+					}
+
+					setKdeGlobalShortcutsBlocked(false, false);
+				}
+				closeDBusConnection();
+			}
 		}
-		brightnessByteBuffer = null;
 
 		EventQueue.invokeLater(() -> {
 			if (forceStop || restart) {
@@ -377,7 +442,15 @@ public abstract class OutputRunMode extends RunMode {
 		} else if (Main.IS_LINUX) {
 			Objects.requireNonNull(keyboardUinputDevice, "Field keyboardUinputDevice must not be null");
 
+			if (kGlobalAccel != null && down && !isOnScreenKeyboardModeActive()) {
+				setKdeGlobalShortcutsBlocked(true, false);
+			}
+
 			keyboardUinputDevice.emit(scancode.event(), down ? 1 : 0, true);
+
+			if (kdeGlobalShortcutsBlocked) {
+				lastKeyboardEventNanos = System.nanoTime();
+			}
 		} else {
 			throw buildNotImplementedException();
 		}
@@ -699,6 +772,20 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			brightnessByteBuffer = ByteBuffer.allocateDirect(1);
+
+			if ("KDE".equalsIgnoreCase(GuiUtils.getLinuxDesktop())) {
+				try {
+					dbusConnection = DBusConnectionBuilder.forSessionBus().build();
+					kGlobalAccel = dbusConnection.getRemoteObject("org.kde.kglobalaccel", "/kglobalaccel",
+							KGlobalAccel.class);
+
+					kdeGlobalShortcutsBlocked = true;
+					setKdeGlobalShortcutsBlocked(false, false);
+				} catch (final Exception e) {
+					logger.log(Level.WARNING, e.getMessage(), e);
+					closeDBusConnection();
+				}
+			}
 		} else {
 			throw buildNotImplementedException();
 		}
@@ -717,6 +804,13 @@ public abstract class OutputRunMode extends RunMode {
 		return true;
 	}
 
+	/// Returns whether the on-screen keyboard mode is currently active.
+	///
+	/// @return `true` if the on-screen keyboard mode is active, `false` otherwise
+	final boolean isOnScreenKeyboardModeActive() {
+		return input.getProfile().getActiveMode().equals(OnScreenKeyboard.onScreenKeyboardMode);
+	}
+
 	/// Reads input from the controller or network and updates internal state.
 	///
 	/// Subclasses override this method to poll the controller or receive network
@@ -728,6 +822,47 @@ public abstract class OutputRunMode extends RunMode {
 		process();
 
 		return true;
+	}
+
+	/// Enables or disables global keyboard shortcut blocking in KDE Plasma.
+	///
+	/// This method uses D-Bus to call the [KGlobalAccel#blockGlobalShortcuts]
+	/// method of the [KGlobalAccel] interface. If `async` is `true`, the
+	/// [KGlobalAccel#blockGlobalShortcutsAsync] variant is used instead, which does
+	/// not wait for a reply. In that case, errors are not reported and the cached
+	/// state is updated optimistically.
+	///
+	/// This method does nothing if the D-Bus connection is not available (for
+	/// example because it was never established or has already been closed) or if
+	/// the cached state already matches the requested one.
+	///
+	/// On failure, the D-Bus connection will get closed early to prevent any
+	/// repeated calls. The cached state is left unchanged in that case, since the
+	/// actual state of the daemon is unknown.
+	///
+	/// @param block `true` to block global shortcuts, `false` to restore
+	/// @param async `true` to ignore the reply of the D-Bus method call
+	private void setKdeGlobalShortcutsBlocked(final boolean block, final boolean async) {
+		if (kGlobalAccel == null || kdeGlobalShortcutsBlocked == block) {
+			return;
+		}
+
+		try {
+			if (async) {
+				kGlobalAccel.blockGlobalShortcutsAsync(block);
+			} else {
+				kGlobalAccel.blockGlobalShortcuts(block);
+			}
+
+			kdeGlobalShortcutsBlocked = block;
+			return;
+		} catch (ServiceUnknown _) {
+			// ignore if the service is not available
+		} catch (final Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+		}
+
+		closeDBusConnection();
 	}
 
 	/// Ensures the given lock key (Caps Lock, Num Lock, Scroll Lock) is in the
@@ -961,48 +1096,55 @@ public abstract class OutputRunMode extends RunMode {
 				doMouseButtonInput(mouseButton, false);
 			}
 
-			for (final var scancode : newUpNormalKeys) {
-				doKeyboardInput(scancode, false);
-			}
-
-			for (final var scancode : newUpModifiers) {
-				doKeyboardInput(scancode, false);
-			}
-
-			for (final var scancode : offLockKeys) {
-				setLockKeyState(scancode, false);
-			}
-
-			for (final var scancode : onLockKeys) {
-				setLockKeyState(scancode, true);
-			}
-
-			for (final var scancode : newDownModifiers) {
-				doKeyboardInput(scancode, true);
-			}
-
-			final var currentTimeNanos = System.nanoTime();
-			final var keyRepeatIntervalNanos = Input.NANOS_PER_SECOND / input.getProfile().getKeyRepeatRate();
-			if (currentTimeNanos - prevKeyInputTime > keyRepeatIntervalNanos) {
-				for (final var scancode : newDownNormalKeys) {
-					doKeyboardInput(scancode, true);
-				}
-
-				prevKeyInputTime = currentTimeNanos;
-			}
-
-			for (final var keystroke : downUpKeystrokes) {
-				for (final var scancode : keystroke.getModifierCodes()) {
-					doKeyboardInput(scancode, true);
-				}
-
-				for (final var scancode : keystroke.getKeyCodes()) {
-					doKeyboardInput(scancode, true);
+			try {
+				for (final var scancode : newUpNormalKeys) {
 					doKeyboardInput(scancode, false);
 				}
 
-				for (final var scancode : keystroke.getModifierCodes()) {
+				for (final var scancode : newUpModifiers) {
 					doKeyboardInput(scancode, false);
+				}
+
+				for (final var scancode : offLockKeys) {
+					setLockKeyState(scancode, false);
+				}
+
+				for (final var scancode : onLockKeys) {
+					setLockKeyState(scancode, true);
+				}
+
+				for (final var scancode : newDownModifiers) {
+					doKeyboardInput(scancode, true);
+				}
+
+				final var currentTimeNanos = System.nanoTime();
+				final var keyRepeatIntervalNanos = Input.NANOS_PER_SECOND / input.getProfile().getKeyRepeatRate();
+				if (currentTimeNanos - prevKeyInputTime > keyRepeatIntervalNanos) {
+					for (final var scancode : newDownNormalKeys) {
+						doKeyboardInput(scancode, true);
+					}
+
+					prevKeyInputTime = currentTimeNanos;
+				}
+
+				for (final var keystroke : downUpKeystrokes) {
+					for (final var scancode : keystroke.getModifierCodes()) {
+						doKeyboardInput(scancode, true);
+					}
+
+					for (final var scancode : keystroke.getKeyCodes()) {
+						doKeyboardInput(scancode, true);
+						doKeyboardInput(scancode, false);
+					}
+
+					for (final var scancode : keystroke.getModifierCodes()) {
+						doKeyboardInput(scancode, false);
+					}
+				}
+			} finally {
+				if (kGlobalAccel != null && kdeGlobalShortcutsBlocked && !keepKdeGlobalShortcutsBlocked
+						&& System.nanoTime() - lastKeyboardEventNanos > KDE_SHORTCUT_UNBLOCK_GRACE_NANOS) {
+					setKdeGlobalShortcutsBlocked(false, true);
 				}
 			}
 
@@ -1067,6 +1209,23 @@ public abstract class OutputRunMode extends RunMode {
 
 			Thread.currentThread().interrupt();
 		}
+	}
+
+	/// D-Bus interface for controlling global keyboard shortcut blocking in KDE.
+	@DBusInterfaceName("org.kde.KGlobalAccel")
+	public interface KGlobalAccel extends DBusInterface {
+
+		/// Synchronously blocks or unblocks all global keyboard shortcuts.
+		///
+		/// @param block `true` to inhibit shortcuts, `false` to restore them
+		void blockGlobalShortcuts(final boolean block);
+
+		/// Asynchronously blocks or unblocks all global keyboard shortcuts.
+		///
+		/// @param block `true` to inhibit shortcuts, `false` to restore them
+		@DBusMemberName("blockGlobalShortcuts")
+		@MethodNoReply
+		void blockGlobalShortcutsAsync(final boolean block);
 	}
 
 	/// Tracks a single output device value with change detection.

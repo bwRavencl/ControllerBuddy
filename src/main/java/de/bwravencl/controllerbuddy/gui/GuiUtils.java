@@ -41,6 +41,7 @@ import java.lang.foreign.ValueLayout;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -416,6 +417,27 @@ public final class GuiUtils {
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return Optional.of(underscoreTitle + "_location");
+	}
+
+	/// Returns the current Linux desktop environment.
+	///
+	/// Returns `"gnome"` for any GNOME session, otherwise the raw value of
+	/// `XDG_CURRENT_DESKTOP`.
+	///
+	/// @return the desktop name or `null` if it could not be determined
+	public static @Nullable String getLinuxDesktop() {
+		if (!Main.IS_X11_TOOLKIT) {
+			throw new UnsupportedOperationException();
+		}
+
+		final var gnome = "gnome";
+		if (System.getenv("GNOME_DESKTOP_SESSION_ID") != null) {
+			return gnome;
+		}
+
+		final var xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
+		return (xdgCurrentDesktop != null && xdgCurrentDesktop.toLowerCase(Locale.ROOT).contains(gnome)) ? gnome
+				: xdgCurrentDesktop;
 	}
 
 	/// Computes the bounding rectangle that encompasses all connected displays.

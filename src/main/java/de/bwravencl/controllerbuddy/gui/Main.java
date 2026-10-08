@@ -270,6 +270,9 @@ public final class Main extends JFrame {
 	/// Default vertical gap in pixels used for layout spacing.
 	public static final int DEFAULT_VGAP = 10;
 
+	/// Whether the current AWT toolkit is the Xlib toolkit.
+	public static final boolean IS_X11_TOOLKIT;
+
 	/// The OS architecture string, as reported by the `os.arch` system property.
 	public static final String OS_ARCH = System.getProperty("os.arch");
 
@@ -318,9 +321,6 @@ public final class Main extends JFrame {
 
 	/// Default overlay scaling factor applied when no preference is stored.
 	static final int DEFAULT_OVERLAY_SCALING = 1;
-
-	/// Whether the current AWT toolkit is the Xlib toolkit.
-	static final boolean IS_X11_TOOLKIT;
 
 	/// Signature light blue color.
 	static final Color LIGHT_BLUE_COLOR = new Color(68, 138, 222);
@@ -1659,56 +1659,47 @@ public final class Main extends JFrame {
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
 		if (IS_LINUX) {
-			final var toolkit = Toolkit.getDefaultToolkit();
-			if (IS_X11_TOOLKIT) {
-				try {
-					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
-					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
-					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
-					final var desktopName = getDesktopMethod.invoke(toolkit);
+			try {
+				if ("gnome".equals(GuiUtils.getLinuxDesktop())) {
+					hasSystemTray = false;
+					try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+						final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
+								"/org/gnome/Shell/Extensions", Extensions.class);
 
-					if ("gnome".equals(desktopName)) {
-						hasSystemTray = false;
-						try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-							final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
-									"/org/gnome/Shell/Extensions", Extensions.class);
+						final var gnomeShellVersion = extensions.getShellVersion();
+						final var matcher = Pattern.compile("(?<major>\\d+)\\.(?<minor>\\d+).*")
+								.matcher(gnomeShellVersion);
+						if (matcher.matches()) {
+							final var majorVersion = Integer.parseInt(matcher.group("major"));
+							final var minorVersion = Integer.parseInt(matcher.group("minor"));
 
-							final var gnomeShellVersion = extensions.getShellVersion();
-							final var matcher = Pattern.compile("(?<major>\\d+)\\.(?<minor>\\d+).*")
-									.matcher(gnomeShellVersion);
-							if (matcher.matches()) {
-								final var majorVersion = Integer.parseInt(matcher.group("major"));
-								final var minorVersion = Integer.parseInt(matcher.group("minor"));
+							if ((majorVersion == 3 && minorVersion <= 25)) {
+								hasSystemTray = true;
+							} else if (majorVersion >= 45) {
+								final var gnomeSystemTrayExtensions = Set.of("appindicatorsupport@rgcjonas.gmail.com",
+										"status-icons@gnome-shell-extensions.gcampax.github.com",
+										"ubuntu-appindicators@ubuntu.com");
 
-								if ((majorVersion == 3 && minorVersion <= 25)) {
-									hasSystemTray = true;
-								} else if (majorVersion >= 45) {
-									final var gnomeSystemTrayExtensions = Set.of(
-											"appindicatorsupport@rgcjonas.gmail.com",
-											"status-icons@gnome-shell-extensions.gcampax.github.com",
-											"ubuntu-appindicators@ubuntu.com");
+								hasSystemTray = extensions.ListExtensions().entrySet().stream().anyMatch(e -> {
+									if (!gnomeSystemTrayExtensions.contains(e.getKey())) {
+										return false;
+									}
 
-									hasSystemTray = extensions.ListExtensions().entrySet().stream().anyMatch(e -> {
-										if (!gnomeSystemTrayExtensions.contains(e.getKey())) {
-											return false;
-										}
+									final var enabled = e.getValue().get("enabled");
+									if (enabled == null) {
+										return false;
+									}
 
-										final var enabled = e.getValue().get("enabled");
-										if (enabled == null) {
-											return false;
-										}
-
-										return Boolean.TRUE.equals(enabled.getValue());
-									});
-								}
+									return Boolean.TRUE.equals(enabled.getValue());
+								});
 							}
 						}
 					}
-				} catch (final RuntimeException e) {
-					throw e;
-				} catch (final Exception e) {
-					logger.log(Level.SEVERE, e.getMessage(), e);
 				}
+			} catch (final RuntimeException e) {
+				throw e;
+			} catch (final Exception e) {
+				logger.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 

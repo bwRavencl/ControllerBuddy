@@ -114,6 +114,11 @@ public final class LocalRunMode extends OutputRunMode {
 			sourceNormalKeys.addAll(Arrays.asList(keystroke.getKeyCodes()));
 		});
 
+		if (kGlobalAccel != null) {
+			keepKdeGlobalShortcutsBlocked = (!sourceModifiers.isEmpty() || !sourceNormalKeys.isEmpty())
+					&& !isOnScreenKeyboardModeActive();
+		}
+
 		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
 		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
