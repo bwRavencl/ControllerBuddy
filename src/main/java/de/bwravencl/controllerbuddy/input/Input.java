@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
@@ -53,7 +54,7 @@ public final class Input {
 	public static final int MAX_N_BUTTONS = 128;
 
 	/// The number of nanoseconds in one second.
-	public static final long NANOS_PER_SECOND = 1_000_000_000L;
+	public static final long NANOS_PER_SECOND = TimeUnit.SECONDS.toNanos(1L);
 
 	/// Minimum axis movement required to abort a suspension action.
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
@@ -65,16 +66,16 @@ public final class Input {
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
 
 	/// Duration in nanoseconds to suppress hot-swap polling after a swap.
-	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL_NS = 2_000_000_000L;
+	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL_NS = TimeUnit.SECONDS.toNanos(2L);
 
 	/// Interval in nanoseconds between hot-swap button polls.
-	private static final long HOT_SWAP_POLL_INTERVAL_NS = 50_000_000L;
+	private static final long HOT_SWAP_POLL_INTERVAL_NS = TimeUnit.MILLISECONDS.toNanos(50L);
 
 	/// Baseline value used to scale the minimum axis step size.
 	private static final float MIN_AXIS_STEP_BASE_VALUE = 2f;
 
 	/// Duration in nanoseconds for which axis suspension is held.
-	private static final long SUSPENSION_TIME_NS = 500_000_000L;
+	private static final long SUSPENSION_TIME_NS = TimeUnit.MILLISECONDS.toNanos(500L);
 
 	private static final Logger logger = Logger.getLogger(Input.class.getName());
 
