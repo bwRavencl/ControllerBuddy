@@ -19,7 +19,6 @@ jobs:
         with:
           globs: |
             **/*.md
-            !CLAUDE.md
             !SDL_GameControllerDB/**
 
   build:
