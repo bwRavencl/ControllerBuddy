@@ -151,7 +151,7 @@ Version is derived automatically from git tags at build time (see `versionProvid
 If a change affects the profile serialization format (i.e., what gets serialized/deserialized via Gson) the minor version must be bumped by creating an annotated tag:
 
 ```sh
-git tag -a "X.Y" -m "X.Y"
+git tag -a 'X.Y' -m 'X.Y'
 ```
 
 The tag must be pushed before the `master` branch is pushed, so that CI derives the correct version number.
