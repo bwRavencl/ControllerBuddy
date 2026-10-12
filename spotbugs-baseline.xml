@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.10.4" sequence="0" timestamp="1791582138176" analysisTimestamp="1791582138176" release="">
+<BugCollection version="4.10.5" sequence="0" timestamp="1791804622173" analysisTimestamp="1791804622173" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/VersionUtils.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/MainLoop$TaskQueueEntry.class</Jar>
@@ -1062,48 +1062,6 @@
       <Message>At OnScreenKeyboard.java:[line 386]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="2e31bb0d5c8b7ed48be7246ed47c85c5" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>An overridable method is called from a constructor</ShortMessage>
-    <LongMessage>Overridable method getText() is called from constructor new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard, String, String).</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="1013" end="1027" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 1013-1027]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Ljava/lang/String;Ljava/lang/String;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" start="1013" end="1018" startBytecode="0" endBytecode="107" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
-      <Message>In method new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard, String, String)</Message>
-    </Method>
-    <Method classname="javax.swing.AbstractButton" name="getText" signature="()Ljava/lang/String;" isStatic="false" role="METHOD_CALLED">
-      <SourceLine classname="javax.swing.AbstractButton" start="291" end="291" startBytecode="0" endBytecode="46" sourcefile="AbstractButton.java" sourcepath="javax/swing/AbstractButton.java"/>
-      <Message>Called method javax.swing.AbstractButton.getText()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton" primary="true" start="1016" end="1016" startBytecode="18" endBytecode="18" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 1016]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="2213a28d836709f6aabd16438e58d492" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>An overridable method is called from a constructor</ShortMessage>
-    <LongMessage>Overridable method toggleLock() is called from constructor new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard, LockKey).</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1042" end="1109" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 1042-1109]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Lde/bwravencl/controllerbuddy/input/LockKey;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1054" end="1063" startBytecode="0" endBytecode="175" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
-      <Message>In method new de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard, LockKey)</Message>
-    </Method>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" name="toggleLock" signature="()V" isStatic="false" role="METHOD_CALLED">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" start="1100" end="1109" startBytecode="0" endBytecode="190" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
-      <Message>Called method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton.toggleLock()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" primary="true" start="1062" end="1062" startBytecode="59" endBytecode="59" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 1062]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="65ae1e02cf618da15ac56ac7a8f0e342" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
     <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
     <LongMessage>This write of the 64-bit primitive variable &quot;selectedSdlGamepad&quot; may not be atomic</LongMessage>
@@ -2047,18 +2005,6 @@ increments/decrements could be lost.
      
     ]]></Details>
   </BugPattern>
-  <BugPattern type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" abbrev="MC" category="MALICIOUS_CODE">
-    <ShortDescription>An overridable method is called from a constructor</ShortDescription>
-    <Details><![CDATA[
-      <p>
-      Calling an overridable method during in a constructor may result in the use of uninitialized data. It may also
-      leak the this reference of the partially constructed object. Only static, final or private methods should be
-      invoked from a constructor.</p>
-      <p>
-      See SEI CERT rule <a href="https://cmu-sei.github.io/secure-coding-standards/sei-cert-oracle-coding-standard-for-java/rules/methods-met/met05-j/">MET05-J. Ensure that constructors do not call overridable methods</a>.
-      </p>
-    ]]></Details>
-  </BugPattern>
   <BugPattern type="MS_OOI_PKGPROTECT" abbrev="MS" category="MALICIOUS_CODE">
     <ShortDescription>Field should be moved out of an interface and made package protected</ShortDescription>
     <Details><![CDATA[
@@ -2105,9 +2051,6 @@ defined in an interface references a mutable
   <BugCode abbrev="UwF">
     <Description>Unwritten field</Description>
   </BugCode>
-  <BugCode abbrev="MC">
-    <Description>Dangerous call to overridable method</Description>
-  </BugCode>
   <BugCode abbrev="MS" cweid="493">
     <Description>Mutable static field</Description>
   </BugCode>
@@ -2124,20 +2067,20 @@ defined in an interface references a mutable
     <Error>
       <ErrorMessage>Unable to read filter: /home/matteo/Projekte/ControllerBuddy/ControllerBuddy/spotbugs-baseline.xml : Failing reading /home/matteo/Projekte/ControllerBuddy/ControllerBuddy/spotbugs-baseline.xml</ErrorMessage>
       <Exception>org.dom4j.DocumentException: Failing reading /home/matteo/Projekte/ControllerBuddy/ControllerBuddy/spotbugs-baseline.xml</Exception>
-      <StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:280)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:261)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.addToExcludedInstanceHashes(ExcludingHashesBugReporter.java:57)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.&lt;init&gt;(ExcludingHashesBugReporter.java:44)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:279)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:260)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.addToExcludedInstanceHashes(ExcludingHashesBugReporter.java:56)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.&lt;init&gt;(ExcludingHashesBugReporter.java:43)</StackTrace>
       <StackTrace>edu.umd.cs.findbugs.FindBugs.configureBaselineFilter(FindBugs.java:484)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.FindBugs2.excludeBaselineBugs(FindBugs2.java:411)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.FindBugs2.configureFilters(FindBugs2.java:518)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.FindBugs2.setUserPreferences(FindBugs2.java:507)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.FindBugs2.excludeBaselineBugs(FindBugs2.java:409)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.FindBugs2.configureFilters(FindBugs2.java:516)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.FindBugs2.setUserPreferences(FindBugs2.java:505)</StackTrace>
       <StackTrace>edu.umd.cs.findbugs.TextUICommandLine.configureEngine(TextUICommandLine.java:750)</StackTrace>
       <StackTrace>edu.umd.cs.findbugs.FindBugs.processCommandLine(FindBugs.java:354)</StackTrace>
-      <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1224)</StackTrace>
+      <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1222)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Fri, 9 Oct 2026 23:42:18 +0200" total_classes="0" referenced_classes="0" total_bugs="76" total_size="0" num_packages="7" java_version="27" vm_version="27+35" cpu_seconds="34.71" clock_seconds="5.30" peak_mbytes="1825.14" alloc_mbytes="24048.00" gc_seconds="0.07" priority_3="37" priority_2="37" priority_1="2">
+  <FindBugsSummary timestamp="Mon, 12 Oct 2026 13:30:22 +0200" total_classes="0" referenced_classes="0" total_bugs="74" total_size="0" num_packages="7" java_version="27" vm_version="27+35" cpu_seconds="34.54" clock_seconds="5.29" peak_mbytes="1000.98" alloc_mbytes="24048.00" gc_seconds="0.08" priority_3="35" priority_2="37" priority_1="2">
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Kernel32.java" bugCount="1" size="0" bugHash="c4a890ae322e6b2dd1a2c9e549e41bd7"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Linux.java" bugCount="1" size="0" bugHash="91bbc897c675c6e3338f0fc097b2269b"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/User32.java" bugCount="3" size="0" bugHash="67a9bee27fbee123d0e4ab43accb66e0"/>
@@ -2145,7 +2088,7 @@ defined in an interface references a mutable
     <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="de519c6d250fe9b9cad44f867ae6cbb5"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" bugCount="2" size="0" bugHash="b83a60f581b1db01b34c7812452dbd8f"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="4" size="0" bugHash="31d0f203cf72060e1965a99a967d4cfd"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="6" size="0" bugHash="20536bce3d2850f282c3a100b68ee7dc"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="4" size="0" bugHash="c64438225c4c5385f9ae90fa7339a4a9"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17" size="0" bugHash="181893d8f063436c50ea9fb5b6b0bba8"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java" bugCount="1" size="0" bugHash="900161eace06620fbfd83c0977066412"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/IAxisToDelayableAction.java" bugCount="2" size="0" bugHash="b6952faa0e1c088875cc917b970552d3"/>
