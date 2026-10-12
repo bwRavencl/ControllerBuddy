@@ -10,6 +10,9 @@
 		<Bug pattern="EI_EXPOSE_REP2" />
 	</Match>
 	<Match>
+		<Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" />
+	</Match>
+	<Match>
 		<Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
 	</Match>
 </FindBugsFilter>
