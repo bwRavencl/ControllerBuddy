@@ -219,7 +219,7 @@ spotless {
   }
 
   format("xml") {
-    target("spotbugs-exclude.xml", "**/*.svg")
+    target("spotbugs-exclude.xml", "spotless.eclipseformat.xml", "**/*.svg")
     eclipseWtp(EclipseWtpFormatterStep.XML)
     endWithNewline()
   }
@@ -228,7 +228,6 @@ spotless {
 
   format("newlineAndTrailingWhitespace") {
     target(
-        "spotless.eclipseformat.xml",
         "**/*.properties",
         "**/*.yml",
         "src/**/resources/META-INF/services/*",
