@@ -2,11 +2,11 @@
   <code_scheme name="Project" version="173">
     <option name="DO_NOT_FORMAT">
       <list>
+        <fileSet type="globPattern" pattern="*.xml" />
         <fileSet type="globPattern" pattern="SDL_GameControllerDB/**" />
         <fileSet type="globPattern" pattern="gradle/**" />
-        <fileSet type="globPattern" pattern="spotbugs-baseline.xml" />
         <fileSet type="globPattern" pattern="src/**/*.svg" />
-        <fileSet type="globPattern" pattern="src/main/java/de/bwravencl/controllerbuddy/version/Version.java" />
+        <fileSet type="globPattern" pattern="src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java" />
         <fileSet type="globPattern" pattern="src/main/java/module-info.java" />
       </list>
     </option>
