@@ -613,6 +613,7 @@ tasks.register("generateModuleInfo") {
         	requires org.lwjgl.natives;
         	requires org.lwjgl.sdl;
         	requires org.lwjgl.sdl.natives;
+        	requires org.slf4j.jul;
         }
 
         """
