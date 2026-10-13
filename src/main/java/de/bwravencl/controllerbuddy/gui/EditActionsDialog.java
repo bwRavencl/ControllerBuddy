@@ -71,6 +71,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -165,18 +167,51 @@ public final class EditActionsDialog extends JDialog {
 		final List<Class<?>> mutableCycleActionClasses = new ArrayList<>();
 		final List<Class<?>> mutableOnScreenKeyboardActionClasses = new ArrayList<>();
 
-		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName()).enableClassInfo()
-				.enableAnnotationInfo().scan()) {
-			final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
-			classInfoList.sort((classInfo1, classInfo2) -> {
-				final var actionAnnotation1 = classInfo1.loadClass().getAnnotation(Action.class);
-				final var actionAnnotation2 = classInfo2.loadClass().getAnnotation(Action.class);
+		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName())
+				.enableNonSystemModules().enableClassInfo().enableAnnotationInfo().scan(new AbstractExecutorService() {
+
+					@Override
+					public void execute(final Runnable command) {
+						command.run();
+					}
+
+					@Override
+					public void shutdown() {
+					}
+
+					@Override
+					public List<Runnable> shutdownNow() {
+						return List.of();
+					}
+
+					@Override
+					public boolean isShutdown() {
+						return false;
+					}
+
+					@Override
+					public boolean isTerminated() {
+						return false;
+					}
+
+					@Override
+					public boolean awaitTermination(final long timeout, final TimeUnit unit) {
+						return true;
+					}
+				}, 1)) {
+			final var classLoader = ClassLoader.getSystemClassLoader();
+			scanResult.getClassesWithAnnotation(Action.class.getName()).stream().map(classInfo -> {
+				try {
+					return Class.forName(classInfo.getName(), false, classLoader);
+				} catch (final ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}).sorted((class1, class2) -> {
+				final var actionAnnotation1 = class1.getAnnotation(Action.class);
+				final var actionAnnotation2 = class2.getAnnotation(Action.class);
 
 				return actionAnnotation1.order() - actionAnnotation2.order();
-			});
-
-			classInfoList.forEach(classInfo -> {
-				final var actionClass = classInfo.loadClass();
+			}).forEach(actionClass -> {
 				final var actionAnnotation = actionClass.getAnnotation(Action.class);
 				final var category = actionAnnotation.category();
 

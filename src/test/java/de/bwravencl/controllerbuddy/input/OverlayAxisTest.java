@@ -17,7 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
+import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import org.jspecify.annotations.NullMarked;
@@ -95,6 +99,31 @@ final class OverlayAxisTest {
 			// VirtualAxis.X has LINE style; VirtualAxis.Y has SOLID style
 			Assertions.assertEquals(VirtualAxis.X.getDefaultStyle(), new OverlayAxis(VirtualAxis.X).getStyle());
 			Assertions.assertEquals(VirtualAxis.Y.getDefaultStyle(), new OverlayAxis(VirtualAxis.Y).getStyle());
+		}
+	}
+
+	@Nested
+	@DisplayName("OverlayAxis - deserialization")
+	final class OverlayAxisDeserializationTests {
+
+		private static Gson createGson() {
+			return new GsonBuilder().registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
+		}
+
+		@Test
+		@DisplayName("orientation defaults VERTICAL when it is not specified")
+		void setsOrientationToVerticalWhenNull() {
+			final var gson = createGson();
+			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
+			Assertions.assertEquals(OverlayAxisOrientation.VERTICAL, overlayAxis.getOrientation());
+		}
+
+		@Test
+		@DisplayName("style defaults to SOLID when it is not specified")
+		void setsStyleToSolidWhenNull() {
+			final var gson = createGson();
+			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
+			Assertions.assertEquals(OverlayAxisStyle.SOLID, overlayAxis.getStyle());
 		}
 	}
 

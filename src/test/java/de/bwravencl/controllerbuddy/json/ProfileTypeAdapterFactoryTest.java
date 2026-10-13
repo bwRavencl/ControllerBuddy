@@ -24,9 +24,6 @@ import com.google.gson.JsonParser;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.OverlayAxis;
-import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
-import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
@@ -171,43 +168,6 @@ final class ProfileTypeAdapterFactoryTest {
 			final var mode = gson.fromJson("{\"uuid\": \"" + uuid + "\"}", Mode.class);
 			Assertions.assertEquals(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"),
 					mode.getDescription());
-		}
-	}
-
-	@Nested
-	@DisplayName("create() - OverlayAxis post-processing")
-	final class OverlayAxisAdapterTests {
-
-		@Test
-		@DisplayName("does not override orientation when it is already set")
-		void doesNotOverrideExistingOrientation() {
-			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{\"orientation\": \"HORIZONTAL\"}", OverlayAxis.class);
-			Assertions.assertEquals(OverlayAxisOrientation.HORIZONTAL, overlayAxis.getOrientation());
-		}
-
-		@Test
-		@DisplayName("does not override style when it is already set")
-		void doesNotOverrideExistingStyle() {
-			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{\"style\": \"LINE\"}", OverlayAxis.class);
-			Assertions.assertEquals(OverlayAxisStyle.LINE, overlayAxis.getStyle());
-		}
-
-		@Test
-		@DisplayName("sets orientation to VERTICAL when it is null after deserialization")
-		void setsOrientationToVerticalWhenNull() {
-			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
-			Assertions.assertEquals(OverlayAxisOrientation.VERTICAL, overlayAxis.getOrientation());
-		}
-
-		@Test
-		@DisplayName("sets style to SOLID when it is null after deserialization")
-		void setsStyleToSolidWhenNull() {
-			final var gson = createGson();
-			final var overlayAxis = gson.fromJson("{}", OverlayAxis.class);
-			Assertions.assertEquals(OverlayAxisStyle.SOLID, overlayAxis.getStyle());
 		}
 	}
 

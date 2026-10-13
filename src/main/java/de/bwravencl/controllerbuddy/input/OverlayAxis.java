@@ -40,6 +40,12 @@ public final class OverlayAxis implements Cloneable {
 	/// Rendering style of the axis indicator on the overlay.
 	private OverlayAxisStyle style;
 
+	/// No-argument constructor to allow deserialization via Gson.
+	@SuppressWarnings("unused")
+	private OverlayAxis() {
+		this(VirtualAxis.Z);
+	}
+
 	/// Constructs an [OverlayAxis] with default settings derived from the given
 	/// virtual axis.
 	///
