@@ -138,7 +138,7 @@ jobs:
           echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
           echo "tag_name=$(basename -s .${{ steps.platform-variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform-variables.outputs.dist_os }}-${{ steps.platform-variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
       - name: Upload Archive Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ steps.release-variables.outputs.archive_filename }}
           path: ${{ steps.release-variables.outputs.archive_path }}
@@ -156,7 +156,7 @@ jobs:
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
           echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
       - name: Upload Signature Artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ steps.sign-archive.outputs.signature_filename }}
           path: ${{ steps.sign-archive.outputs.signature_path }}
@@ -166,7 +166,7 @@ jobs:
     needs: build
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
       - name: Collect Artifact Files
         id: collect-files
         run: |
