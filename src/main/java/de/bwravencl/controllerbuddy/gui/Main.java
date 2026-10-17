@@ -3602,17 +3602,6 @@ public final class Main extends JFrame {
 		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
-	/// Checks whether the overlay frame is positioned in the lower half of the
-	/// display.
-	///
-	/// @param totalDisplayBounds the total display bounds to test against
-	/// @return `true` if the overlay center is in the lower half
-	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
-		Objects.requireNonNull(overlayFrame, "Field overlayFrame must not be null");
-
-		return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
-	}
-
 	/// Returns whether power save mode prevention is enabled.
 	///
 	/// @return `true` if power save mode prevention is enabled
@@ -4955,7 +4944,7 @@ public final class Main extends JFrame {
 	/// Updates the overlay frame layout so the indicator panel and mode label are
 	/// positioned in the correct half of the display.
 	///
-	/// When the overlay is in the lower half of the total display bounds, the
+	/// When the overlay is in the upper half of the total display bounds, the
 	/// indicator panel is placed at the bottom and the mode label at the top;
 	/// otherwise the positions are reversed. After repositioning the components
 	/// the frame is repacked to adjust its size.
@@ -4968,7 +4957,7 @@ public final class Main extends JFrame {
 		final String horizontalIndicatorPanelConstraint;
 		final String currentModePanelConstraint;
 
-		if (isOverlayInLowerHalf(totalDisplayBounds)) {
+		if (overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2) {
 			horizontalIndicatorPanelConstraint = BorderLayout.SOUTH;
 			currentModePanelConstraint = BorderLayout.NORTH;
 		} else {
