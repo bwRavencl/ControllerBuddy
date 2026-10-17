@@ -426,7 +426,7 @@ public final class GuiUtils {
 	///
 	/// @return the desktop name or `null` if it could not be determined
 	public static @Nullable String getLinuxDesktop() {
-		if (!Main.IS_X11_TOOLKIT) {
+		if (!Main.IS_LINUX) {
 			throw new UnsupportedOperationException();
 		}
 

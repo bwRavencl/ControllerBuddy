@@ -270,9 +270,6 @@ public final class Main extends JFrame {
 	/// Default vertical gap in pixels used for layout spacing.
 	public static final int DEFAULT_VGAP = 10;
 
-	/// Whether the current AWT toolkit is the Xlib toolkit.
-	public static final boolean IS_X11_TOOLKIT;
-
 	/// The OS architecture string, as reported by the `os.arch` system property.
 	public static final String OS_ARCH = System.getProperty("os.arch");
 
@@ -321,6 +318,9 @@ public final class Main extends JFrame {
 
 	/// Default overlay scaling factor applied when no preference is stored.
 	static final int DEFAULT_OVERLAY_SCALING = 1;
+
+	/// Whether the current AWT toolkit is the Xlib toolkit.
+	static final boolean IS_X11_TOOLKIT;
 
 	/// Signature light blue color.
 	static final Color LIGHT_BLUE_COLOR = new Color(68, 138, 222);
