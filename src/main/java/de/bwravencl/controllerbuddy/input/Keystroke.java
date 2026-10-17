@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.Main;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

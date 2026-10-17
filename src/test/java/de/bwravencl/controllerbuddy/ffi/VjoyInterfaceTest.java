@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.ffi;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.Main;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

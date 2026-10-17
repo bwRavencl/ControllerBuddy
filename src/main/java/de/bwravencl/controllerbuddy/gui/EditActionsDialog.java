@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.input.ControllerComponent;
 import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -107,7 +108,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// - **Component editor**: edits actions for a specific controller component
 /// within a profile.
 /// - **Cycle editor**: edits the sub-actions within a [ButtonToCycleAction].
-@SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
 	/// Horizontal weight for the actions list columns in the grid layout.
@@ -274,7 +274,7 @@ public final class EditActionsDialog extends JDialog {
 
 	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Main main;
+	private final MainFrame mainFrame;
 
 	/// The panel containing property editors for the selected action.
 	private final JPanel propertiesPanel = new JPanel(new GridBagLayout());
@@ -322,11 +322,10 @@ public final class EditActionsDialog extends JDialog {
 	/// editor
 	/// @param cycleAction the cycle action whose sub-actions are to be edited
 	@SuppressWarnings("unchecked")
-	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,
-			@SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
+	public EditActionsDialog(final EditActionsDialog parentDialog, final ButtonToCycleAction cycleAction) {
 		super(parentDialog);
 
-		main = parentDialog.main;
+		mainFrame = parentDialog.mainFrame;
 		input = parentDialog.input;
 		this.cycleAction = cycleAction;
 
@@ -350,17 +349,17 @@ public final class EditActionsDialog extends JDialog {
 	/// Constructs an [EditActionsDialog] for editing the actions assigned to a
 	/// specific controller component within a profile.
 	///
-	/// @param main the main application instance owning this dialog
+	/// @param mainFrame the main frame instance
 	/// @param controllerComponent the controller component whose actions are to be
 	/// edited
 	/// @param name the display name of the component, used in the dialog title
-	EditActionsDialog(final Main main, final ControllerComponent controllerComponent, final String name) {
-		super(main);
+	EditActionsDialog(final MainFrame mainFrame, final ControllerComponent controllerComponent, final String name) {
+		super(mainFrame);
 
-		this.main = main;
+		this.mainFrame = mainFrame;
 		this.controllerComponent = controllerComponent;
 
-		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
+		input = Objects.requireNonNull(mainFrame.getInput(), "Field input must not be null");
 
 		try {
 			unsavedProfile = (Profile) input.getProfile().clone();
@@ -368,7 +367,7 @@ public final class EditActionsDialog extends JDialog {
 			throw new RuntimeException(e);
 		}
 
-		preInit(main);
+		preInit(mainFrame);
 		setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 		final var modes = unsavedProfile.getModes();
@@ -399,9 +398,9 @@ public final class EditActionsDialog extends JDialog {
 	private static JButton addClipboardButton(final JPanel clipboardPanel, final javax.swing.Action action) {
 		final var button = new JButton(action);
 		button.setEnabled(false);
-		button.setPreferredSize(Main.squareButtonDimension);
-		button.setMinimumSize(Main.squareButtonDimension);
-		button.setMaximumSize(Main.squareButtonDimension);
+		button.setPreferredSize(MainFrame.squareButtonDimension);
+		button.setMinimumSize(MainFrame.squareButtonDimension);
+		button.setMaximumSize(MainFrame.squareButtonDimension);
 		button.setAlignmentX(CENTER_ALIGNMENT);
 		button.setAlignmentY(CENTER_ALIGNMENT);
 		clipboardPanel.add(button);
@@ -694,7 +693,6 @@ public final class EditActionsDialog extends JDialog {
 	/// Returns the [Input] instance associated with this dialog.
 	///
 	/// @return the input instance
-	@SuppressWarnings("exports")
 	public Input getInput() {
 		return input;
 	}
@@ -706,6 +704,8 @@ public final class EditActionsDialog extends JDialog {
 	/// This method must be called after [#preInit].
 	@SuppressWarnings("ConstantValue")
 	private void init() {
+		GuiUtils.setWindowIcon(this);
+
 		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
@@ -726,8 +726,8 @@ public final class EditActionsDialog extends JDialog {
 						GridBagConstraints.BOTH, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var addActionButton = new JButton(new AddActionAction());
-		addActionButton.setMinimumSize(Main.rectButtonDimension);
-		addActionButton.setPreferredSize(Main.rectButtonDimension);
+		addActionButton.setMinimumSize(MainFrame.rectButtonDimension);
+		addActionButton.setPreferredSize(MainFrame.rectButtonDimension);
 		addActionButton.setEnabled(false);
 		actionsPanel.add(addActionButton, new GridBagConstraints(0, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -792,8 +792,8 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.HORIZONTAL, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var removeActionButton = new JButton(new RemoveActionAction());
-		removeActionButton.setMinimumSize(Main.rectButtonDimension);
-		removeActionButton.setPreferredSize(Main.rectButtonDimension);
+		removeActionButton.setMinimumSize(MainFrame.rectButtonDimension);
+		removeActionButton.setPreferredSize(MainFrame.rectButtonDimension);
 		removeActionButton.setEnabled(false);
 		actionsPanel.add(removeActionButton, new GridBagConstraints(1, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -934,12 +934,12 @@ public final class EditActionsDialog extends JDialog {
 		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		final var okButton = new JButton(new OKAction());
-		okButton.setPreferredSize(Main.rectButtonDimension);
+		okButton.setPreferredSize(MainFrame.rectButtonDimension);
 		okCancelButtonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
 		final var cancelButton = new JButton(new CancelAction());
-		cancelButton.setPreferredSize(Main.rectButtonDimension);
+		cancelButton.setPreferredSize(MainFrame.rectButtonDimension);
 		okCancelButtonPanel.add(cancelButton);
 
 		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
@@ -1170,7 +1170,7 @@ public final class EditActionsDialog extends JDialog {
 	/// non-`null` action whose class is present in the list returned by
 	/// [#getAllowedActionClasses].
 	private void updatePasteButton() {
-		final var clipboardAction = main.getClipboardAction();
+		final var clipboardAction = mainFrame.getClipboardAction();
 		final var pasteAllowed = clipboardAction != null
 				&& getAllowedActionClasses().contains(clipboardAction.getClass());
 
@@ -1388,8 +1388,8 @@ public final class EditActionsDialog extends JDialog {
 	/// Copies the currently selected assigned action to the clipboard.
 	///
 	/// When performed, clones the action selected in the assigned-actions list and
-	/// stores the clone in the application clipboard via [Main], enabling it to be
-	/// pasted into another component or mode.
+	/// stores the clone in the application clipboard via [MainFrame], enabling it
+	/// to be pasted into another component or mode.
 	private class CopyActionAction extends AbstractAction {
 
 		@Serial
@@ -1408,7 +1408,7 @@ public final class EditActionsDialog extends JDialog {
 			}
 
 			try {
-				main.setClipboardAction((IAction<?>) selectedAssignedAction.clone());
+				mainFrame.setClipboardAction((IAction<?>) selectedAssignedAction.clone());
 				updatePasteButton();
 			} catch (final CloneNotSupportedException e1) {
 				throw new RuntimeException(e1);
@@ -1419,9 +1419,9 @@ public final class EditActionsDialog extends JDialog {
 	/// Cuts the currently selected assigned action to the clipboard.
 	///
 	/// When performed, clones the action selected in the assigned-actions list,
-	/// stores the clone in the application clipboard via [Main], enabling it to be
-	/// pasted into another component or mode, and removes the original from the
-	/// assigned actions.
+	/// stores the clone in the application clipboard via [MainFrame], enabling it
+	/// to be pasted into another component or mode, and removes the original from
+	/// the assigned actions.
 	private final class CutActionAction extends CopyActionAction {
 
 		@Serial
@@ -1444,7 +1444,7 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// When performed in cycle-editor mode, commits the edited sub-action list back
 	/// to the [ButtonToCycleAction]. In component-editor mode, applies the updated
-	/// profile to the [Input], refreshes the relevant UI panels in [Main], and
+	/// profile to the [Input], refreshes the relevant UI panels in [MainFrame], and
 	/// marks the profile as having unsaved changes before closing.
 	private final class OKAction extends AbstractAction {
 
@@ -1481,10 +1481,10 @@ public final class EditActionsDialog extends JDialog {
 				}
 
 				input.setProfile(unsavedProfile);
-				main.updateModesPanel(false);
-				main.updateOverlayPanel();
-				main.updateVisualizationPanel();
-				main.setUnsavedChanges(true);
+				mainFrame.updateModesPanel(false);
+				mainFrame.updateOverlayPanel();
+				mainFrame.updateVisualizationPanel();
+				mainFrame.setUnsavedChanges(true);
 			}
 
 			closeDialog();
@@ -1495,8 +1495,8 @@ public final class EditActionsDialog extends JDialog {
 	/// cycle.
 	///
 	/// When performed, retrieves the action stored in the application clipboard via
-	/// [Main], clones it, and delegates to the enclosing dialog's add-action logic,
-	/// so the copy is appended to the assigned-actions list.
+	/// [MainFrame], clones it, and delegates to the enclosing dialog's add-action
+	/// logic, so the copy is appended to the assigned-actions list.
 	private final class PasteActionAction extends AbstractAction {
 
 		@Serial
@@ -1510,7 +1510,7 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var clipboardAction = main.getClipboardAction();
+			final var clipboardAction = mainFrame.getClipboardAction();
 			if (clipboardAction == null) {
 				return;
 			}

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -44,13 +44,13 @@ final class InputTest {
 	Controller mockController;
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	@Mock
 	RunMode mockRunMode;
 
 	private Input createInput() {
-		final var input = new Input(mockMain, mockController, null);
+		final var input = new Input(mockMainFrame, mockController, null);
 		input.setRunMode(mockRunMode);
 		return input;
 	}
@@ -99,10 +99,10 @@ final class InputTest {
 		void suspensionExpiresAfterTimeout() throws Exception {
 			input.suspendAxis(0, input.getProfile().getActiveMode());
 
-			final var field = input.getClass().getDeclaredField("axisToSuspensionInfoMap");
-			field.setAccessible(true);
+			final var axisToSuspensionInfoMapField = input.getClass().getDeclaredField("axisToSuspensionInfoMap");
+			axisToSuspensionInfoMapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (Map<Integer, Object>) field.get(input);
+			final var map = (Map<Integer, Object>) axisToSuspensionInfoMapField.get(input);
 
 			final var suspensionInfo = map.get(0);
 			Assertions.assertNotNull(suspensionInfo);
@@ -145,7 +145,7 @@ final class InputTest {
 					"Should be false when no axes map is provided");
 
 			final var axes = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
-			Assertions.assertTrue(new Input(mockMain, mockController, axes).isSkipAxisInitialization(),
+			Assertions.assertTrue(new Input(mockMainFrame, mockController, axes).isSkipAxisInitialization(),
 					"Should be true when an axes map is provided");
 		}
 
@@ -155,7 +155,7 @@ final class InputTest {
 			final var axes = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
 			axes.put(VirtualAxis.X, 42);
 
-			final var input = new Input(mockMain, mockController, axes);
+			final var input = new Input(mockMainFrame, mockController, axes);
 
 			Assertions.assertSame(axes, input.getAxes());
 			Assertions.assertEquals(42, input.getAxes().get(VirtualAxis.X));
@@ -251,7 +251,7 @@ final class InputTest {
 		@Test
 		@DisplayName("returns false and does not set initialized when the selected controller fails to open")
 		void returnsFalseWhenSelectedControllerFailsToOpen() {
-			Mockito.when(mockMain.getControllers()).thenReturn(Set.of(mockController));
+			Mockito.when(mockMainFrame.getControllers()).thenReturn(Set.of(mockController));
 			Mockito.when(mockController.instanceId()).thenReturn(1);
 
 			final var input = createInput();
@@ -268,9 +268,9 @@ final class InputTest {
 		@DisplayName("throws IllegalStateException when called on an already-initialised Input")
 		void throwsWhenCalledWhileAlreadyInitialized() throws Exception {
 			final var input = createInput();
-			final var field = Input.class.getDeclaredField("initialized");
-			field.setAccessible(true);
-			field.set(input, true);
+			final var initializedField = Input.class.getDeclaredField("initialized");
+			initializedField.setAccessible(true);
+			initializedField.set(input, true);
 
 			Assertions.assertThrows(IllegalStateException.class, input::init);
 		}
@@ -289,10 +289,11 @@ final class InputTest {
 			input.setAxis(VirtualAxis.X, 1f, false, null, null, null);
 			input.moveAxis(VirtualAxis.X, 1f);
 
-			final var field = input.getClass().getDeclaredField("virtualAxisToTargetValueMap");
-			field.setAccessible(true);
+			final var virtualAxisToTargetValueMapField = input.getClass()
+					.getDeclaredField("virtualAxisToTargetValueMap");
+			virtualAxisToTargetValueMapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var targetMap = (Map<VirtualAxis, Integer>) field.get(input);
+			final var targetMap = (Map<VirtualAxis, Integer>) virtualAxisToTargetValueMapField.get(input);
 
 			Assertions.assertFalse(targetMap.containsKey(VirtualAxis.X));
 		}
@@ -303,10 +304,11 @@ final class InputTest {
 			// The axes start at 0; moving to 1f should enqueue a target
 			input.moveAxis(VirtualAxis.X, 1f);
 
-			final var field = input.getClass().getDeclaredField("virtualAxisToTargetValueMap");
-			field.setAccessible(true);
+			final var virtualAxisToTargetValueMapField = input.getClass()
+					.getDeclaredField("virtualAxisToTargetValueMap");
+			virtualAxisToTargetValueMapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var targetMap = (Map<VirtualAxis, Integer>) field.get(input);
+			final var targetMap = (Map<VirtualAxis, Integer>) virtualAxisToTargetValueMapField.get(input);
 
 			Assertions.assertTrue(targetMap.containsKey(VirtualAxis.X));
 			Assertions.assertEquals(32_767, targetMap.get(VirtualAxis.X));
@@ -408,10 +410,10 @@ final class InputTest {
 			final var activeMode = input.getProfile().getActiveMode();
 			input.suspendAxis(0, activeMode);
 
-			final var field = Input.class.getDeclaredField("axisToSuspensionInfoMap");
-			field.setAccessible(true);
+			final var axisToSuspensionInfoMapField = Input.class.getDeclaredField("axisToSuspensionInfoMap");
+			axisToSuspensionInfoMapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (Map<Integer, Object>) field.get(input);
+			final var map = (Map<Integer, Object>) axisToSuspensionInfoMapField.get(input);
 
 			final var suspensionInfo = map.get(0);
 			Assertions.assertNotNull(suspensionInfo);
@@ -445,9 +447,9 @@ final class InputTest {
 
 			// Wind lastPollNanoTime back by 100 ms to simulate elapsed time
 			final var rewindInterval = 100_000_000L;
-			final var field = Input.class.getDeclaredField("lastPollNanoTime");
-			field.setAccessible(true);
-			field.set(input, (long) field.get(input) - rewindInterval);
+			final var lastPollNanoTimeField = Input.class.getDeclaredField("lastPollNanoTime");
+			lastPollNanoTimeField.setAccessible(true);
+			lastPollNanoTimeField.set(input, (long) lastPollNanoTimeField.get(input) - rewindInterval);
 
 			input.poll(); // second call - should use elapsed time
 
@@ -480,9 +482,9 @@ final class InputTest {
 
 			input.reset();
 
-			final var field = Input.class.getDeclaredField("repeatModeActionWalk");
-			field.setAccessible(true);
-			Assertions.assertFalse((boolean) field.get(input));
+			final var repeatModeActionWalkField = Input.class.getDeclaredField("repeatModeActionWalk");
+			repeatModeActionWalkField.setAccessible(true);
+			Assertions.assertFalse((boolean) repeatModeActionWalkField.get(input));
 		}
 
 		@Test
@@ -491,9 +493,9 @@ final class InputTest {
 			final var input = createInput();
 			input.repeatModeActionWalk();
 
-			final var field = Input.class.getDeclaredField("repeatModeActionWalk");
-			field.setAccessible(true);
-			Assertions.assertTrue((boolean) field.get(input));
+			final var repeatModeActionWalkField = Input.class.getDeclaredField("repeatModeActionWalk");
+			repeatModeActionWalkField.setAccessible(true);
+			Assertions.assertTrue((boolean) repeatModeActionWalkField.get(input));
 		}
 	}
 
@@ -519,11 +521,10 @@ final class InputTest {
 		@Test
 		@DisplayName("clears the pending axis movement targets queued via moveAxis()")
 		void clearsPendingAxisMoveTargets() throws Exception {
-			// Inject a target directly so we don't need RunMode stubs
-			final var field = Input.class.getDeclaredField("virtualAxisToTargetValueMap");
-			field.setAccessible(true);
+			final var virtualAxisToTargetValueMapField = Input.class.getDeclaredField("virtualAxisToTargetValueMap");
+			virtualAxisToTargetValueMapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			final var map = (Map<VirtualAxis, Integer>) field.get(input);
+			final var map = (Map<VirtualAxis, Integer>) virtualAxisToTargetValueMapField.get(input);
 			map.put(VirtualAxis.X, 1000);
 
 			input.reset();
@@ -536,9 +537,9 @@ final class InputTest {
 		void resetsButtonsArray() throws Exception {
 			// Inject a non-null buttons array directly via reflection to avoid
 			// needing a RunMode stub just for this state-reset assertion
-			final var field = Input.class.getDeclaredField("buttons");
-			field.setAccessible(true);
-			field.set(input, new boolean[16]);
+			final var buttonsField = Input.class.getDeclaredField("buttons");
+			buttonsField.setAccessible(true);
+			buttonsField.set(input, new boolean[16]);
 			Assertions.assertNotNull(input.getButtons());
 
 			input.reset();
@@ -549,9 +550,9 @@ final class InputTest {
 		@Test
 		@DisplayName("resets initialized to false, allowing the instance to be init()-ed again")
 		void resetsInitialized() throws Exception {
-			final var field = Input.class.getDeclaredField("initialized");
-			field.setAccessible(true);
-			field.set(input, true);
+			final var initializedField = Input.class.getDeclaredField("initialized");
+			initializedField.setAccessible(true);
+			initializedField.set(input, true);
 			Assertions.assertTrue(input.isInitialized());
 
 			input.reset();
@@ -563,7 +564,7 @@ final class InputTest {
 		@DisplayName("resets skipAxisInitialization to false even when it was true")
 		void resetsSkipAxisInitialization() {
 			final var axes = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
-			final var inputWithAxes = new Input(mockMain, mockController, axes);
+			final var inputWithAxes = new Input(mockMainFrame, mockController, axes);
 			Assertions.assertTrue(inputWithAxes.isSkipAxisInitialization());
 
 			inputWithAxes.reset();
@@ -588,9 +589,9 @@ final class InputTest {
 			input.scheduleClearOnNextPoll();
 			input.reset();
 
-			final var field = Input.class.getDeclaredField("clearOnNextPoll");
-			field.setAccessible(true);
-			Assertions.assertFalse((boolean) field.get(input));
+			final var clearOnNextPollField = Input.class.getDeclaredField("clearOnNextPoll");
+			clearOnNextPollField.setAccessible(true);
+			Assertions.assertFalse((boolean) clearOnNextPollField.get(input));
 		}
 
 		@Test
@@ -599,9 +600,9 @@ final class InputTest {
 			final var input = createInput();
 			input.scheduleClearOnNextPoll();
 
-			final var field = Input.class.getDeclaredField("clearOnNextPoll");
-			field.setAccessible(true);
-			Assertions.assertTrue((boolean) field.get(input));
+			final var clearOnNextPollField = Input.class.getDeclaredField("clearOnNextPoll");
+			clearOnNextPollField.setAccessible(true);
+			Assertions.assertTrue((boolean) clearOnNextPollField.get(input));
 		}
 	}
 
@@ -628,9 +629,9 @@ final class InputTest {
 
 			input.setAxis(VirtualAxis.X, 1f, false, -1f, 1f, null); // hapticFeedback=false
 
-			final var field = Input.class.getDeclaredField("scheduledRumbleEffect");
-			field.setAccessible(true);
-			Assertions.assertNull(field.get(input));
+			final var scheduledRumbleEffectField = Input.class.getDeclaredField("scheduledRumbleEffect");
+			scheduledRumbleEffectField.setAccessible(true);
+			Assertions.assertNull(scheduledRumbleEffectField.get(input));
 		}
 
 		@Test
@@ -650,9 +651,9 @@ final class InputTest {
 
 			input.setAxis(VirtualAxis.X, -0.5f, true, -1f, 1f, 0f); // cross detent at 0f
 
-			final var field = Input.class.getDeclaredField("scheduledRumbleEffect");
-			field.setAccessible(true);
-			Assertions.assertEquals("LIGHT", field.get(input).toString());
+			final var scheduledRumbleEffectField = Input.class.getDeclaredField("scheduledRumbleEffect");
+			scheduledRumbleEffectField.setAccessible(true);
+			Assertions.assertEquals("LIGHT", scheduledRumbleEffectField.get(input).toString());
 		}
 
 		@Test
@@ -662,9 +663,9 @@ final class InputTest {
 
 			input.setAxis(VirtualAxis.X, 0.5f, true, -1f, 1f, 0f); // cross detent at 0f
 
-			final var field = Input.class.getDeclaredField("scheduledRumbleEffect");
-			field.setAccessible(true);
-			Assertions.assertEquals("LIGHT", field.get(input).toString());
+			final var scheduledRumbleEffectField = Input.class.getDeclaredField("scheduledRumbleEffect");
+			scheduledRumbleEffectField.setAccessible(true);
+			Assertions.assertEquals("LIGHT", scheduledRumbleEffectField.get(input).toString());
 		}
 
 		@Test
@@ -674,9 +675,9 @@ final class InputTest {
 
 			input.setAxis(VirtualAxis.X, 1f, true, -1f, 1f, null); // move to maxValue
 
-			final var field = Input.class.getDeclaredField("scheduledRumbleEffect");
-			field.setAccessible(true);
-			Assertions.assertEquals("STRONG", field.get(input).toString());
+			final var scheduledRumbleEffectField = Input.class.getDeclaredField("scheduledRumbleEffect");
+			scheduledRumbleEffectField.setAccessible(true);
+			Assertions.assertEquals("STRONG", scheduledRumbleEffectField.get(input).toString());
 		}
 
 		@Test
@@ -686,9 +687,9 @@ final class InputTest {
 
 			input.setAxis(VirtualAxis.X, -1f, true, -1f, 1f, null); // move to minValue
 
-			final var field = Input.class.getDeclaredField("scheduledRumbleEffect");
-			field.setAccessible(true);
-			Assertions.assertEquals("STRONG", field.get(input).toString());
+			final var scheduledRumbleEffectField = Input.class.getDeclaredField("scheduledRumbleEffect");
+			scheduledRumbleEffectField.setAccessible(true);
+			Assertions.assertEquals("STRONG", scheduledRumbleEffectField.get(input).toString());
 		}
 
 		@BeforeEach

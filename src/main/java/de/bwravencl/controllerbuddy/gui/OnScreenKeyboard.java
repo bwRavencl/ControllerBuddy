@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -50,7 +51,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
@@ -63,8 +63,7 @@ import javax.swing.border.Border;
 /// The keyboard is navigable via gamepad input and supports key press, release,
 /// hold, and lock operations. It renders a standard QWERTY layout with function
 /// keys, numpad, and modifier keys.
-@SuppressWarnings("exports")
-public final class OnScreenKeyboard extends JFrame {
+public final class OnScreenKeyboard extends OverlayFrame {
 
 	/// The mode associated with the on-screen keyboard.
 	public static final Mode onScreenKeyboardMode;
@@ -109,7 +108,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Main main;
+	private final MainFrame mainFrame;
 
 	/// The right Shift key button on this keyboard.
 	private final ShiftKeyboardButton rightShiftKeyboardButton;
@@ -123,14 +122,11 @@ public final class OnScreenKeyboard extends JFrame {
 	/// Row index of the currently selected keyboard button.
 	private volatile int selectedRow;
 
-	/// Flag that tracks if the `STEAM_GAME` Xlib window property has been added
-	private boolean steamGameX11WindowPropertyAdded;
-
 	/// Constructs an [OnScreenKeyboard] and lays out all key rows.
 	///
-	/// @param main the main application instance
-	OnScreenKeyboard(final Main main) {
-		this.main = main;
+	/// @param mainFrame the main frame instance
+	OnScreenKeyboard(final MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 
 		capsLockKeyButton = new CapsLockKeyButton();
 
@@ -214,7 +210,7 @@ public final class OnScreenKeyboard extends JFrame {
 		selectedRow = keyboardButtons.length / 2;
 		selectedColumn = keyboardButtons[selectedRow].length / 2;
 
-		frameDragListener = new FrameDragListener(main, this);
+		frameDragListener = new FrameDragListener(mainFrame, this);
 
 		rootPane.setWindowDecorationStyle(JRootPane.NONE);
 		setUndecorated(true);
@@ -222,8 +218,8 @@ public final class OnScreenKeyboard extends JFrame {
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(Window.Type.POPUP);
 		setFocusableWindowState(false);
-		setBackground(Main.TRANSPARENT);
-		rootPane.setBackground(Main.TRANSPARENT);
+		setBackground(MainFrame.TRANSPARENT);
+		rootPane.setBackground(MainFrame.TRANSPARENT);
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -232,7 +228,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		final var parentPanel = new JPanel();
 		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
-		parentPanel.setBackground(Main.TRANSPARENT);
+		parentPanel.setBackground(MainFrame.TRANSPARENT);
 
 		for (var row = 0; row < keyboardButtons.length; row++) {
 			final var flowLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
@@ -414,7 +410,7 @@ public final class OnScreenKeyboard extends JFrame {
 	/// input state.
 	///
 	/// @param input the input instance
-	public void poll(@SuppressWarnings("exports") final Input input) {
+	public void poll(final Input input) {
 		synchronized (keyboardButtons) {
 			if (anyChanges) {
 				anyChanges = false;
@@ -481,10 +477,6 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 
 			repaint();
-
-			if (Main.IS_X11_TOOLKIT && !steamGameX11WindowPropertyAdded) {
-				steamGameX11WindowPropertyAdded = GuiUtils.addSteamGameX11WindowProperty(this);
-			}
 		});
 	}
 
@@ -509,14 +501,14 @@ public final class OnScreenKeyboard extends JFrame {
 		defaultLocation.x = (int) maximumWindowBounds.getMaxX() / 2 - getWidth() / 2;
 		defaultLocation.y = (int) maximumWindowBounds.getMaxY() - getHeight();
 
-		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
-		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, totalDisplayBounds);
+		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(mainFrame);
+		GuiUtils.loadFrameLocation(this, defaultLocation, totalDisplayBounds);
 	}
 
 	/// Updates button sizes and font sizes to match the current overlay scaling
 	/// factor, then repacks and repositions the window.
 	private void updateScaling() {
-		final var overlayScaling = main.getOverlayScaling();
+		final var overlayScaling = mainFrame.getOverlayScaling();
 		final var buttonSideLength = Math.round(AbstractKeyboardButton.BASE_BUTTON_SIZE * overlayScaling);
 		final var buttonPreferredSize = new Dimension(buttonSideLength, buttonSideLength);
 
@@ -743,7 +735,7 @@ public final class OnScreenKeyboard extends JFrame {
 			defaultButtonBorder = UIManager.getBorder("Button.border");
 			focusedButtonBorder = BorderFactory.createCompoundBorder(defaultButtonBorder,
 					BorderFactory.createLineBorder(Color.RED,
-							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling())));
+							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * mainFrame.getOverlayScaling())));
 
 			// noinspection ConstantValue
 			if (keyboardButtons != null && equals(getSelectedButton())) {

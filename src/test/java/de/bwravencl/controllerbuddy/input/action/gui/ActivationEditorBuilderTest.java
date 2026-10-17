@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;

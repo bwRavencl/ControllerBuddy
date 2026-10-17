@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import com.formdev.flatlaf.ui.FlatRoundBorder;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -59,7 +59,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		super.buildEditor(parentPanel);
 		Objects.requireNonNull(spinner, "Field spinner must not be null");
 
-		parentPanel.add(Box.createHorizontalStrut(Main.DEFAULT_HGAP));
+		parentPanel.add(Box.createHorizontalStrut(MainFrame.DEFAULT_HGAP));
 
 		final var powerFunctionPlotter = new PowerFunctionPlotter((float) initialValue);
 		parentPanel.add(powerFunctionPlotter);

@@ -30,11 +30,18 @@ import java.lang.invoke.VarHandle;
 /// Provides Java bindings to Linux system calls and uinput ioctl constants via
 /// the Foreign Function & Memory API.
 ///
-/// This class exposes native `open`, `close`, `write`, and `ioctl` operations,
-/// as well as memory layout definitions for uinput data structures used to
-/// create and manage virtual input devices.
+/// This class exposes native `open`, `close`, `write`, `ioctl`, `ftruncate`,
+/// `memfd_create`, `mmap` and `munmap` operations, as well as memory layout
+/// definitions for uinput data structures used to create and manage virtual
+/// input devices.
 @SuppressWarnings({ "restricted", "SameParameterValue" })
 public final class Linux {
+
+	/// Linux `MAP_SHARED` flag for a mapping that is shared with other processes.
+	public static final int MAP_SHARED = 0x01;
+
+	/// Linux `MFD_CLOEXEC` flag that closes the file descriptor on `exec`.
+	public static final int MFD_CLOEXEC = 0x0001;
 
 	/// Linux `O_NONBLOCK` flag for non-blocking I/O.
 	@SuppressWarnings("OctalInteger")
@@ -42,6 +49,12 @@ public final class Linux {
 
 	/// Linux `O_WRONLY` flag for write-only access.
 	public static final int O_WRONLY = 1;
+
+	/// Linux `PROT_READ` flag for readable memory pages.
+	public static final int PROT_READ = 0x1;
+
+	/// Linux `PROT_WRITE` flag for writable memory pages.
+	public static final int PROT_WRITE = 0x2;
 
 	/// Maximum length of a uinput device name.
 	public static final int UINPUT_MAX_NAME_SIZE = 80;
@@ -59,8 +72,20 @@ public final class Linux {
 	/// Linker option that captures the `errno` value after each native call.
 	private static final Linker.Option ERRNO_CAPTURE_CALL_STATE = Linker.Option.captureCallState(ERRNO_NAME);
 
+	/// Method handle for the native `ftruncate` function.
+	private static final MethodHandle FTRUNCATE_METHOD_HANDLE;
+
 	/// Method handle for the native `ioctl` function with errno capture.
 	private static final MethodHandle IOCTL_METHOD_HANDLE;
+
+	/// Method handle for the native `memfd_create` function.
+	private static final MethodHandle MEMFD_CREATE_METHOD_HANDLE;
+
+	/// Method handle for the native `mmap` function.
+	private static final MethodHandle MMAP_METHOD_HANDLE;
+
+	/// Method handle for the native `munmap` function.
+	private static final MethodHandle MUNMAP_METHOD_HANDLE;
 
 	/// Method handle for the native `open` function.
 	private static final MethodHandle OPEN_METHOD_HANDLE;
@@ -125,10 +150,27 @@ public final class Linux {
 		CLOSE_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("close"),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), Linker.Option.critical(false));
 
+		FTRUNCATE_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("ftruncate"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG),
+				Linker.Option.critical(false));
+
 		IOCTL_METHOD_HANDLE = linker.downcallHandle(
 				symbolLookup.findOrThrow("ioctl"), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
 						ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
 				ERRNO_CAPTURE_CALL_STATE, Linker.Option.firstVariadicArg(2));
+
+		MEMFD_CREATE_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("memfd_create"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
+				Linker.Option.critical(false));
+
+		MMAP_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("mmap"),
+				FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG,
+						ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG),
+				Linker.Option.critical(false));
+
+		MUNMAP_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("munmap"),
+				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG),
+				Linker.Option.critical(false));
 
 		OPEN_METHOD_HANDLE = linker.downcallHandle(symbolLookup.findOrThrow("open"),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
@@ -205,6 +247,20 @@ public final class Linux {
 		}
 	}
 
+	/// Truncates or extends the file referred to by a file descriptor to the given
+	/// length.
+	///
+	/// @param fd the file descriptor
+	/// @param length the new length in bytes
+	/// @return zero on success, or `-1` on error
+	public static int ftruncate(final int fd, final long length) {
+		try {
+			return (int) FTRUNCATE_METHOD_HANDLE.invokeExact(fd, length);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
 	/// Extracts the `errno` value from a captured call state segment.
 	///
 	/// @param errorState the memory segment containing the captured errno state
@@ -223,6 +279,54 @@ public final class Linux {
 	public static int ioctl(final int fd, final long request, final MemorySegment argp, final MemorySegment errno) {
 		try {
 			return (int) IOCTL_METHOD_HANDLE.invoke(errno, fd, request, argp);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	/// Creates an anonymous file that lives in memory.
+	///
+	/// @param name the null-terminated name of the file as a memory segment, used
+	/// for debugging only
+	/// @param flags the creation flags (e.g., [#MFD_CLOEXEC])
+	/// @return a non-negative file descriptor on success, or `-1` on error
+	public static int memfd_create(final MemorySegment name, final int flags) {
+		try {
+			return (int) MEMFD_CREATE_METHOD_HANDLE.invokeExact(name, flags);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	/// Maps a file into memory.
+	///
+	/// @param addr the preferred address of the mapping, or `NULL` to let the
+	/// kernel choose
+	/// @param length the length of the mapping in bytes
+	/// @param prot the memory protection flags (e.g., [#PROT_READ], [#PROT_WRITE])
+	/// @param flags the mapping flags (e.g., [#MAP_SHARED])
+	/// @param fd the file descriptor of the file to map
+	/// @param offset the offset in the file
+	/// @return the mapped memory as a zero-length memory segment, or a segment
+	/// with address `-1` (`MAP_FAILED`) on error
+	public static MemorySegment mmap(final MemorySegment addr, final long length, final int prot, final int flags,
+			final int fd, final long offset) {
+		try {
+			return (MemorySegment) MMAP_METHOD_HANDLE.invokeExact(addr, length, prot, flags, fd, offset);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	/// Removes a memory mapping.
+	///
+	/// @param addr the start of the mapping
+	/// @param length the length of the mapping in bytes
+	/// @return zero on success, or `-1` on error
+	@SuppressWarnings("UnusedReturnValue")
+	public static int munmap(final MemorySegment addr, final long length) {
+		try {
+			return (int) MUNMAP_METHOD_HANDLE.invokeExact(addr, length);
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}

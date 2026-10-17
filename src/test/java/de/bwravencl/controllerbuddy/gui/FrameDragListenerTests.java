@@ -38,7 +38,7 @@ final class FrameDragListenerTests {
 	JFrame mockFrame;
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	private FrameDragListener listener;
 
@@ -59,6 +59,6 @@ final class FrameDragListenerTests {
 
 	@BeforeEach
 	void setUp() {
-		listener = new FrameDragListener(mockMain, mockFrame);
+		listener = new FrameDragListener(mockMainFrame, mockFrame);
 	}
 }

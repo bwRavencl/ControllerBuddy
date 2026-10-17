@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import java.io.IOException;
@@ -42,9 +42,9 @@ public final class LocalRunMode extends OutputRunMode {
 
 	/// Constructs a [LocalRunMode].
 	///
-	/// @param main the main application instance
-	public LocalRunMode(final Main main) {
-		super(main);
+	/// @param mainFrame the main frame instance
+	public LocalRunMode(final MainFrame mainFrame) {
+		super(mainFrame);
 	}
 
 	@Override

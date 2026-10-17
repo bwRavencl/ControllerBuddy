@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// Represents a controller component (axis or button) with stick-swapping
@@ -27,17 +27,17 @@ import org.lwjgl.sdl.SDLGamepad;
 /// transparently remaps left-stick and right-stick indices so that actions
 /// follow the swap.
 ///
-/// @param main the main application instance used to check stick-swapping state
+/// @param mainFrame the main frame instance
 /// @param type the type of component (axis or button)
 /// @param index the SDL gamepad component index
-public record ControllerComponent(Main main, ControllerComponentType type, int index) {
+public record ControllerComponent(MainFrame mainFrame, ControllerComponentType type, int index) {
 
 	/// Returns the component index, swapping left and right sticks if enabled.
 	///
 	/// @return the component index, potentially swapped
 	@Override
 	public int index() {
-		if (main.isSwapLeftAndRightSticks()) {
+		if (mainFrame.isSwapLeftAndRightSticks()) {
 			return switch (type) {
 			case AXIS -> switch (index) {
 			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX;

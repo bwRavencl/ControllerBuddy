@@ -50,13 +50,13 @@ base { archivesName = application.applicationName.lowercase() }
 
 application {
   mainModule = "de.bwravencl.controllerbuddy"
-  mainClass = "de.bwravencl.controllerbuddy.gui.Main"
+  mainClass = "de.bwravencl.controllerbuddy.Main"
 }
 
 val javaToolchainSpec =
     Action<JavaToolchainSpec> {
-      languageVersion.set(JavaLanguageVersion.of(27))
-      vendor.set(JvmVendorSpec.AZUL)
+      languageVersion.set(JavaLanguageVersion.of(25))
+      @Suppress("UnstableApiUsage") vendor.set(JvmVendorSpec.JETBRAINS)
     }
 
 val javaHome: Provider<Directory> =
@@ -70,21 +70,31 @@ val constantsFile =
 
 val resourcesDir = "$projectDir/src/main/resources"
 val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
+val applicationDir = "${project.name}${if (os.isMacOsX) ".app" else ""}"
+val runtimeDir =
+    project.name +
+        when {
+          os.isWindows -> "/runtime"
+          os.isMacOsX -> ".app/Contents/runtime"
+          os.isLinux -> "/lib/runtime"
+          else -> throw GradleException("Unsupported operating system ${os.displayName}")
+        }
+val fontsDir = "$runtimeDir${if (os.isMacOsX) "/Contents/Home" else ""}/lib/fonts"
 
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
     listOf(
+        "-XX:+UseCompactObjectHeaders",
         "-XX:TieredStopAtLevel=1",
         "-XX:ReservedCodeCacheSize=32m",
     )
 val runJvmArgs =
     commonJvmArgs +
         listOf(
-            "-Xms24m",
-            "-Xmx64m",
+            "-Xms32m",
+            "-Xmx96m",
             "--add-exports=java.base/jdk.internal.misc=org.lwjgl",
             "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
-            "--illegal-final-field-mutation=deny",
         )
 val windowsJvmArgs =
     listOf(
@@ -95,6 +105,7 @@ val linuxJvmArgs =
     listOf(
         "--add-opens=java.desktop/java.awt=$mainModule",
         "--add-opens=java.desktop/sun.awt=$mainModule",
+        "--add-opens=java.desktop/sun.awt.wl=$mainModule",
         "--add-opens=java.desktop/sun.awt.X11=$mainModule",
     )
 
@@ -594,8 +605,9 @@ tasks.register("generateModuleInfo") {
         @SuppressWarnings("Java9RedundantRequiresStatement")
         @NullMarked
         module de.bwravencl.controllerbuddy {
-        	exports de.bwravencl.controllerbuddy.gui;
+        	exports de.bwravencl.controllerbuddy;
 
+        	opens de.bwravencl.controllerbuddy.gui to com.google.gson;
         	opens de.bwravencl.controllerbuddy.input to com.google.gson;
         	opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
 
@@ -606,6 +618,7 @@ tasks.register("generateModuleInfo") {
         	requires transitive java.desktop;
         	requires java.logging;
         	requires java.prefs;
+        	requires jdk.unsupported.desktop;
         	requires org.apache.commons.cli;
         	requires org.freedesktop.dbus;
         	requires org.freedesktop.dbus.transport.jre;
@@ -964,7 +977,6 @@ tasks.named<Test>("test") {
   jvmArgs(commonJvmArgs)
   jvmArgs("--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED")
   jvmArgs("--enable-native-access=ALL-UNNAMED")
-  jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
 
   systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
@@ -1038,9 +1050,9 @@ tasks.register("customizeLoggingProperties") {
           .get()
           .dir(
               when {
-                os.isWindows -> "${project.name}/runtime/conf"
-                os.isMacOsX -> "${project.name}.app/Contents/runtime/Contents/Home/conf"
-                os.isLinux -> "${project.name}/lib/runtime/conf"
+                os.isWindows -> "$runtimeDir/conf"
+                os.isMacOsX -> "$runtimeDir/Contents/Home/conf"
+                os.isLinux -> "$runtimeDir/conf"
                 else -> throw GradleException("Unsupported operating system ${os.displayName}")
               }
           )
@@ -1079,7 +1091,8 @@ tasks.named<Tar>("distTar") {
   dependsOn("customizeLoggingProperties")
 
   from(tmpDir)
-  include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
+  include("$applicationDir/**")
+  exclude(fontsDir)
 
   archiveAppendix = distAppendix
   compression = Compression.GZIP
@@ -1091,7 +1104,8 @@ tasks.named<Zip>("distZip") {
   dependsOn("customizeLoggingProperties")
 
   from(tmpDir)
-  include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
+  include("$applicationDir/**")
+  exclude(fontsDir)
 
   archiveAppendix = distAppendix
   isPreserveFileTimestamps = true
@@ -1103,5 +1117,6 @@ tasks.named<Sync>("installDist") {
 
   from(tmpDir)
   into(layout.buildDirectory.dir("install"))
-  include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
+  include("$applicationDir/**")
+  exclude(fontsDir)
 }

@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatButtonUI;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.input.ControllerComponent;
 import de.bwravencl.controllerbuddy.input.ControllerComponent.ControllerComponentType;
 import java.awt.BasicStroke;
@@ -89,8 +90,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 		final var textureImage = new BufferedImage(TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
 		final var g2d = textureImage.createGraphics();
 
-		final var backgroundColor = new Color(Main.LIGHT_BLUE_COLOR.getRed(), Main.LIGHT_BLUE_COLOR.getGreen(),
-				Main.LIGHT_BLUE_COLOR.getBlue(), 128);
+		final var backgroundColor = new Color(MainFrame.LIGHT_BLUE_COLOR.getRed(),
+				MainFrame.LIGHT_BLUE_COLOR.getGreen(), MainFrame.LIGHT_BLUE_COLOR.getBlue(), 128);
 		g2d.setColor(backgroundColor);
 		g2d.fillRect(0, 0, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE);
 
@@ -112,14 +113,14 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Main main;
+	private final MainFrame mainFrame;
 
 	/// Creates an [AssignmentsScrollPane] with buttons arranged in a grid to
 	/// resemble a gamepad layout.
 	///
-	/// @param main the main application instance
-	AssignmentsScrollPane(final Main main) {
-		this.main = main;
+	/// @param mainFrame the main frame instance
+	AssignmentsScrollPane(final MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 
 		assignmentsPanel.setLayout(new GridBagLayout());
 		assignmentsPanel.setOpaque(false);
@@ -131,77 +132,80 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createComponentButton(Main.strings.getString("LEFT_TRIGGER"),
-				new ControllerComponent(main, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER)),
-				constraints);
+		assignmentsPanel
+				.add(createComponentButton(Main.strings.getString("LEFT_TRIGGER"), new ControllerComponent(mainFrame,
+						ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createComponentButton(Main.strings.getString("RIGHT_TRIGGER"),
-				new ControllerComponent(main, ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)),
-				constraints);
+		assignmentsPanel
+				.add(createComponentButton(Main.strings.getString("RIGHT_TRIGGER"), new ControllerComponent(mainFrame,
+						ControllerComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		assignmentsPanel
-				.add(createComponentButton(Main.strings.getString("LEFT_SHOULDER"), new ControllerComponent(main,
+				.add(createComponentButton(Main.strings.getString("LEFT_SHOULDER"), new ControllerComponent(mainFrame,
 						ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER)), constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(Main.strings.getString("GUIDE_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)),
-				constraints);
+		assignmentsPanel
+				.add(createComponentButton(Main.strings.getString("GUIDE_BUTTON"), new ControllerComponent(mainFrame,
+						ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
 		assignmentsPanel
-				.add(createComponentButton(Main.strings.getString("RIGHT_SHOULDER"), new ControllerComponent(main,
+				.add(createComponentButton(Main.strings.getString("RIGHT_SHOULDER"), new ControllerComponent(mainFrame,
 						ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		assignmentsPanel.add(new Stick(main, Stick.StickType.LEFT), constraints);
+		assignmentsPanel.add(new Stick(mainFrame, Stick.StickType.LEFT), constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
 		assignmentsPanel.add(createComponentButton(Main.strings.getString("BACK_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK)),
+				new ControllerComponent(mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK)),
 				constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(Main.strings.getString("START_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_START)),
-				constraints);
+		assignmentsPanel
+				.add(createComponentButton(Main.strings.getString("START_BUTTON"), new ControllerComponent(mainFrame,
+						ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 2;
 		assignmentsPanel.add(new FourWay(this, Main.strings.getString("Y_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH),
+				new ControllerComponent(mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH),
 				Main.strings.getString("X_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_WEST),
+				new ControllerComponent(mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_WEST),
 				Main.strings.getString("B_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_EAST),
-				Main.strings.getString("A_BUTTON"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH)),
+				new ControllerComponent(mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_EAST),
+				Main.strings.getString("A_BUTTON"), new ControllerComponent(mainFrame, ControllerComponentType.BUTTON,
+						SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH)),
 				constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		assignmentsPanel.add(new FourWay(this, Main.strings.getString("DPAD_UP"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP),
+				new ControllerComponent(
+						mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP),
 				Main.strings.getString("DPAD_LEFT"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT),
+				new ControllerComponent(
+						mainFrame, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT),
 				Main.strings.getString("DPAD_RIGHT"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT),
-				Main.strings.getString("DPAD_DOWN"),
-				new ControllerComponent(main, ControllerComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN)),
+				new ControllerComponent(mainFrame, ControllerComponentType.BUTTON,
+						SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT),
+				Main.strings.getString("DPAD_DOWN"), new ControllerComponent(mainFrame, ControllerComponentType.BUTTON,
+						SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN)),
 				constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 3;
-		assignmentsPanel.add(new Stick(main, Stick.StickType.RIGHT), constraints);
+		assignmentsPanel.add(new Stick(mainFrame, Stick.StickType.RIGHT), constraints);
 
 		final var centeringPanel = new JPanel(new GridBagLayout()) {
 
@@ -237,7 +241,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 					path.closePath();
 
 					g2d.setStroke(CONTROLLER_STROKE);
-					g2d.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
+					g2d.setColor(mainFrame.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
 					g2d.draw(path);
 
 					g2d.setPaint(controllerTexture);
@@ -279,7 +283,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_BACK
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_START
 						|| controllerComponent.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)) {
-			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent), false) {
+			button = new AssignmentsButton(mainFrame, new EditComponentAction(mainFrame, name, controllerComponent),
+					false) {
 
 				@Serial
 				private static final long serialVersionUID = 8467379031897370934L;
@@ -367,7 +372,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 				}
 			};
 		} else {
-			button = new AssignmentsButton(main, new EditComponentAction(main, name, controllerComponent), true);
+			button = new AssignmentsButton(mainFrame, new EditComponentAction(mainFrame, name, controllerComponent),
+					true);
 		}
 
 		final Dimension dimension;
@@ -420,7 +426,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// The main application instance.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final Main main;
+		private final MainFrame mainFrame;
 
 		/// Whether the button has square corners.
 		private final boolean square;
@@ -458,20 +464,20 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// Constructs an [AssignmentsButton] with no associated action.
 		///
-		/// @param main the main application instance
-		private AssignmentsButton(final Main main) {
-			this.main = main;
+		/// @param mainFrame the main frame instance
+		private AssignmentsButton(final MainFrame mainFrame) {
+			this.mainFrame = mainFrame;
 			square = false;
 			super();
 		}
 
 		/// Constructs an [AssignmentsButton] with the given action.
 		///
-		/// @param main the main application instance
+		/// @param mainFrame the main frame instance
 		/// @param action the action to associate with this button
 		/// @param square `true` to make the button square, `false` for round corners
-		private AssignmentsButton(final Main main, final Action action, final boolean square) {
-			this.main = main;
+		private AssignmentsButton(final MainFrame mainFrame, final Action action, final boolean square) {
+			this.mainFrame = mainFrame;
 			this.square = square;
 			super(action);
 
@@ -624,9 +630,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 			disabledBorderColor = UIManager.getColor("Button.disabledBorderColor");
 			disabledText = UIManager.getColor("Button.disabledText");
 
-			focusedBorderColor = Main.LIGHT_BLUE_COLOR.brighter();
+			focusedBorderColor = MainFrame.LIGHT_BLUE_COLOR.brighter();
 
-			if (main.isDarkLookAndFeel()) {
+			if (mainFrame.isDarkLookAndFeel()) {
 				borderColor = Color.LIGHT_GRAY;
 				hoverBorderColor = Color.WHITE;
 			} else {
@@ -686,20 +692,20 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// Constructs a center [CompoundButton] for the stick-press component.
 		///
-		/// @param main the main application instance
+		/// @param mainFrame the main frame instance
 		/// @param parentPanel the parent panel whose preferred size governs this
 		/// button's preferred size
 		/// @param controllerComponent the controller component this button represents
-		private CompoundButton(final Main main, final JPanel parentPanel,
+		private CompoundButton(final MainFrame mainFrame, final JPanel parentPanel,
 				final ControllerComponent controllerComponent) {
-			this(main, parentPanel, controllerComponent, CompoundButtonLocation.CENTER, null);
+			this(mainFrame, parentPanel, controllerComponent, CompoundButtonLocation.CENTER, null);
 		}
 
 		/// Constructs a [CompoundButton] at the specified location, optionally sharing
 		/// its button model with a peer button representing the opposite end of
 		/// the same axis.
 		///
-		/// @param main the main application instance
+		/// @param mainFrame the main frame instance
 		/// @param parentPanel the parent panel whose preferred size governs this
 		/// button's preferred size
 		/// @param controllerComponent the controller component this button represents
@@ -707,9 +713,10 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// stick control
 		/// @param peer the opposing axis button that shares this button's model or
 		/// `null` if there is no peer
-		private CompoundButton(final Main main, final JPanel parentPanel, final ControllerComponent controllerComponent,
-				final CompoundButtonLocation buttonLocation, final @Nullable CompoundButton peer) {
-			super(main);
+		private CompoundButton(final MainFrame mainFrame, final JPanel parentPanel,
+				final ControllerComponent controllerComponent, final CompoundButtonLocation buttonLocation,
+				final @Nullable CompoundButton peer) {
+			super(mainFrame);
 
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
@@ -726,12 +733,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			final var componentType = controllerComponent.type();
 			final var componentIndex = controllerComponent.index();
-			final var swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
+			final var swapLeftAndRightSticks = mainFrame.isSwapLeftAndRightSticks();
 
 			if (componentType == ControllerComponentType.BUTTON) {
 				switch (componentIndex) {
 				case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> {
-					setAction(new EditComponentAction(main,
+					setAction(new EditComponentAction(mainFrame,
 							Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK"),
 							controllerComponent));
 
@@ -740,7 +747,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 					swapTextPossible = true;
 				}
 				case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> {
-					setAction(new EditComponentAction(main,
+					setAction(new EditComponentAction(mainFrame,
 							Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK"),
 							controllerComponent));
 					text = Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
@@ -751,16 +758,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 				}
 			} else {
 				switch (componentIndex) {
-				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> setAction(new EditComponentAction(main,
+				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> setAction(new EditComponentAction(mainFrame,
 						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
 						controllerComponent));
-				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> setAction(new EditComponentAction(main,
+				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> setAction(new EditComponentAction(mainFrame,
 						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_Y_AXIS" : "LEFT_STICK_Y_AXIS"),
 						controllerComponent));
-				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> setAction(new EditComponentAction(main,
+				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> setAction(new EditComponentAction(mainFrame,
 						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_X_AXIS" : "RIGHT_STICK_X_AXIS"),
 						controllerComponent));
-				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> setAction(new EditComponentAction(main,
+				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> setAction(new EditComponentAction(mainFrame,
 						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_Y_AXIS" : "RIGHT_STICK_Y_AXIS"),
 						controllerComponent));
 				default -> throw buildInvalidComponentIndexException(componentType, componentIndex);
@@ -812,9 +819,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 						final var textRect = getTextRectangle(text, g2d, x, y, 0);
 						paintText(g, textRect, text);
 
-						if (swapTextPossible && main.isSwapLeftAndRightSticks()) {
-							final var swappedTextRect = getTextRectangle(Main.SWAPPED_SYMBOL, g2d, x, y, 1);
-							paintText(g, swappedTextRect, Main.SWAPPED_SYMBOL);
+						if (swapTextPossible && mainFrame.isSwapLeftAndRightSticks()) {
+							final var swappedTextRect = getTextRectangle(MainFrame.SWAPPED_SYMBOL, g2d, x, y, 1);
+							paintText(g, swappedTextRect, MainFrame.SWAPPED_SYMBOL);
 						}
 					}
 					case EAST -> {
@@ -997,7 +1004,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// The main application instance.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final Main main;
+		private final MainFrame mainFrame;
 
 		/// The localized display name of the component.
 		private final String name;
@@ -1005,11 +1012,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// Constructs an [EditComponentAction] that will open the assignment editor for
 		/// the given component.
 		///
-		/// @param main the main application instance
+		/// @param mainFrame the main frame instance
 		/// @param name the localized display name of the component
 		/// @param controllerComponent the controller component to edit
-		private EditComponentAction(final Main main, final String name, final ControllerComponent controllerComponent) {
-			this.main = main;
+		private EditComponentAction(final MainFrame mainFrame, final String name,
+				final ControllerComponent controllerComponent) {
+			this.mainFrame = mainFrame;
 			this.name = name;
 			this.controllerComponent = controllerComponent;
 
@@ -1020,7 +1028,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var editComponentDialog = new EditActionsDialog(main, controllerComponent, name);
+			final var editComponentDialog = new EditActionsDialog(mainFrame, controllerComponent, name);
 			editComponentDialog.setVisible(true);
 		}
 
@@ -1113,9 +1121,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// Constructs a [Stick] for the given stick type, adding compound buttons for
 		/// the stick press and the four axis directions.
 		///
-		/// @param main the main application instance
+		/// @param mainFrame the main frame instance
 		/// @param type whether this panel represents the left or right stick
-		private Stick(final Main main, final StickType type) {
+		private Stick(final MainFrame mainFrame, final StickType type) {
 			final var preferredSize = new Dimension(171, 171);
 			setPreferredSize(preferredSize);
 
@@ -1124,23 +1132,23 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			final var left = type == StickType.LEFT;
 
-			add(new CompoundButton(main, this, new ControllerComponent(main, ControllerComponentType.BUTTON,
+			add(new CompoundButton(mainFrame, this, new ControllerComponent(mainFrame, ControllerComponentType.BUTTON,
 					left ? SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK : SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK)));
 
-			final var xControllerComponent = new ControllerComponent(main, ControllerComponentType.AXIS,
+			final var xControllerComponent = new ControllerComponent(mainFrame, ControllerComponentType.AXIS,
 					left ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX : SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX);
-			final var yControllerComponent = new ControllerComponent(main, ControllerComponentType.AXIS,
+			final var yControllerComponent = new ControllerComponent(mainFrame, ControllerComponentType.AXIS,
 					left ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY : SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
 
-			final var northernButton = new CompoundButton(main, this, yControllerComponent,
+			final var northernButton = new CompoundButton(mainFrame, this, yControllerComponent,
 					CompoundButton.CompoundButtonLocation.NORTH, null);
 			add(northernButton);
-			final var westernButton = new CompoundButton(main, this, xControllerComponent,
+			final var westernButton = new CompoundButton(mainFrame, this, xControllerComponent,
 					CompoundButton.CompoundButtonLocation.WEST, null);
 			add(westernButton);
-			add(new CompoundButton(main, this, xControllerComponent, CompoundButton.CompoundButtonLocation.EAST,
+			add(new CompoundButton(mainFrame, this, xControllerComponent, CompoundButton.CompoundButtonLocation.EAST,
 					westernButton));
-			add(new CompoundButton(main, this, yControllerComponent, CompoundButton.CompoundButtonLocation.SOUTH,
+			add(new CompoundButton(mainFrame, this, yControllerComponent, CompoundButton.CompoundButtonLocation.SOUTH,
 					northernButton));
 		}
 

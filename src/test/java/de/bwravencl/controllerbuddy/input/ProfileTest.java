@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -48,7 +48,7 @@ final class ProfileTest {
 	Input mockInput;
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	private Profile createProfile() {
 		return new Profile();
@@ -245,7 +245,7 @@ final class ProfileTest {
 			Profile.defaultMode.getAxisToActionsMap().put(0, currentAxisActions);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
-			Mockito.when(mockInput.getMain()).thenReturn(mockMain);
+			Mockito.when(mockInput.getMain()).thenReturn(mockMainFrame);
 			// mockAxisToAxisAction is an AxisToAxisAction but NOT an
 			// AxisToRelativeAxisAction
 			Mockito.when(mockAxisToAxisAction.getVirtualAxis()).thenReturn(VirtualAxis.X);
@@ -282,7 +282,7 @@ final class ProfileTest {
 			profile.getModes().add(secondMode);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(null);
-			Mockito.when(mockInput.getMain()).thenReturn(mockMain);
+			Mockito.when(mockInput.getMain()).thenReturn(mockMainFrame);
 
 			profile.setActiveMode(mockInput, 1);
 
@@ -302,7 +302,7 @@ final class ProfileTest {
 			profile.getModes().add(secondMode);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(null);
-			Mockito.when(mockInput.getMain()).thenReturn(mockMain);
+			Mockito.when(mockInput.getMain()).thenReturn(mockMainFrame);
 
 			profile.setActiveMode(mockInput, secondMode);
 

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
@@ -281,7 +281,7 @@ final class InputPipelineTest {
 		IButtonToDelayableAction.reset();
 		Profile.defaultMode.getAxisToActionsMap().clear();
 		Profile.defaultMode.getButtonToActionsMap().clear();
-		final var mockMain = Mockito.mock(Main.class);
+		final var mockMain = Mockito.mock(MainFrame.class);
 		final var mockController = Mockito.mock(Controller.class);
 		mockOnScreenKeyboard = Mockito.mock(OnScreenKeyboard.class);
 		final var mockRunMode = Mockito.mock(RunMode.class);
@@ -4052,8 +4052,8 @@ final class InputPipelineTest {
 
 			for (final var fieldName : fieldNames) {
 				try {
-					final var field = Input.class.getDeclaredField(fieldName);
-					field.setAccessible(true);
+					final var fieldNameField = Input.class.getDeclaredField(fieldName);
+					fieldNameField.setAccessible(true);
 				} catch (final NoSuchFieldException e) {
 					throw new AssertionError("Expected field not found on Input: " + fieldName, e);
 				}

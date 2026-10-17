@@ -37,10 +37,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @NullMarked
-final class MainTest {
+final class MainFrameTest {
 
 	private static PlainDocument createLimitedLengthPlainDocument(final int limit) throws ReflectiveOperationException {
-		final var clazz = Arrays.stream(Main.class.getDeclaredClasses())
+		final var clazz = Arrays.stream(MainFrame.class.getDeclaredClasses())
 				.filter(c -> "LimitedLengthPlainDocument".equals(c.getSimpleName())).findFirst().orElseThrow();
 		final var constructor = clazz.getDeclaredConstructor(int.class);
 		constructor.setAccessible(true);
@@ -49,26 +49,27 @@ final class MainTest {
 
 	private static String invokeCreateVisualizationLegendHtml(final Set<String> usedSymbols)
 			throws ReflectiveOperationException {
-		final var method = Main.class.getDeclaredMethod("createVisualizationLegendHtml", Set.class);
+		final var method = MainFrame.class.getDeclaredMethod("createVisualizationLegendHtml", Set.class);
 		method.setAccessible(true);
 		return (String) method.invoke(null, usedSymbols);
 	}
 
 	private static int invokeGetExtendedKeyCodeForMenu(final JButton button, final Set<Integer> alreadyAssigned)
 			throws ReflectiveOperationException {
-		final var method = Main.class.getDeclaredMethod("getExtendedKeyCodeForMenu", AbstractButton.class, Set.class);
+		final var method = MainFrame.class.getDeclaredMethod("getExtendedKeyCodeForMenu", AbstractButton.class,
+				Set.class);
 		method.setAccessible(true);
 		return (int) method.invoke(null, button, alreadyAssigned);
 	}
 
 	private static boolean invokeIsValidHost(final @Nullable String host) throws ReflectiveOperationException {
-		final var method = Main.class.getDeclaredMethod("isValidHost", String.class);
+		final var method = MainFrame.class.getDeclaredMethod("isValidHost", String.class);
 		method.setAccessible(true);
 		return (boolean) method.invoke(null, host);
 	}
 
 	private static boolean invokeIsValidPassword(final @Nullable String password) throws ReflectiveOperationException {
-		final var method = Main.class.getDeclaredMethod("isValidPassword", String.class);
+		final var method = MainFrame.class.getDeclaredMethod("isValidPassword", String.class);
 		method.setAccessible(true);
 		return (boolean) method.invoke(null, password);
 	}
@@ -92,8 +93,8 @@ final class MainTest {
 		@DisplayName("includes a known symbol's description in the output")
 		void includesKnownSymbolDescription() throws ReflectiveOperationException {
 			// SWAPPED_SYMBOL ("⇆") is always in SYMBOL_TO_DESCRIPTION_MAP.
-			final var result = invokeCreateVisualizationLegendHtml(Set.of(Main.SWAPPED_SYMBOL));
-			Assertions.assertTrue(result.contains(Main.SWAPPED_SYMBOL));
+			final var result = invokeCreateVisualizationLegendHtml(Set.of(MainFrame.SWAPPED_SYMBOL));
+			Assertions.assertTrue(result.contains(MainFrame.SWAPPED_SYMBOL));
 			Assertions.assertTrue(result.contains("<td"));
 		}
 
@@ -102,7 +103,7 @@ final class MainTest {
 		void insertsRowBreaksAtCorrectIntervals() throws ReflectiveOperationException {
 			// Provide enough known symbols to force at least two rows.
 			// SYMBOL_TO_DESCRIPTION_MAP has 9 entries total. Use all known symbols.
-			final var mapField = Main.class.getDeclaredField("SYMBOL_TO_DESCRIPTION_MAP");
+			final var mapField = MainFrame.class.getDeclaredField("SYMBOL_TO_DESCRIPTION_MAP");
 			mapField.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			final var map = (Map<String, String>) mapField.get(null);
@@ -114,7 +115,7 @@ final class MainTest {
 			// ceil(N / 6) rows.
 			final var trCount = result.split("<tr>", -1).length - 1;
 			final var expectedRows = (int) Math
-					.ceil((double) allSymbols.size() / Main.VISUALIZATION_LEGEND_ITEMS_PER_ROW);
+					.ceil((double) allSymbols.size() / MainFrame.VISUALIZATION_LEGEND_ITEMS_PER_ROW);
 			Assertions.assertEquals(expectedRows, trCount);
 		}
 
@@ -267,25 +268,25 @@ final class MainTest {
 		@Test
 		@DisplayName("returns false when length exceeds the maximum")
 		void returnsFalseWhenTooLong() throws ReflectiveOperationException {
-			Assertions.assertFalse(invokeIsValidPassword("a".repeat(Main.PASSWORD_MAX_LENGTH + 1)));
+			Assertions.assertFalse(invokeIsValidPassword("a".repeat(MainFrame.PASSWORD_MAX_LENGTH + 1)));
 		}
 
 		@Test
 		@DisplayName("returns false when length is below the minimum")
 		void returnsFalseWhenTooShort() throws ReflectiveOperationException {
-			Assertions.assertFalse(invokeIsValidPassword("a".repeat(Main.PASSWORD_MIN_LENGTH - 1)));
+			Assertions.assertFalse(invokeIsValidPassword("a".repeat(MainFrame.PASSWORD_MIN_LENGTH - 1)));
 		}
 
 		@Test
 		@DisplayName("returns true at the maximum length boundary")
 		void returnsTrueAtMaximumLength() throws ReflectiveOperationException {
-			Assertions.assertTrue(invokeIsValidPassword("a".repeat(Main.PASSWORD_MAX_LENGTH)));
+			Assertions.assertTrue(invokeIsValidPassword("a".repeat(MainFrame.PASSWORD_MAX_LENGTH)));
 		}
 
 		@Test
 		@DisplayName("returns true at the minimum length boundary")
 		void returnsTrueAtMinimumLength() throws ReflectiveOperationException {
-			Assertions.assertTrue(invokeIsValidPassword("a".repeat(Main.PASSWORD_MIN_LENGTH)));
+			Assertions.assertTrue(invokeIsValidPassword("a".repeat(MainFrame.PASSWORD_MIN_LENGTH)));
 		}
 	}
 
@@ -348,15 +349,15 @@ final class MainTest {
 		}
 
 		private Object getThemeConstant(final String name) throws ReflectiveOperationException {
-			final var themeClass = Arrays.stream(Main.class.getDeclaredClasses())
+			final var themeClass = Arrays.stream(MainFrame.class.getDeclaredClasses())
 					.filter(c -> "Theme".equals(c.getSimpleName())).findFirst().orElseThrow();
-			final var field = themeClass.getDeclaredField(name);
-			field.setAccessible(true);
-			return field.get(null);
+			final var nameField = themeClass.getDeclaredField(name);
+			nameField.setAccessible(true);
+			return nameField.get(null);
 		}
 
 		private Object invokeFromId(final int id) throws ReflectiveOperationException {
-			final var themeClass = Arrays.stream(Main.class.getDeclaredClasses())
+			final var themeClass = Arrays.stream(MainFrame.class.getDeclaredClasses())
 					.filter(c -> "Theme".equals(c.getSimpleName())).findFirst().orElseThrow();
 			final var method = themeClass.getDeclaredMethod("fromId", int.class);
 			method.setAccessible(true);

@@ -6,7 +6,11 @@ on:
       - master
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   check:
@@ -14,8 +18,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Lint Markdown Files
-        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff #v24
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24
         with:
           globs: |
             **/*.md
@@ -26,98 +32,62 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - ubuntu-26.04-arm
+        include:
+          - os: windows-latest
+            dist_os: windows
+            dist_arch: x86-64
+            dist_archive_extension: zip
+            gradle_task: distZip
+          - os: ubuntu-latest
+            dist_os: linux
+            dist_arch: x86-64
+            dist_archive_extension: tgz
+            gradle_task: distTar
+          - os: ubuntu-26.04-arm
+            dist_os: linux
+            dist_arch: aarch64
+            dist_archive_extension: tgz
+            gradle_task: distTar
     runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
+    env:
+      MAVEN_TOKEN_SECRET: ${{ secrets.MAVEN_TOKEN_SECRET }}
     outputs:
       tag_name: ${{ steps.release-variables.outputs.tag_name }}
     steps:
-      - name: Setup Platform Variables
-        id: platform-variables
-        run: |
-          case ${{ matrix.os }} in
-            windows-latest)
-              echo jdk_os=windows >> "$GITHUB_OUTPUT"
-              echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-              echo jdk_archive_type=zip >> "$GITHUB_OUTPUT"
-              echo dist_os=windows >> "$GITHUB_OUTPUT"
-              echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-              echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
-              echo gradle_task=distZip >> "$GITHUB_OUTPUT"
-              ;;
-            ubuntu-latest)
-              echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
-              echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-              echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
-              echo dist_os=linux >> "$GITHUB_OUTPUT"
-              echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-              echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
-              echo gradle_task=distTar >> "$GITHUB_OUTPUT"
-              ;;
-            ubuntu-26.04-arm)
-              echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
-              echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
-              echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
-              echo dist_os=linux >> "$GITHUB_OUTPUT"
-              echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
-              echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
-              echo gradle_task=distTar >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              exit 1
-              ;;
-          esac
       - name: Setup Gradle Init Script
         run: |
-          mkdir -p $HOME/.gradle
+          mkdir -p "$HOME/.gradle"
           cat << 'EOF' > "$HOME/.gradle/init.gradle.kts"
-          allprojects {
-            val baseUrl = uri("https://maven.bwravencl.de")
-            val user = "github"
-            val pass = "${{ secrets.MAVEN_TOKEN_SECRET }}"
-            buildscript {
-              repositories {
-                maven {
-                  url = baseUrl.resolve("releases")
+          val mavenBaseUrl = java.net.URI("https://maven.bwravencl.de/")
+          val mavenUser = "github"
+          val mavenPassword: String = System.getenv("MAVEN_TOKEN_SECRET")
+              ?: error("MAVEN_TOKEN_SECRET environment variable is not set")
+
+          fun RepositoryHandler.addRepositories() {
+              maven {
+                  url = mavenBaseUrl.resolve("releases")
                   credentials {
-                    username = user
-                    password = pass
+                      username = mavenUser
+                      password = mavenPassword
                   }
                   mavenContent { releasesOnly() }
-                }
-                maven {
-                  url = baseUrl.resolve("snapshots")
+              }
+              maven {
+                  url = mavenBaseUrl.resolve("snapshots")
                   credentials {
-                    username = user
-                    password = pass
+                      username = mavenUser
+                      password = mavenPassword
                   }
                   mavenContent { snapshotsOnly() }
-                }
               }
-            }
-            repositories {
-              maven {
-                url = baseUrl.resolve("releases")
-                credentials {
-                  username = user
-                  password = pass
-                }
-                mavenContent { releasesOnly() }
-              }
-              maven {
-                url = baseUrl.resolve("snapshots")
-                credentials {
-                  username = user
-                  password = pass
-                }
-                mavenContent { snapshotsOnly() }
-              }
-            }
+          }
+
+          allprojects {
+              buildscript { repositories { addRepositories() } }
+              repositories { addRepositories() }
           }
           EOF
       - name: Checkout
@@ -129,85 +99,96 @@ jobs:
       - name: Build Distribution Archive
         uses: ./.github/actions/run-gradle-task
         with:
-          task: ${{ steps.platform-variables.outputs.gradle_task }}
+          task: ${{ matrix.gradle_task }}
       - name: Setup Release Variables
         id: release-variables
+        env:
+          DIST_ARCHIVE_EXTENSION: ${{ matrix.dist_archive_extension }}
+          DIST_OS: ${{ matrix.dist_os }}
+          DIST_ARCH: ${{ matrix.dist_arch }}
         run: |
-          archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform-variables.outputs.dist_archive_extension }} -maxdepth 1 -type f -print0)
-          echo "archive_path=$archive_path" >> "$GITHUB_OUTPUT"
-          echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
-          echo "tag_name=$(basename -s .${{ steps.platform-variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform-variables.outputs.dist_os }}-${{ steps.platform-variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
-      - name: Upload Archive Artifact
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: ${{ steps.release-variables.outputs.archive_filename }}
-          path: ${{ steps.release-variables.outputs.archive_path }}
-          if-no-files-found: error
+          shopt -s nullglob
+          archives=(build/distributions/ControllerBuddy-*."$DIST_ARCHIVE_EXTENSION")
+          if [ "${#archives[@]}" -ne 1 ]; then
+            echo "::error::Expected exactly one archive, found ${#archives[@]}: ${archives[*]}"
+            exit 1
+          fi
+          archive_path=${archives[0]}
+          archive_filename=$(basename "$archive_path")
+          tag_name=${archive_filename%."$DIST_ARCHIVE_EXTENSION"}
+          tag_name=${tag_name#ControllerBuddy-}
+          tag_name=${tag_name#"$DIST_OS-$DIST_ARCH-"}
+          {
+            echo "archive_path=$archive_path"
+            echo "archive_filename=$archive_filename"
+            echo "tag_name=$tag_name"
+          } >> "$GITHUB_OUTPUT"
       - name: Import GPG Key
+        id: import-gpg
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
       - name: Sign Archive
         id: sign-archive
+        env:
+          ARCHIVE_PATH: ${{ steps.release-variables.outputs.archive_path }}
+          GPG_KEY_ID: ${{ steps.import-gpg.outputs.fingerprint }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
         run: |
-          signature_path="${{ steps.release-variables.outputs.archive_path }}.sig"
-          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release-variables.outputs.archive_path }}
+          signature_path="$ARCHIVE_PATH.sig"
+          gpg --batch --yes \
+            --local-user "$GPG_KEY_ID" \
+            --pinentry-mode loopback \
+            --passphrase-fd 0 \
+            --detach-sig \
+            --output "$signature_path" \
+            "$ARCHIVE_PATH" <<< "$GPG_PASSPHRASE"
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
-          echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
-      - name: Upload Signature Artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: ${{ steps.sign-archive.outputs.signature_filename }}
-          path: ${{ steps.sign-archive.outputs.signature_path }}
+          name: ${{ steps.release-variables.outputs.archive_filename }}
+          path: |
+            ${{ steps.release-variables.outputs.archive_path }}
+            ${{ steps.sign-archive.outputs.signature_path }}
+          if-no-files-found: error
 
   release:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-      - name: Collect Artifact Files
-        id: collect-files
-        run: |
-          files=$(find . -iname 'ControllerBuddy-*' -mindepth 2 -maxdepth 2 -type f)
-          if [ -z "$files" ]
-          then
-            echo "Error: No artifact files found."
-            exit 1
-          fi
-          echo "files<<EOF" >> "$GITHUB_OUTPUT"
-          while IFS= read -r line
-          do
-            echo "$line" >> "$GITHUB_OUTPUT"
-          done <<< "$files"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-      - name: Check Tag
-        uses: action-pack/tag-exists@1466626d5e0263063b314d09d032be2daa603a6a # v1
-        id: check-tag
         with:
-          tag: ${{ needs.build.outputs.tag_name }}
-      - name: Tag Commit
-        if: steps.check-tag.outputs.exists == 'false'
-        uses: tvdias/github-tagger@ed7350546e3e503b5e942dffd65bc8751a95e49d # v0.0.2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.build.outputs.tag_name }}
+          path: dist
+          merge-multiple: true
       - name: Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
         with:
           name: ControllerBuddy-${{ needs.build.outputs.tag_name }}
           tag_name: ${{ needs.build.outputs.tag_name }}
-          draft: false
-          prerelease: false
-          files: ${{ steps.collect-files.outputs.files }}
+          target_commitish: ${{ github.sha }}
+          files: dist/*
+          fail_on_unmatched_files: true
       - name: Trigger Release Monitoring Check
         id: release-monitoring
+        env:
+          RELEASE_MONITORING_TOKEN: ${{ secrets.RELEASE_MONITORING_TOKEN }}
         run: |
           sleep 20
-          response=$(curl -s -w "%{http_code}" https://release-monitoring.org/api/v2/versions/ -H "Authorization: token ${{ secrets.RELEASE_MONITORING_TOKEN }}" -H 'Content-Type: application/json' -d '{"id": "376393", "dry_run": "false"}')
+          response=$(curl -sS -w "\n%{http_code}" https://release-monitoring.org/api/v2/versions/ \
+            -H "Authorization: token $RELEASE_MONITORING_TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{"id": 376393, "dry_run": false}')
+          status=$(echo "$response" | tail -n 1)
           echo "$response" | sed '$d'
-          echo "http_status=$(echo "$response" | tail -n 1)" >> $GITHUB_OUTPUT
+          echo "http_status=$status" >> "$GITHUB_OUTPUT"
+          if [ "$status" != "200" ]; then
+            echo "::warning::Release monitoring returned HTTP $status, skipping Flatpak update check"
+          fi
       - name: Trigger Flatpak Update Check
         if: steps.release-monitoring.outputs.http_status == '200'
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4

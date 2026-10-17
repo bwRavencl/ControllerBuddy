@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.test;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import org.jspecify.annotations.NullMarked;
@@ -28,8 +28,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /// JUnit extension that ensures safe GUI behavior during tests.
 ///
 /// On loading, it suppresses Swing message dialogs by setting
-/// [Main]`.skipMessageDialogs` to `true`. After every test it drains the AWT
-/// event queue (if the EDT is running) so that asynchronously posted events
+/// [GuiUtils]`.skipMessageDialogs` to `true`. After every test it drains the
+/// AWT event queue (if the EDT is running) so that asynchronously posted events
 /// cannot leak into the following tests.
 @NullMarked
 public final class GuiTestExtension implements AfterEachCallback, BeforeAllCallback {
@@ -47,9 +47,9 @@ public final class GuiTestExtension implements AfterEachCallback, BeforeAllCallb
 	@Override
 	public void beforeAll(final ExtensionContext context) throws Exception {
 		if (!initialized) {
-			final var field = Main.class.getDeclaredField("skipMessageDialogs");
-			field.setAccessible(true);
-			field.setBoolean(null, true);
+			final var skipMessageDialogsField = GuiUtils.class.getDeclaredField("skipMessageDialogs");
+			skipMessageDialogsField.setAccessible(true);
+			skipMessageDialogsField.setBoolean(null, true);
 			initialized = true;
 		}
 	}

@@ -17,9 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
-import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.input.action.IAction;

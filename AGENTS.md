@@ -12,7 +12,7 @@ See @README for detailed project overview.
 
 ## Tech Stack
 
-- **Language:** Java 27
+- **Language:** Java 25
 - **Build Tool:** Gradle 9
 - **Input Handling:** LWJGL 3.4 (SDL3)
 - **Native Access:** FFM API (Project Panama)

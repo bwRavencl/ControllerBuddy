@@ -70,19 +70,19 @@ final class IndicatorProgressBar extends JProgressBar {
 	/// Configures the orientation, dimensions, inversion, border, and foreground
 	/// color from the [OverlayAxis] and the current overlay scaling factor.
 	///
-	/// @param main the main application instance
+	/// @param mainFrame the main frame instance
 	/// @param overlayAxis the overlay axis configuration defining orientation,
 	/// style, color, and inversion
 	/// @param detentValues the set of normalized axis values at which detent tick
 	/// marks should be drawn
-	IndicatorProgressBar(final Main main, final OverlayAxis overlayAxis, final float[] detentValues) {
+	IndicatorProgressBar(final MainFrame mainFrame, final OverlayAxis overlayAxis, final float[] detentValues) {
 		final var overlayAxisOrientation = overlayAxis.getOrientation();
 		super(overlayAxisOrientation.toSwingConstant());
 
 		this.overlayAxis = overlayAxis;
 		this.detentValues = detentValues;
 
-		final var overlayScaling = main.getOverlayScaling();
+		final var overlayScaling = mainFrame.getOverlayScaling();
 		subdivisionScale = Math.round(overlayScaling);
 
 		putClientProperty(FlatClientProperties.PROGRESS_BAR_SQUARE, true);

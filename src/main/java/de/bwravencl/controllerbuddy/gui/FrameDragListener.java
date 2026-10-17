@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -36,7 +37,7 @@ class FrameDragListener extends MouseAdapter {
 	private final JFrame frame;
 
 	/// The main application instance.
-	private final Main main;
+	private final MainFrame mainFrame;
 
 	/// The mouse position at the start of the current drag, or `null` if not
 	/// dragging.
@@ -44,11 +45,10 @@ class FrameDragListener extends MouseAdapter {
 
 	/// Constructs a [FrameDragListener] for the given main window and frame.
 	///
-	/// @param main the main application instance used to access display bounds
-	/// and preferences
+	/// @param mainFrame the main frame instance
 	/// @param frame the undecorated frame that should be draggable
-	FrameDragListener(final Main main, final JFrame frame) {
-		this.main = main;
+	FrameDragListener(final MainFrame mainFrame, final JFrame frame) {
+		this.mainFrame = mainFrame;
 		this.frame = frame;
 	}
 
@@ -69,7 +69,7 @@ class FrameDragListener extends MouseAdapter {
 		final var newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
 				currentMouseLocation.y - mouseDownLocation.y);
 
-		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
+		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(mainFrame);
 		GuiUtils.setFrameLocationRespectingBounds(frame, newFrameLocation, totalDisplayBounds);
 	}
 
@@ -83,10 +83,10 @@ class FrameDragListener extends MouseAdapter {
 		mouseDownLocation = null;
 
 		final var frameLocation = frame.getLocation();
-		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
+		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(mainFrame);
 
 		GuiUtils.getFrameLocationPreferencesKey(frame)
-				.ifPresent(preferencesKey -> main.getPreferences().put(preferencesKey,
+				.ifPresent(preferencesKey -> Main.preferences.put(preferencesKey,
 						frameLocation.x / (float) totalDisplayBounds.width + ","
 								+ frameLocation.y / (float) totalDisplayBounds.height));
 	}

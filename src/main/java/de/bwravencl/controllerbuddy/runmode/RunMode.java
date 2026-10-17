@@ -17,8 +17,9 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.awt.EventQueue;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public abstract class RunMode implements Runnable {
 	final Input input;
 
 	/// The main application instance.
-	final Main main;
+	final MainFrame mainFrame;
 
 	/// The maximum polling rate.
 	private final int maxPollingRate;
@@ -71,16 +72,17 @@ public abstract class RunMode implements Runnable {
 	/// Flag set when the run mode is in the process of stopping.
 	private boolean stopping;
 
-	/// Constructs a [RunMode], storing references to the main application and input
+	/// Constructs a [RunMode], storing references to the main application and
+	/// input
 	/// instance and registering this run mode with the input.
 	///
-	/// @param main the main application instance
-	RunMode(final Main main) {
-		this.main = main;
-		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
+	/// @param mainFrame the main frame instance
+	RunMode(final MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		input = Objects.requireNonNull(mainFrame.getInput(), "Field input must not be null");
 
-		minPollingRate = main.getMinPollingRate();
-		maxPollingRate = main.getMaxPollingRate();
+		minPollingRate = mainFrame.getMinPollingRate();
+		maxPollingRate = mainFrame.getMaxPollingRate();
 
 		useMinPollingRate();
 
@@ -96,17 +98,17 @@ public abstract class RunMode implements Runnable {
 			return;
 		}
 
-		Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
+		Thread.startVirtualThread(() -> mainFrame.stopAll(true, !mainFrame.isAutoRestartOutput(), true));
 
 		final var controller = input.getSelectedController();
 		if (controller != null) {
-			logger.warning(Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
+			logger.warning(MainFrame.assembleControllerLoggingMessage("Could not read from controller ", controller));
 		}
 
-		if (!main.isSkipControllerDialogs()) {
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+		if (!mainFrame.isSkipControllerDialogs()) {
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 					Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		}
 
 		stopping = true;
@@ -164,11 +166,12 @@ public abstract class RunMode implements Runnable {
 		return input.poll();
 	}
 
-	/// Polls SDL events and yields the main loop, advancing the application event
+	/// Polls SDL events and yields the main loop, advancing the application
+	/// event
 	/// cycle by one step.
 	final void process() {
-		main.pollSdlEvents();
-		main.getMainLoop().yield();
+		mainFrame.pollSdlEvents();
+		mainFrame.getMainLoop().yield();
 	}
 
 	/// Requests the run mode to stop by setting the run flag to false.

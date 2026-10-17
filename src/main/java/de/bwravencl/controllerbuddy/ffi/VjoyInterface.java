@@ -17,7 +17,8 @@
 
 package de.bwravencl.controllerbuddy.ffi;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import java.io.File;
 import java.lang.foreign.Arena;
 import java.lang.foreign.FunctionDescriptor;
@@ -297,10 +298,10 @@ public final class VjoyInterface {
 	/// Initializes the vJoy library by loading native function handles from the
 	/// vJoy installation directory.
 	///
-	/// @param main the application main instance providing the vJoy directory
+	/// @param mainFrame the main frame instance
 	@SuppressWarnings("restricted")
-	public static void init(final Main main) {
-		final var vJoyPath = main.getVJoyDirectory();
+	public static void init(final MainFrame mainFrame) {
+		final var vJoyPath = mainFrame.getVJoyDirectory();
 		final var libraryPathFile = new File(vJoyPath, GetVJoyArchFolderName());
 
 		logger.info("Using vJoy library path: " + libraryPathFile.getAbsolutePath());

@@ -17,7 +17,8 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -45,7 +46,7 @@ final class OutputRunModeTest {
 	Input mockInput;
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	@Mock
 	Profile mockProfile;
@@ -172,11 +173,11 @@ final class OutputRunModeTest {
 
 		@BeforeEach
 		void setUp() {
-			Mockito.when(mockMain.getInput()).thenReturn(mockInput);
-			Mockito.when(mockMain.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
-			Mockito.when(mockMain.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
+			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
 			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
-			runMode = new LocalRunMode(mockMain);
+			runMode = new LocalRunMode(mockMainFrame);
 		}
 	}
 

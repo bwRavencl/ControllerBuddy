@@ -46,7 +46,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 final class AssignmentsScrollPaneTest {
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	/// Creates a `CompoundButton` (the only concrete sub-final class of the
 	/// private-abstract `CustomButton`) via reflection, using the left-stick button
@@ -56,12 +56,12 @@ final class AssignmentsScrollPaneTest {
 	private Object createCompoundButton() throws ReflectiveOperationException {
 		final var compoundButtonClass = Arrays.stream(AssignmentsScrollPane.class.getDeclaredClasses())
 				.filter(c -> "CompoundButton".equals(c.getSimpleName())).findFirst().orElseThrow();
-		final var constructor = compoundButtonClass.getDeclaredConstructor(Main.class, JPanel.class,
+		final var constructor = compoundButtonClass.getDeclaredConstructor(MainFrame.class, JPanel.class,
 				ControllerComponent.class);
 		constructor.setAccessible(true);
-		final var controllerComponent = new ControllerComponent(mockMain, ControllerComponentType.BUTTON,
+		final var controllerComponent = new ControllerComponent(mockMainFrame, ControllerComponentType.BUTTON,
 				SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
-		return constructor.newInstance(mockMain, new JPanel(), controllerComponent);
+		return constructor.newInstance(mockMainFrame, new JPanel(), controllerComponent);
 	}
 
 	/// Invokes `CustomButton.paintText` (declared on the super-final class of
@@ -116,8 +116,8 @@ final class AssignmentsScrollPaneTest {
 
 		@BeforeEach
 		void setUp() throws ReflectiveOperationException {
-			Mockito.when(mockMain.isDarkLookAndFeel()).thenReturn(false);
-			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
+			Mockito.when(mockMainFrame.isDarkLookAndFeel()).thenReturn(false);
+			Mockito.when(mockMainFrame.isSwapLeftAndRightSticks()).thenReturn(false);
 			button = createCompoundButton();
 			final var image = new BufferedImage(200, 50, BufferedImage.TYPE_INT_ARGB);
 			graphics = image.createGraphics();

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.ffi.Kernel32;
 import de.bwravencl.controllerbuddy.ffi.User32;
 import de.bwravencl.controllerbuddy.ffi.Xlib;
@@ -45,11 +46,11 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -76,7 +77,6 @@ import org.jspecify.annotations.Nullable;
 /// such as wrapping components in scroll panes, creating text fields with
 /// context menus, positioning frames across multiple displays, and showing
 /// message dialogs.
-@SuppressWarnings({ "exports" })
 public final class GuiUtils {
 
 	/// Reflective field accessor for the native window handle on Windows.
@@ -87,6 +87,9 @@ public final class GuiUtils {
 	/// Reflective field accessor for the AWT component peer on Windows.
 	private static final @Nullable Field peerField;
 
+	/// Whether message dialogs should be suppressed during automated runs.
+	public static boolean skipMessageDialogs;
+
 	static {
 		if (Main.IS_WINDOWS) {
 			try {
@@ -94,7 +97,7 @@ public final class GuiUtils {
 				peerField.setAccessible(true);
 
 				@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
-				final var wComponentPeerClass = Class.forName("sun.awt.windows.WComponentPeer");
+				final var wComponentPeerClass = Class.forName("sun.awt.windows.WComponentPeer", false, null);
 				hwndField = wComponentPeerClass.getDeclaredField("hwnd");
 				hwndField.setAccessible(true);
 			} catch (final ReflectiveOperationException e) {
@@ -119,7 +122,8 @@ public final class GuiUtils {
 	/// @return the mode combo box
 	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
 			final AbstractAction actionListener) {
-		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
+		final var modePanel = new JPanel(
+				new FlowLayout(FlowLayout.CENTER, MainFrame.DEFAULT_HGAP, MainFrame.DEFAULT_VGAP));
 		container.add(modePanel, BorderLayout.NORTH);
 
 		modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
@@ -143,8 +147,8 @@ public final class GuiUtils {
 	///
 	/// @param frame the frame to whose window peer the property shall be added
 	/// @return `true` if the property was successfully added
-	public static boolean addSteamGameX11WindowProperty(final Frame frame) {
-		if (!Main.IS_X11_TOOLKIT) {
+	static boolean addSteamGameX11WindowProperty(final Frame frame) {
+		if (!MainFrame.IS_X11_TOOLKIT) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -214,6 +218,33 @@ public final class GuiUtils {
 		}
 
 		return false;
+	}
+
+	/// Displays a [JOptionPane] dialog with the window icon images specified in
+	/// [Main#ICON_RESOURCE_PATHS].
+	///
+	/// @param parentComponent the parent component for the dialog
+	/// @param message the message to display
+	/// @param title the dialog title
+	/// @param optionType the options to display in the pane: `DEFAULT_OPTION`,
+	/// `YES_NO_OPTION`, `YES_NO_CANCEL_OPTION`, or `OK_CANCEL_OPTION`
+	/// @param messageType the type of message to be displayed: `ERROR_MESSAGE`,
+	/// `INFORMATION_MESSAGE`, `WARNING_MESSAGE`, `QUESTION_MESSAGE`, or
+	/// `PLAIN_MESSAGE`
+	/// @param icon the [Icon] image to display within the dialog
+	/// @return the underlying [JOptionPane]
+	/// @throws HeadlessException if the environment is headless
+	private static JOptionPane createDialog(final @Nullable Component parentComponent, final Object message,
+			final String title, final int optionType, final int messageType, final @Nullable Icon icon)
+			throws HeadlessException {
+		@SuppressWarnings("MagicConstant")
+		final var optionPane = new JOptionPane(message, messageType, optionType, icon);
+		final var dialog = optionPane.createDialog(parentComponent, title);
+		setWindowIcon(dialog);
+		dialog.setVisible(true);
+		dialog.dispose();
+
+		return optionPane;
 	}
 
 	/// Creates a non-editable, non-focusable editor pane configured for displaying
@@ -362,10 +393,9 @@ public final class GuiUtils {
 	/// Computes the bounding rectangle that encompasses all connected displays and
 	/// optionally stores the result in the main application instance.
 	///
-	/// @param main the main application instance to store the bounds in, or `null`
-	/// to skip storage
+	/// @param mainFrame the main frame instance
 	/// @return the total display bounds rectangle
-	static Rectangle getAndStoreTotalDisplayBounds(final @Nullable Main main) {
+	static Rectangle getAndStoreTotalDisplayBounds(final @Nullable MainFrame mainFrame) {
 		final var totalDisplayBounds = new Rectangle();
 
 		for (final var graphicsDevice : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
@@ -386,8 +416,8 @@ public final class GuiUtils {
 			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
 		}
 
-		if (main != null) {
-			main.setTotalDisplayBounds(totalDisplayBounds);
+		if (mainFrame != null) {
+			mainFrame.setTotalDisplayBounds(totalDisplayBounds);
 		}
 
 		return totalDisplayBounds;
@@ -452,7 +482,7 @@ public final class GuiUtils {
 	/// [EventQueue#invokeLater].
 	///
 	/// @param runnable the task to run
-	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
+	public static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
 		if (EventQueue.isDispatchThread()) {
 			runnable.run();
 		} else {
@@ -463,16 +493,14 @@ public final class GuiUtils {
 	/// Loads a previously persisted frame location from preferences and applies it
 	/// to the frame, clamping the position to stay within the total display bounds.
 	///
-	/// @param preferences the preferences store
 	/// @param frame the frame to position
 	/// @param defaultLocation the fallback location if no preference exists
 	/// @param totalDisplayBounds the bounding rectangle of all displays
-	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
-			final Rectangle totalDisplayBounds) {
+	static void loadFrameLocation(final JFrame frame, final Point defaultLocation, final Rectangle totalDisplayBounds) {
 		final var location = new Point(defaultLocation);
 
 		getFrameLocationPreferencesKey(frame).ifPresent(preferencesKey -> {
-			final var locationString = preferences.get(preferencesKey, null);
+			final var locationString = Main.preferences.get(preferencesKey, null);
 			if (locationString != null) {
 				final var parts = locationString.split(",", -1);
 
@@ -579,45 +607,102 @@ public final class GuiUtils {
 		frame.setLocation(location);
 	}
 
-	/// Displays a message dialog, ensuring the main window is shown first. Does
-	/// nothing if message dialogs are currently suppressed.
+	/// Sets the window icon to the images specified in [Main#ICON_RESOURCE_PATHS].
 	///
-	/// @param main the main application instance, or `null`
+	/// @param window the window to set the icon for
+	static void setWindowIcon(final Window window) {
+		window.setIconImages(Main.ICON_RESOURCE_PATHS.stream()
+				.map(path -> new ImageIcon(Main.getResourceLocation(path)).getImage()).toList());
+	}
+
+	/// Displays a confirm dialog, ensuring the main window is shown first.
+	///
+	/// @param mainFrame the main frame instance, or `null`
 	/// @param parentComponent the parent component for the dialog
 	/// @param message the message to display
 	/// @param title the dialog title
-	/// @param messageType the JOptionPane message type constant
+	/// @param optionType the options to display in the pane: `DEFAULT_OPTION`,
+	/// `YES_NO_OPTION`, `YES_NO_CANCEL_OPTION`, or `OK_CANCEL_OPTION`
+	/// @param messageType the type of message to be displayed: `ERROR_MESSAGE`,
+	/// `INFORMATION_MESSAGE`, `WARNING_MESSAGE`, `QUESTION_MESSAGE`, or
+	/// `PLAIN_MESSAGE`
+	/// @return the underlying [JOptionPane]
 	/// @throws HeadlessException if the environment is headless
-	public static void showMessageDialog(final @Nullable Main main,
-			@SuppressWarnings("exports") final @Nullable Component parentComponent, final Object message,
-			final String title, final int messageType) throws HeadlessException {
-		showMessageDialog(main, parentComponent, message, title, messageType, null);
+	public static int showConfirmDialog(final @Nullable MainFrame mainFrame, final Component parentComponent,
+			final Object message, final String title, final int optionType, final int messageType)
+			throws HeadlessException {
+		if (mainFrame != null) {
+			mainFrame.setVisible(true);
+		}
+
+		final var optionPane = createDialog(parentComponent, message, title, optionType, messageType, null);
+
+		if (optionPane.getValue() instanceof final Integer value) {
+			return value;
+		}
+		return JOptionPane.CLOSED_OPTION;
+	}
+
+	/// Displays a confirm dialog, ensuring the main window is shown first.
+	///
+	/// @param mainFrame the main frame instance, or `null`
+	/// @param parentComponent the parent component for the dialog
+	/// @param message the message to display
+	/// @param title the dialog title
+	/// @param optionType the options to display in the pane: `DEFAULT_OPTION`,
+	/// `YES_NO_OPTION`, `YES_NO_CANCEL_OPTION`, or `OK_CANCEL_OPTION`
+	/// @return the underlying [JOptionPane]
+	/// @throws HeadlessException if the environment is headless
+	public static int showConfirmDialog(final @Nullable MainFrame mainFrame, final Component parentComponent,
+			final Object message, final String title, final int optionType) throws HeadlessException {
+		return showConfirmDialog(mainFrame, parentComponent, message, title, optionType, JOptionPane.QUESTION_MESSAGE);
+	}
+
+	/// Displays a message dialog, ensuring the main window is shown first. Does
+	/// nothing if message dialogs are currently suppressed and `skippable` is
+	/// `true`.
+	///
+	/// @param mainFrame the main frame instance, or `null`
+	/// @param parentComponent the parent component for the dialog
+	/// @param message the message to display
+	/// @param title the dialog title
+	/// @param messageType the type of message to be displayed: `ERROR_MESSAGE`,
+	/// `INFORMATION_MESSAGE`, `WARNING_MESSAGE`, `QUESTION_MESSAGE`, or
+	/// `PLAIN_MESSAGE`
+	/// @param skippable whether the dialog can be skipped
+	/// @throws HeadlessException if the environment is headless
+	public static void showMessageDialog(final @Nullable MainFrame mainFrame, final @Nullable Component parentComponent,
+			final Object message, final String title, final int messageType, final boolean skippable)
+			throws HeadlessException {
+		showMessageDialog(mainFrame, parentComponent, message, title, messageType, null, skippable);
 	}
 
 	/// Displays a message dialog with a custom icon, ensuring the main window is
-	/// shown first. Does nothing if message dialogs are currently suppressed.
+	/// shown first. Does nothing if message dialogs are currently suppressed and
+	/// `skippable` is `true`.
 	///
-	/// @param main the main application instance, or `null`
+	/// @param mainFrame the main frame instance, or `null`
 	/// @param parentComponent the parent component for the dialog
 	/// @param message the message to display
 	/// @param title the dialog title
-	/// @param messageType the JOptionPane message type constant
+	/// @param messageType the type of message to be displayed: `ERROR_MESSAGE`,
+	/// `INFORMATION_MESSAGE`, `WARNING_MESSAGE`, `QUESTION_MESSAGE`, or
+	/// `PLAIN_MESSAGE`
 	/// @param icon the icon to display, or `null` for the default
+	/// @param skippable whether the dialog can be skipped
 	/// @throws HeadlessException if the environment is headless
-	public static void showMessageDialog(final @Nullable Main main,
-			@SuppressWarnings("exports") final @Nullable Component parentComponent, final Object message,
-			final String title, final int messageType, @SuppressWarnings("exports") final @Nullable Icon icon)
-			throws HeadlessException {
-		if (Main.skipMessageDialogs) {
+	public static void showMessageDialog(final @Nullable MainFrame mainFrame, final @Nullable Component parentComponent,
+			final Object message, final String title, final int messageType, final @Nullable Icon icon,
+			final boolean skippable) throws HeadlessException {
+		if (skippable && skipMessageDialogs) {
 			return;
 		}
 
-		if (main != null) {
-			main.setVisible(true);
+		if (mainFrame != null) {
+			mainFrame.setVisible(true);
 		}
 
-		// noinspection MagicConstant
-		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
+		createDialog(parentComponent, message, title, JOptionPane.DEFAULT_OPTION, messageType, icon);
 	}
 
 	/// Wraps a component in a scroll pane with default sizing.

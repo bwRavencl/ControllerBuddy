@@ -17,8 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
@@ -52,7 +53,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var editActionsButton = new JButton(new EditActionsAction());
-		editActionsButton.setPreferredSize(Main.rectButtonDimension);
+		editActionsButton.setPreferredSize(MainFrame.rectButtonDimension);
 		parentPanel.add(editActionsButton);
 	}
 

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.util;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLInit;
 
-/// The SDL main-thread event loop and task scheduler.
+/// The SDL mainFrame-thread event loop and task scheduler.
 ///
 /// All SDL API calls must be executed on this loop's thread. Tasks can be
 /// submitted synchronously (blocking the caller) or asynchronously. The loop
@@ -49,7 +49,7 @@ public final class MainLoop {
 	private volatile @Nullable TaskQueueEntry currentTaskQueueEntry;
 
 	/// The main application instance.
-	private volatile @Nullable Main main;
+	private volatile @Nullable MainFrame mainFrame;
 
 	/// Whether the loop should poll SDL events on each iteration.
 	private volatile boolean pollSdlEvents;
@@ -60,15 +60,15 @@ public final class MainLoop {
 	/// Enqueues a task entry and wakes the main loop thread.
 	///
 	/// @param taskQueueEntry the entry to enqueue
-	/// @throws IllegalStateException if the main loop thread is no longer alive
-	/// or is shutting down
+	/// @throws IllegalStateException if the main loop thread is no longer alive or
+	/// is shutting down
 	private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
 		if (!thread.isAlive()) {
-			throw new IllegalStateException("Main loop thread is not alive");
+			throw new IllegalStateException("MainFrame loop thread is not alive");
 		}
 
 		if (shuttingDown) {
-			throw new IllegalStateException("Main loop is shutting down");
+			throw new IllegalStateException("MainFrame loop is shutting down");
 		}
 
 		synchronized (this) {
@@ -91,15 +91,15 @@ public final class MainLoop {
 			while (!Thread.interrupted()) {
 				currentTaskQueueEntry = taskQueue.poll();
 				final var currentTaskQueueEntry = this.currentTaskQueueEntry;
-				final var main = this.main;
+				final var mainFrame = this.mainFrame;
 				if (currentTaskQueueEntry != null) {
 					try {
 						executeTaskQueueEntry(currentTaskQueueEntry);
 					} finally {
 						this.currentTaskQueueEntry = null;
 					}
-				} else if (pollSdlEvents && main != null) {
-					main.pollSdlEvents();
+				} else if (pollSdlEvents && mainFrame != null) {
+					mainFrame.pollSdlEvents();
 
 					try {
 						// noinspection BusyWait
@@ -250,13 +250,13 @@ public final class MainLoop {
 		return Optional.empty();
 	}
 
-	/// Sets the [Main] instance.
+	/// Sets the [MainFrame] instance.
 	///
-	/// This method must be called from within the [Main] constructor after the
+	/// This method must be called from within the [MainFrame] constructor after the
 	/// [MainLoop] has already been constructed.
-	/// @param main the [Main] instance
-	public void setMain(final Main main) {
-		this.main = main;
+	/// @param mainFrame the [MainFrame] instance
+	public void setMain(final MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 	}
 
 	/// Shuts down the main loop by interrupting its thread and waiting for it

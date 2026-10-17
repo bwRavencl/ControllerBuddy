@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import de.bwravencl.controllerbuddy.Main;
 import java.awt.AWTEvent;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -172,8 +173,8 @@ final class LockableSettingsPanel extends JPanel {
 	/// Sets up the mouse-intercepting layer, the resize-settle timer, and the
 	/// listener that restarts it on resize.
 	///
-	/// @param main the main application instance
-	LockableSettingsPanel(final Main main) {
+	/// @param mainFrame the main frame instance
+	LockableSettingsPanel(final MainFrame mainFrame) {
 		super(new BorderLayout());
 
 		final var layerUI = new LayerUI<JComponent>() {
@@ -228,7 +229,7 @@ final class LockableSettingsPanel extends JPanel {
 				mouseEvent.consume();
 
 				if (triggerStop) {
-					main.stopAll(true, true, false);
+					mainFrame.stopAll(true, true, false);
 				}
 			}
 

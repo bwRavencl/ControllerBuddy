@@ -17,8 +17,9 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.VirtualAxis;
@@ -110,14 +111,13 @@ public final class ClientRunMode extends OutputRunMode {
 
 	/// Creates a [ClientRunMode] that will connect to the configured remote server.
 	///
-	/// @param main the main application instance providing host, port, timeout,
-	/// and encryption settings
-	public ClientRunMode(final Main main) {
-		super(main);
+	/// @param mainFrame the main frame instance
+	public ClientRunMode(final MainFrame mainFrame) {
+		super(mainFrame);
 
-		host = main.getHost();
-		port = main.getPort();
-		timeout = main.getTimeout();
+		host = mainFrame.getHost();
+		port = mainFrame.getPort();
+		timeout = mainFrame.getTimeout();
 
 		try {
 			cipher = Cipher.getInstance(ServerRunMode.CIPHER_TRANSFORMATION);
@@ -125,8 +125,8 @@ public final class ClientRunMode extends OutputRunMode {
 			throw new RuntimeException(e);
 		}
 
-		main.getRandom().nextBytes(salt);
-		key = ServerRunMode.deriveKey(main, salt);
+		mainFrame.getRandom().nextBytes(salt);
+		key = ServerRunMode.deriveKey(mainFrame, salt);
 	}
 
 	/// Decrypts the payload of the given datagram packet using AES-GCM.
@@ -161,9 +161,9 @@ public final class ClientRunMode extends OutputRunMode {
 	private void handleGeneralSecurityException(final GeneralSecurityException e) {
 		logger.log(Level.WARNING, e.getMessage(), e);
 
-		EventQueue.invokeLater(
-				() -> GuiUtils.showMessageDialog(main, main, Main.strings.getString("DECRYPTION_ERROR_DIALOG_TEXT"),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
+				Main.strings.getString("DECRYPTION_ERROR_DIALOG_TEXT"), Main.strings.getString("ERROR_DIALOG_TITLE"),
+				JOptionPane.ERROR_MESSAGE, true));
 
 		forceStop = true;
 		run = false;
@@ -181,7 +181,7 @@ public final class ClientRunMode extends OutputRunMode {
 		switch (clientState) {
 		case CONNECTING -> {
 			logger.info("Connecting to " + host + ":" + port);
-			EventQueue.invokeLater(() -> main.setStatusBarText(
+			EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
 					MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -215,11 +215,12 @@ public final class ClientRunMode extends OutputRunMode {
 								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
 									logger.warning("Protocol version mismatch: client " + ServerRunMode.PROTOCOL_VERSION
 											+ " vs server " + serverProtocolVersion);
-									EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+									EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 											MessageFormat.format(
 													Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
 													ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
-											Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+											Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE,
+											true));
 									retry = -1;
 								} else {
 									success = true;
@@ -227,7 +228,7 @@ public final class ClientRunMode extends OutputRunMode {
 							} else {
 								retry--;
 								final var finalRetry = retry;
-								EventQueue.invokeLater(() -> main.setStatusBarText(
+								EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
 										MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
 												NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 							}
@@ -238,7 +239,7 @@ public final class ClientRunMode extends OutputRunMode {
 						logger.log(Level.INFO, e.getMessage(), e);
 						retry--;
 						final var finalRetry = retry;
-						EventQueue.invokeLater(() -> main.setStatusBarText(
+						EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
 								MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
 										NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 					}
@@ -247,15 +248,15 @@ public final class ClientRunMode extends OutputRunMode {
 				if (success) {
 					clientState = ClientState.CONNECTED;
 					logger.info("Successfully connected");
-					EventQueue.invokeLater(() -> main.setStatusBarText(
+					EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
 							MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
 					if (retry != -1 && run) {
 						logger.info("Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
-						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
 										NUM_CONNECTION_RETRIES),
-								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 					}
 
 					forceStop = true;
@@ -386,9 +387,9 @@ public final class ClientRunMode extends OutputRunMode {
 				handleGeneralSecurityException(e);
 			} catch (final SocketTimeoutException e) {
 				logger.log(Level.FINE, e.getMessage(), e);
-				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 						Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 
 				forceStop = true;
 				run = false;
@@ -452,9 +453,9 @@ public final class ClientRunMode extends OutputRunMode {
 			forceStop = true;
 
 			logger.info("Could not resolve host: " + host);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 					MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		} catch (final SocketException e) {
 			if (forceStop) {
 				return;
@@ -463,9 +464,9 @@ public final class ClientRunMode extends OutputRunMode {
 			forceStop = true;
 
 			logger.log(Level.INFO, e.getMessage(), e);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 					MessageFormat.format(Main.strings.getString("SOCKET_ERROR_DIALOG_TEXT"), host),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		} catch (final IOException e) {
 			handleIOException(e);
 		} finally {

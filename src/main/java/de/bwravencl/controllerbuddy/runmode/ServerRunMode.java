@@ -17,8 +17,9 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
@@ -116,14 +117,13 @@ public final class ServerRunMode extends RunMode {
 
 	/// Constructs a [ServerRunMode].
 	///
-	/// @param main the main application instance providing port, timeout, and
-	/// encryption settings
-	public ServerRunMode(final Main main) {
-		super(main);
+	/// @param mainFrame the main frame instance
+	public ServerRunMode(final MainFrame mainFrame) {
+		super(mainFrame);
 
-		port = main.getPort();
-		timeout = main.getTimeout();
-		random = main.getRandom();
+		port = mainFrame.getPort();
+		timeout = mainFrame.getTimeout();
+		random = mainFrame.getRandom();
 
 		try {
 			cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
@@ -135,11 +135,11 @@ public final class ServerRunMode extends RunMode {
 	/// Derives an AES secret key from the application password and the given salt
 	/// using PBKDF2 with HMAC-SHA-256.
 	///
-	/// @param main the main application instance providing the password
+	/// @param mainFrame the main frame instance
 	/// @param saltBytes the salt bytes used during key derivation
 	/// @return the derived [Key]
-	static Key deriveKey(final Main main, final byte[] saltBytes) {
-		final var pbeKeySpec = new PBEKeySpec(main.getPassword().toCharArray(), saltBytes, 1000, 256);
+	static Key deriveKey(final MainFrame mainFrame, final byte[] saltBytes) {
+		final var pbeKeySpec = new PBEKeySpec(mainFrame.getPassword().toCharArray(), saltBytes, 1000, 256);
 		try {
 			final var secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
 			final var secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
@@ -185,7 +185,7 @@ public final class ServerRunMode extends RunMode {
 			serverSocket = new DatagramSocket(port);
 			final var receiveBuf = new byte[1024];
 
-			EventQueue.invokeLater(() -> main
+			EventQueue.invokeLater(() -> mainFrame
 					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
 			for (;;) {
@@ -227,7 +227,7 @@ public final class ServerRunMode extends RunMode {
 
 						if (messageType == MessageType.CLIENT_HELLO.getId()) {
 							final var salt = dataInputStream.readNBytes(SALT_LENGTH);
-							key = deriveKey(main, salt);
+							key = deriveKey(mainFrame, salt);
 
 							minAxisValue = dataInputStream.readInt();
 							maxAxisValue = dataInputStream.readInt();
@@ -248,7 +248,7 @@ public final class ServerRunMode extends RunMode {
 								return;
 							}
 							final var clientHostName = clientAddress.getCanonicalHostName();
-							EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat.format(
+							EventQueue.invokeLater(() -> mainFrame.setStatusBarText(MessageFormat.format(
 									Main.strings.getString("STATUS_CONNECTED_TO"), clientHostName, clientPort)));
 						}
 					}
@@ -376,8 +376,8 @@ public final class ServerRunMode extends RunMode {
 							input.reset();
 							input.deInit();
 
-							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
-							main.scheduleStatusBarText(
+							mainFrame.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
+							mainFrame.scheduleStatusBarText(
 									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
 
 							serverState = ServerState.LISTENING;
@@ -388,16 +388,16 @@ public final class ServerRunMode extends RunMode {
 			}
 		} catch (final BindException e) {
 			logger.warning("Could not bind socket on port " + port);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 					MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		} catch (final SocketException e) {
 			logger.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			logger.log(Level.SEVERE, e.getMessage(), e);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} finally {
@@ -408,8 +408,8 @@ public final class ServerRunMode extends RunMode {
 			}
 
 			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
-				main.stopAll(false, false, true);
+				mainFrame.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
+				mainFrame.stopAll(false, false, true);
 			});
 		}
 

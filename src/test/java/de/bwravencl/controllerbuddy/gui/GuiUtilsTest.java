@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.Main;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -33,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +46,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sun.misc.Unsafe;
 
 @NullMarked
 @ExtendWith(MockitoExtension.class)
@@ -210,6 +215,16 @@ final class GuiUtilsTest {
 
 		private static final Rectangle bounds = new Rectangle(0, 0, 1920, 1080);
 
+		private AutoCloseable closeable;
+
+		private Preferences originalPreferences;
+
+		private @Nullable Object preferencesFieldBase;
+
+		private long preferencesFieldOffset;
+
+		private @Nullable Unsafe unsafe;
+
 		@Test
 		@DisplayName("computes position from normalised coordinates stored in preferences")
 		void computesPositionFromNormalisedCoordinates() {
@@ -217,7 +232,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockFrame.getTitle()).thenReturn("Main");
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("0.5,0.5");
 
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, new Point(0, 0), bounds);
+			GuiUtils.loadFrameLocation(mockFrame, new Point(0, 0), bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -233,7 +248,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("not,numbers");
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
+			GuiUtils.loadFrameLocation(mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -248,7 +263,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("singlevalue");
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
+			GuiUtils.loadFrameLocation(mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -263,7 +278,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn(null);
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
+			GuiUtils.loadFrameLocation(mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -271,11 +286,31 @@ final class GuiUtilsTest {
 			Assertions.assertEquals(200, captor.getValue().y);
 		}
 
+		@SuppressWarnings("removal")
 		@BeforeEach
-		void setUp() {
-			// Frame dimensions return 0 so clamping doesn't offset results
-			Mockito.when(mockFrame.getWidth()).thenReturn(0);
-			Mockito.when(mockFrame.getHeight()).thenReturn(0);
+		void setUp() throws Exception {
+			closeable = MockitoAnnotations.openMocks(this);
+
+			final var theUnsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+			theUnsafeField.setAccessible(true);
+			unsafe = (Unsafe) theUnsafeField.get(null);
+
+			final var preferecesField = Main.class.getDeclaredField("preferences");
+			preferencesFieldBase = unsafe.staticFieldBase(preferecesField);
+			preferencesFieldOffset = unsafe.staticFieldOffset(preferecesField);
+
+			originalPreferences = (Preferences) unsafe.getObject(preferencesFieldBase, preferencesFieldOffset);
+
+			unsafe.putObject(preferencesFieldBase, preferencesFieldOffset, mockPreferences);
+		}
+
+		@SuppressWarnings("removal")
+		@AfterEach
+		void tearDown() throws Exception {
+			if (unsafe != null && preferencesFieldBase != null) {
+				unsafe.putObject(preferencesFieldBase, preferencesFieldOffset, originalPreferences);
+			}
+			closeable.close();
 		}
 
 		@Test
@@ -284,7 +319,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockFrame.getTitle()).thenReturn(null);
 			final var defaultLocation = new Point(100, 200);
 
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
+			GuiUtils.loadFrameLocation(mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());

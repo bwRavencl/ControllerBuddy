@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.util.logging.Logger;
 import org.jspecify.annotations.NullMarked;
@@ -39,11 +39,11 @@ final class RunModeTest {
 	Input mockInput;
 
 	@Mock
-	Main mockMain;
+	MainFrame mockMainFrame;
 
 	private RunMode createRunMode() {
-		Mockito.when(mockMain.getInput()).thenReturn(mockInput);
-		return new RunMode(mockMain) {
+		Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
+		return new RunMode(mockMainFrame) {
 
 			@Override
 			Logger getLogger() {
@@ -66,7 +66,7 @@ final class RunModeTest {
 		@DisplayName("calls stopAll() on the first invocation")
 		void callsStopAllOnFirstInvocation() {
 			runMode.controllerDisconnected();
-			Mockito.verify(mockMain, Mockito.timeout(1000)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
+			Mockito.verify(mockMainFrame, Mockito.timeout(1000)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
 					Mockito.anyBoolean());
 		}
 
@@ -74,11 +74,11 @@ final class RunModeTest {
 		@DisplayName("does not call stopAll() a second time when called again after stopping")
 		void doesNotCallStopAllAgainAfterStopping() {
 			runMode.controllerDisconnected();
-			Mockito.verify(mockMain, Mockito.timeout(1000)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
+			Mockito.verify(mockMainFrame, Mockito.timeout(1000)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
 					Mockito.anyBoolean());
 
 			runMode.controllerDisconnected();
-			Mockito.verify(mockMain, Mockito.times(1)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
+			Mockito.verify(mockMainFrame, Mockito.times(1)).stopAll(Mockito.anyBoolean(), Mockito.anyBoolean(),
 					Mockito.anyBoolean());
 		}
 
@@ -86,15 +86,15 @@ final class RunModeTest {
 		@DisplayName("does not invoke the dialog when isSkipControllerDialogs() returns true")
 		void doesNotInvokeDialogWhenSkipped() {
 			runMode.controllerDisconnected();
-			Mockito.verify(mockMain).isSkipControllerDialogs();
+			Mockito.verify(mockMainFrame).isSkipControllerDialogs();
 			Assertions.assertDoesNotThrow(() -> runMode.controllerDisconnected());
 		}
 
 		@BeforeEach
 		void setUp() {
-			Mockito.when(mockMain.isSkipControllerDialogs()).thenReturn(true);
-			Mockito.when(mockMain.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
-			Mockito.when(mockMain.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.isSkipControllerDialogs()).thenReturn(true);
+			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
 			runMode = createRunMode();
 		}
 	}

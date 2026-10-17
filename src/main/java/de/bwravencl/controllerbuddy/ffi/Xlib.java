@@ -29,7 +29,7 @@ import java.lang.invoke.MethodHandle;
 /// Uses the Foreign Function and Memory API to expose functions for managing
 /// X11 displays, inter-client communication, window properties, and event
 /// synchronization.
-@SuppressWarnings({ "restricted" })
+@SuppressWarnings("restricted")
 public final class Xlib {
 
 	/// Method handle for the native `XChangeProperty` function.
@@ -66,5 +66,9 @@ public final class Xlib {
 
 		XOpenDisplay = linker.downcallHandle(symbolLookup.find("XOpenDisplay").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
+	}
+
+	/// Prevents instantiation.
+	private Xlib() {
 	}
 }

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAxisToDelayableAction;
@@ -102,7 +102,7 @@ public final class Input {
 	private final Set<Integer> hotSwappingButtonDownInstanceIds = new HashSet<>();
 
 	/// The main application instance.
-	private final Main main;
+	private final MainFrame mainFrame;
 
 	/// Lock keys that should be turned off this poll cycle.
 	private final Set<LockKey> offLockKeys = new HashSet<>();
@@ -184,12 +184,12 @@ public final class Input {
 
 	/// Constructs an [Input] for the given controller.
 	///
-	/// @param main the [Main] application instance
+	/// @param mainFrame the main frame instance
 	/// @param selectedController the [Controller] selected for input
 	/// @param axes initial axis values, or `null` to initialize all axes to zero
-	public Input(final Main main, final @Nullable Controller selectedController,
+	public Input(final MainFrame mainFrame, final @Nullable Controller selectedController,
 			final @Nullable Map<VirtualAxis, Integer> axes) {
-		this.main = main;
+		this.mainFrame = mainFrame;
 		this.selectedController = selectedController;
 
 		if (axes != null) {
@@ -328,9 +328,9 @@ public final class Input {
 
 	/// Returns the main application instance.
 	///
-	/// @return the [Main] instance
-	public Main getMain() {
-		return main;
+	/// @return the [MainFrame] instance
+	public MainFrame getMain() {
+		return mainFrame;
 	}
 
 	/// Returns the smallest representable axis movement step size based on the run
@@ -414,9 +414,9 @@ public final class Input {
 		Objects.requireNonNull(runMode, "Field runMode must not be null");
 
 		sdlGamepadToControllerStateMap.clear();
-		for (final var controller : main.getControllers()) {
+		for (final var controller : mainFrame.getControllers()) {
 			if (!openController(controller) && controller.equals(selectedController)) {
-				Main.logSdlError("Could not open gamepad");
+				MainFrame.logSdlError("Could not open gamepad");
 
 				return false;
 			}
@@ -489,8 +489,8 @@ public final class Input {
 			return false;
 		}
 
-		sdlGamepadToControllerStateMap.put(sdlGamepad,
-				new ControllerState(sdlGamepad, main.isSwapLeftAndRightSticks(), main.isMapCircularAxesToSquareAxes()));
+		sdlGamepadToControllerStateMap.put(sdlGamepad, new ControllerState(sdlGamepad,
+				mainFrame.isSwapLeftAndRightSticks(), mainFrame.isMapCircularAxesToSquareAxes()));
 		updateHotSwappingButtonId();
 
 		final var gamepadProperties = SDLGamepad.SDL_GetGamepadProperties(sdlGamepad);
@@ -498,7 +498,7 @@ public final class Input {
 		if (isSelectedController) {
 			selectedSdlGamepad = sdlGamepad;
 
-			if (main.isHapticFeedback()) {
+			if (mainFrame.isHapticFeedback()) {
 				hapticFeedback = SDLProperties.SDL_GetBooleanProperty(gamepadProperties,
 						SDLGamepad.SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN, false);
 			}
@@ -506,7 +506,7 @@ public final class Input {
 
 		if (SDLProperties.SDL_GetBooleanProperty(gamepadProperties, SDLGamepad.SDL_PROP_GAMEPAD_CAP_RGB_LED_BOOLEAN,
 				false)) {
-			final var ledColor = main.getLedColor();
+			final var ledColor = mainFrame.getLedColor();
 			SDLGamepad.SDL_SetGamepadLED(sdlGamepad, Integer.valueOf(ledColor.getRed()).byteValue(),
 					Integer.valueOf(ledColor.getGreen()).byteValue(), Integer.valueOf(ledColor.getBlue()).byteValue());
 		}
@@ -561,20 +561,20 @@ public final class Input {
 					if (controllerState.getButtons()[hotSwappingButtonId]) {
 						hotSwappingButtonDownInstanceIds.add(instanceId);
 					} else if (hotSwappingButtonDownInstanceIds.contains(instanceId)) {
-						final var optionalController = main.getControllers().stream()
+						final var optionalController = mainFrame.getControllers().stream()
 								.filter(controller -> controller.instanceId() == instanceId).findFirst();
 
 						if (optionalController.isPresent()) {
 							final var controller = optionalController.get();
 
-							logger.info(Main.assembleControllerLoggingMessage("Initiating hot swap to controller ",
+							logger.info(MainFrame.assembleControllerLoggingMessage("Initiating hot swap to controller ",
 									controller));
 
 							hotSwappingButtonId = HotSwappingButton.NONE.id;
 							EventQueue.invokeLater(() -> {
-								main.setSelectedControllerAndUpdateInput(controller, axes);
-								main.updateDeviceMenuSelection();
-								main.restartLast();
+								mainFrame.setSelectedControllerAndUpdateInput(controller, axes);
+								mainFrame.updateDeviceMenuSelection();
+								mainFrame.restartLast();
 							});
 
 							break;
@@ -594,7 +594,7 @@ public final class Input {
 			return false;
 		}
 
-		final var onScreenKeyboard = main.getOnScreenKeyboard();
+		final var onScreenKeyboard = mainFrame.getOnScreenKeyboard();
 
 		if (clearOnNextPoll) {
 			Arrays.fill(buttons, false);
@@ -725,8 +725,8 @@ public final class Input {
 			scheduledRumbleEffect = null;
 		}
 
-		EventQueue.invokeLater(() -> main.updateOverlayAxisIndicators(false));
-		main.handleOnScreenKeyboardModeChange();
+		EventQueue.invokeLater(() -> mainFrame.updateOverlayAxisIndicators(false));
+		mainFrame.handleOnScreenKeyboardModeChange();
 
 		return true;
 	}
@@ -955,7 +955,7 @@ public final class Input {
 		final var hotSwappingPossible = sdlGamepadToControllerStateMap.size() > 1;
 
 		if (hotSwappingPossible && hotSwappingButtonId == HotSwappingButton.NONE.id) {
-			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
+			hotSwappingButtonId = mainFrame.getSelectedHotSwappingButtonId();
 		} else if (!hotSwappingPossible && hotSwappingButtonId != HotSwappingButton.NONE.id) {
 			hotSwappingButtonId = HotSwappingButton.NONE.id;
 		}

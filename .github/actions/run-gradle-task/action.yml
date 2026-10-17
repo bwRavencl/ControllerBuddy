@@ -15,11 +15,32 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Download JBR
+      id: download-jbr
+      shell: bash
+      env:
+        JAVA_VERSION: 25.0.4.1
+        JBR_BUILD: 635.75
+      run: |
+        case "$RUNNER_OS" in
+          Linux)   jdk_os=linux ;;
+          macOS)   jdk_os=osx ;;
+          Windows) jdk_os=windows ;;
+          *) echo "::error::Unsupported OS: $RUNNER_OS"; exit 1 ;;
+        esac
+        case "$RUNNER_ARCH" in
+          X64)   jdk_arch=x64 ;;
+          ARM64) jdk_arch=aarch64 ;;
+          *) echo "::error::Unsupported arch: $RUNNER_ARCH"; exit 1 ;;
+        esac
+        curl -fsSL -o "$RUNNER_TEMP/java_package.tar.gz" "https://cache-redirector.jetbrains.com/intellij-jbr/jbrsdk-$JAVA_VERSION-$jdk_os-$jdk_arch-b$JBR_BUILD.tar.gz"
+        echo "java_semver=$(echo "$JAVA_VERSION" | cut -d. -f1-3)" >> "$GITHUB_OUTPUT"
     - name: Install JDK
       uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
       with:
-        distribution: zulu
-        java-version: 27.0.0+35
+        distribution: jdkfile
+        jdk-file: ${{ runner.temp }}/java_package.tar.gz
+        java-version: ${{ steps.download-jbr.outputs.java_semver }}
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
       with:
@@ -27,12 +48,13 @@ runs:
     - name: Execute Gradle Task
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: ./gradlew ${{ inputs.task }} --info --non-interactive
       env:
         GRADLE_OPTS: -Dorg.gradle.daemon=false
+        GRADLE_TASK: ${{ inputs.task }}
+      run: ./gradlew $GRADLE_TASK --info --non-interactive
     - name: Upload Build-Reports Artifact
       if: failure() && inputs.upload-artifacts == 'true'
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
       with:
         name: build-reports-${{ runner.os }}-${{ runner.arch }}
         path: |
