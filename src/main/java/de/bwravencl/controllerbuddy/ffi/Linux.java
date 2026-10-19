@@ -37,7 +37,8 @@ import java.lang.invoke.VarHandle;
 public final class Linux {
 
 	/// Linux `O_NONBLOCK` flag for non-blocking I/O.
-	public static final int O_NONBLOCK = 4000;
+	@SuppressWarnings("OctalInteger")
+	public static final int O_NONBLOCK = 04_000;
 
 	/// Linux `O_WRONLY` flag for write-only access.
 	public static final int O_WRONLY = 1;
