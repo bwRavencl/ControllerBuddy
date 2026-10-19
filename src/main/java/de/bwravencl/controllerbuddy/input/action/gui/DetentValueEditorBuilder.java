@@ -29,12 +29,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 /// Editor builder for optional detent value properties, providing a spinner
-/// with a range of -1.0 to 1.0 and a checkbox to enable or disable the
-/// detent.
+/// with a range of -1.0 to 1.0 and a checkbox to enable or disable the detent.
 ///
-/// When the checkbox is unchecked, the property is set to `null`, indicating
-/// no detent position. When checked, the spinner value is applied as the
-/// detent point on the axis.
+/// When the checkbox is unchecked, the property is set to `null`, indicating no
+/// detent position. When checked, the spinner value is applied as the detent
+/// point on the axis.
 public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 	private static final Logger logger = Logger.getLogger(DetentValueEditorBuilder.class.getName());

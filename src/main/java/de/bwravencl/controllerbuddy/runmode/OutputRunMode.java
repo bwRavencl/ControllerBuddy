@@ -162,8 +162,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// Mouse buttons that were pressed in the previous output cycle.
 	final Set<Integer> oldDownMouseButtons = new HashSet<>();
 
-	/// Normal (non-modifier) key scancodes that were pressed in the previous
-	/// output cycle.
+	/// Normal (non-modifier) key scancodes that were pressed in the previous output
+	/// cycle.
 	final Set<Scancode> oldDownNormalKeys = new HashSet<>();
 
 	/// Lock keys that should be turned on this cycle.
@@ -419,8 +419,8 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// Sends a keyboard key press or release event for the given scancode.
 	///
-	/// On Windows this uses `SendInput` with the scancode; on Linux it emits
-	/// the corresponding uinput event to the keyboard device.
+	/// On Windows this uses `SendInput` with the scancode; on Linux it emits the
+	/// corresponding uinput event to the keyboard device.
 	///
 	/// @param scancode the scancode of the key to press or release
 	/// @param down `true` to press the key, `false` to release it
@@ -516,9 +516,9 @@ public abstract class OutputRunMode extends RunMode {
 	/// Returns whether the given number of buttons is enough for the current
 	/// profile.
 	///
-	/// Scans all actions in all modes for the highest button ID in use and
-	/// compares it against the provided count. If not enough buttons are
-	/// available, an error dialog is shown.
+	/// Scans all actions in all modes for the highest button ID in use and compares
+	/// it against the provided count. If not enough buttons are available, an error
+	/// dialog is shown.
 	///
 	/// @param numButtons the number of buttons available on the virtual device
 	/// @return `true` if the device has enough buttons, `false` otherwise
@@ -870,13 +870,13 @@ public abstract class OutputRunMode extends RunMode {
 	///
 	/// On Windows the locking state is toggled via the Java [Toolkit] if it does
 	/// not already match. On Linux the sysfs LED brightness file is read to
-	/// determine the current state, and a key-press/release pair is emitted if
-	/// a change is needed.
+	/// determine the current state, and a key-press/release pair is emitted if a
+	/// change is needed.
 	///
 	/// @param lockKey the lock key to control
 	/// @param on `true` to turn the lock key on, `false` to turn it off
-	/// @throws IOException if reading the sysfs brightness file or emitting
-	/// the uinput event fails
+	/// @throws IOException if reading the sysfs brightness file or emitting the
+	/// uinput event fails
 	private void setLockKeyState(final LockKey lockKey, final boolean on) throws IOException {
 		if (Main.IS_WINDOWS) {
 			final var virtualKeyCode = lockKey.virtualKeyCode();
@@ -928,8 +928,8 @@ public abstract class OutputRunMode extends RunMode {
 		}
 	}
 
-	/// Writes all changed axis, button, keyboard, mouse, and lock-key values to
-	/// the virtual output device.
+	/// Writes all changed axis, button, keyboard, mouse, and lock-key values to the
+	/// virtual output device.
 	///
 	/// Only values that have changed since the last write operation are sent;
 	/// unchanged values are skipped. On Windows, a warning is shown if any vJoy
@@ -1230,8 +1230,8 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// Tracks a single output device value with change detection.
 	///
-	/// Caches the last written value and flags whether it has changed, allowing
-	/// the output stage to skip unchanged values.
+	/// Caches the last written value and flags whether it has changed, allowing the
+	/// output stage to skip unchanged values.
 	static final class DeviceValue {
 
 		/// The last value written to the output device.
@@ -1240,8 +1240,8 @@ public abstract class OutputRunMode extends RunMode {
 		/// Whether the value has changed since the last output cycle.
 		private boolean changed;
 
-		/// Constructs a [DeviceValue] and marks it as changed so the first write
-		/// is always sent.
+		/// Constructs a [DeviceValue] and marks it as changed so the first write is
+		/// always sent.
 		private DeviceValue() {
 			changed = true;
 		}

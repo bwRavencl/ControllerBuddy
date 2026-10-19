@@ -74,8 +74,8 @@ public final class ControllerState {
 		return Math.clamp(v, -1f, 1f);
 	}
 
-	/// Corrects near-zero numerical imprecision by snapping values smaller than
-	/// a small epsilon to exactly zero.
+	/// Corrects near-zero numerical imprecision by snapping values smaller than a
+	/// small epsilon to exactly zero.
 	///
 	/// @param d the value to correct
 	/// @return `0` if `d` is smaller than the epsilon threshold, otherwise `d`
@@ -147,8 +147,8 @@ public final class ControllerState {
 	/// Polls the SDL gamepad and refreshes all axis and button state arrays.
 	///
 	/// Reads normalized axis values for sticks and triggers, optionally swapping
-	/// left and right sticks and remapping circular to square axes, then reads
-	/// all button states.
+	/// left and right sticks and remapping circular to square axes, then reads all
+	/// button states.
 	///
 	/// @return `true` if the gamepad is still connected and state was updated,
 	/// `false` if the gamepad has been disconnected

@@ -45,10 +45,10 @@ import java.util.List;
 /// handle (the `M_*` constants), which is passed to [#send], [#create] and
 /// [#request].
 ///
-/// Listener tables for events are built from upcall stubs with [#stub],
-/// [#noop] and [#listener]. Every event handler receives `(void *data, struct
-/// wl_proxy *proxy, ...)`; the names of the `V_*` descriptor constants encode
-/// the parameters: `P` for a pointer and `I` for a 32-bit integer, which also
+/// Listener tables for events are built from upcall stubs with [#stub], [#noop]
+/// and [#listener]. Every event handler receives `(void *data, struct wl_proxy
+/// *proxy, ...)`; the names of the `V_*` descriptor constants encode the
+/// parameters: `P` for a pointer and `I` for a 32-bit integer, which also
 /// covers `uint` and `wl_fixed_t`.
 @SuppressWarnings("restricted")
 public final class Wayland {
@@ -62,8 +62,8 @@ public final class Wayland {
 	/// Marshal handle with four `int` or `uint` arguments.
 	public static final MethodHandle M_IIII;
 
-	/// Marshal handle with one pointer argument (new_id placeholder, object,
-	/// string or dummy `NULL`).
+	/// Marshal handle with one pointer argument (new_id placeholder, object, string
+	/// or dummy `NULL`).
 	public static final MethodHandle M_P;
 
 	/// Marshal handle with one pointer and two `int` arguments.
@@ -690,8 +690,8 @@ public final class Wayland {
 		}
 	}
 
-	/// Dispatches the events already queued in an event queue, without reading
-	/// from the display.
+	/// Dispatches the events already queued in an event queue, without reading from
+	/// the display.
 	///
 	/// @param display the display
 	/// @param queue the event queue
@@ -862,11 +862,11 @@ public final class Wayland {
 			@SuppressWarnings("ArrayRecordComponent") MemorySegment[] types) {
 	}
 
-	/// Represents the Wayland `wl_interface` structure describing an interface,
-	/// its requests and its events.
+	/// Represents the Wayland `wl_interface` structure describing an interface, its
+	/// requests and its events.
 	///
-	/// Provides a [GroupLayout] constant and static accessor methods for the
-	/// fields of a `wl_interface` memory segment.
+	/// Provides a [GroupLayout] constant and static accessor methods for the fields
+	/// of a `wl_interface` memory segment.
 	private static final class wl_interface {
 
 		/// Field name for the events array.

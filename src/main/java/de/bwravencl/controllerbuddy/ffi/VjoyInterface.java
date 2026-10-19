@@ -71,8 +71,7 @@ public final class VjoyInterface {
 	/// before [#init] is called. Accepts any number of arguments (via
 	/// [MethodHandle#asVarargsCollector]) and, regardless of how it is invoked,
 	/// always throws an [IllegalStateException] indicating that initialization has
-	/// not yet occurred.
-	/// Intended to be invoked via [MethodHandle#invoke], not
+	/// not yet occurred. Intended to be invoked via [MethodHandle#invoke], not
 	/// [MethodHandle#invokeExact].
 	private static final MethodHandle UNINITIALIZED_METHOD_HANDLE = MethodHandles
 			.dropArguments(MethodHandles.insertArguments(

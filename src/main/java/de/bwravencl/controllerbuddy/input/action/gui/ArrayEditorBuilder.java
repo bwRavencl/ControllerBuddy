@@ -79,9 +79,9 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	/// Action that applies the currently selected [JComboBox] item to the action
 	/// property via the setter method.
 	///
-	/// Invoked automatically by the combo box whenever the user selects a
-	/// different item, and also calls [ArrayEditorBuilder#onNewValueSet] to
-	/// allow subclasses to react to the change.
+	/// Invoked automatically by the combo box whenever the user selects a different
+	/// item, and also calls [ArrayEditorBuilder#onNewValueSet] to allow subclasses
+	/// to react to the change.
 	private final class JComboBoxSetPropertyAction extends PropertySetterAction {
 
 		@Serial

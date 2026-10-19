@@ -35,9 +35,9 @@ import javax.swing.UIManager;
 /// Editor builder for exponent (response curve) properties, providing a spinner
 /// with a range of 0.1 to 10.0 alongside a live power-function plot.
 ///
-/// The plot visualizes the current curve shape in real time as the user
-/// adjusts the exponent value, making it easier to understand the effect of
-/// different response curves on axis input.
+/// The plot visualizes the current curve shape in real time as the user adjusts
+/// the exponent value, making it easier to understand the effect of different
+/// response curves on axis input.
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 	/// Constructs a [ExponentEditorBuilder] for the specified action property.

@@ -78,8 +78,8 @@ public abstract class ToMouseButtonAction<V extends Constable> extends Activatio
 		return mouseButton;
 	}
 
-	/// Handles a mouse button press or release by updating the target mouse
-	/// button state according to the configured activation mode and interval.
+	/// Handles a mouse button press or release by updating the target mouse button
+	/// state according to the configured activation mode and interval.
 	///
 	/// When the activatable state is [Activatable#ALWAYS], a down-up mouse button
 	/// event is enqueued unconditionally. Otherwise, the activation mode determines

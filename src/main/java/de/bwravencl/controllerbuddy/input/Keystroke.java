@@ -104,9 +104,9 @@ public final class Keystroke implements Cloneable, Serializable {
 		return Objects.hash(Arrays.hashCode(keyCodes), Arrays.hashCode(modifierCodes));
 	}
 
-	/// Deserializes this keystroke from the given stream, reading the modifier
-	/// and key code sets and mapping each stored integer key code to its
-	/// corresponding [Scancode].
+	/// Deserializes this keystroke from the given stream, reading the modifier and
+	/// key code sets and mapping each stored integer key code to its corresponding
+	/// [Scancode].
 	///
 	/// @param stream the object input stream to read from
 	/// @throws ClassNotFoundException if the class of a serialized object cannot be

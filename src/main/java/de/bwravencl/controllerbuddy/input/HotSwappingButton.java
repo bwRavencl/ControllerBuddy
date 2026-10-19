@@ -92,8 +92,8 @@ public enum HotSwappingButton {
 		label = Main.strings.getString(labelKey);
 	}
 
-	/// Returns the [HotSwappingButton] constant whose id matches the given
-	/// SDL button ID, or [#NONE] if no match is found.
+	/// Returns the [HotSwappingButton] constant whose id matches the given SDL
+	/// button ID, or [#NONE] if no match is found.
 	///
 	/// @param id the SDL button ID to look up
 	/// @return the matching [HotSwappingButton] constant, or [#NONE] as default

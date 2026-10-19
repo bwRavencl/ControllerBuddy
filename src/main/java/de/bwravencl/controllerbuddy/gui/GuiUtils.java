@@ -280,8 +280,7 @@ public final class GuiUtils {
 	}
 
 	/// Creates a text field backed by the given document model, with a right-click
-	/// context menu
-	/// providing undo, cut, copy, paste, and select-all actions.
+	/// context menu providing undo, cut, copy, paste, and select-all actions.
 	///
 	/// @param doc the document model, or `null` to use the default
 	/// @param text the initial text

@@ -27,10 +27,10 @@ import org.jspecify.annotations.Nullable;
 /// A mouse adapter that enables dragging an undecorated frame by clicking and
 /// dragging anywhere on its surface.
 ///
-/// Frame location is clamped to the total display bounds during the drag.
-/// On mouse release the frame's position is persisted to preferences as
-/// normalized coordinates relative to the total display bounds, so the
-/// position is restored correctly across different screen configurations.
+/// Frame location is clamped to the total display bounds during the drag. On
+/// mouse release the frame's position is persisted to preferences as normalized
+/// coordinates relative to the total display bounds, so the position is
+/// restored correctly across different screen configurations.
 class FrameDragListener extends MouseAdapter {
 
 	/// The frame being dragged.

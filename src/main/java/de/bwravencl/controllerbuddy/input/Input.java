@@ -253,8 +253,7 @@ public final class Input {
 	}
 
 	/// Converts a floating-point axis value in the range `[-1, 1]` to an integer
-	/// axis value
-	/// scaled to the current run mode's axis range.
+	/// axis value scaled to the current run mode's axis range.
 	///
 	/// @param value the float axis value, clamped to `[-1, 1]`
 	/// @return the corresponding integer axis value
@@ -362,12 +361,12 @@ public final class Input {
 		return profile;
 	}
 
-	/// Returns the rate multiplier based on elapsed time since the last poll.
-	/// Used to scale time-dependent actions for frame-rate independence.
+	/// Returns the rate multiplier based on elapsed time since the last poll. Used
+	/// to scale time-dependent actions for frame-rate independence.
 	///
 	/// If this method is called while a [RunMode] is active, it will also invoke
-	/// [RunMode#useMaxPollingRate] to enable maximum polling rate for the
-	/// next cycle.
+	/// [RunMode#useMaxPollingRate] to enable maximum polling rate for the next
+	/// cycle.
 	///
 	/// @return the rate multiplier
 	public float getRateMultiplier() {
@@ -775,8 +774,8 @@ public final class Input {
 		lastHotSwapPollNanoTime = System.nanoTime() + HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL_NS;
 	}
 
-	/// Schedules a full state clear to be performed at the start of the next
-	/// poll cycle, resetting all virtual outputs to their default values.
+	/// Schedules a full state clear to be performed at the start of the next poll
+	/// cycle, resetting all virtual outputs to their default values.
 	void scheduleClearOnNextPoll() {
 		clearOnNextPoll = true;
 	}
@@ -948,9 +947,8 @@ public final class Input {
 		axisToSuspensionInfoMap.put(axis, new SuspensionInfo(System.nanoTime() + SUSPENSION_TIME_NS, activeMode));
 	}
 
-	/// Updates the active hot-swapping button ID based on whether multiple
-	/// gamepads are currently connected, enabling or disabling hot-swap support
-	/// accordingly.
+	/// Updates the active hot-swapping button ID based on whether multiple gamepads
+	/// are currently connected, enabling or disabling hot-swap support accordingly.
 	private void updateHotSwappingButtonId() {
 		final var hotSwappingPossible = sdlGamepadToControllerStateMap.size() > 1;
 

@@ -87,8 +87,8 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 	/// returned unchanged.
 	///
 	/// @param glfwButton the GLFW gamepad button index to convert
-	/// @return the corresponding SDL gamepad button constant, or the original
-	/// value if no mapping exists
+	/// @return the corresponding SDL gamepad button constant, or the original value
+	/// if no mapping exists
 	private static int convertGlfwToSdlButton(final int glfwButton) {
 		return switch (glfwButton) {
 		case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER;

@@ -19,8 +19,8 @@ package de.bwravencl.controllerbuddy.util;
 
 /// A [Runnable] wrapper that propagates uncaught exceptions.
 ///
-/// Delegates uncaught exceptions to the thread's default uncaught
-/// exception handler instead of silently swallowing them.
+/// Delegates uncaught exceptions to the thread's default uncaught exception
+/// handler instead of silently swallowing them.
 ///
 /// @param runnable the runnable to wrap
 public record RunnableWithDefaultExceptionHandler(Runnable runnable) implements Runnable {

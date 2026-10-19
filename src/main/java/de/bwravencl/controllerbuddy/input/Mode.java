@@ -48,8 +48,8 @@ public final class Mode implements Cloneable {
 	/// Human-readable description of this mode.
 	private @Nullable String description;
 
-	/// Unique identifier of this mode.
-	/// This field is not final to allow modification by Gson.
+	/// Unique identifier of this mode. This field is not final to allow
+	/// modification by Gson.
 	@SuppressWarnings({ "CanBeFinal", "FieldMayBeFinal" })
 	private UUID uuid;
 

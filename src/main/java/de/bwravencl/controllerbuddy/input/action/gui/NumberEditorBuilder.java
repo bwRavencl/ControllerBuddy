@@ -39,8 +39,8 @@ import org.jspecify.annotations.Nullable;
 /// Abstract editor builder for numeric properties.
 ///
 /// Renders a [JSpinner] with a configurable minimum, maximum, and step size.
-/// Subclasses define the numeric range and step by implementing
-/// [#getMinimum], [#getMaximum], and [#getStepSize].
+/// Subclasses define the numeric range and step by implementing [#getMinimum],
+/// [#getMaximum], and [#getStepSize].
 ///
 /// @param <T> the numeric type of the property being edited
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
@@ -124,10 +124,10 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// property and optionally forwards it to a registered value consumer.
 	///
 	/// Float values are rounded to a fixed number of decimal places before being
-	/// passed to the setter, preventing floating-point drift from accumulating
-	/// as the user steps through values. An optional [Consumer] can be registered
-	/// via [#setValueConsumer] to receive each new value, for example, to update a
-	/// live preview component.
+	/// passed to the setter, preventing floating-point drift from accumulating as
+	/// the user steps through values. An optional [Consumer] can be registered via
+	/// [#setValueConsumer] to receive each new value, for example, to update a live
+	/// preview component.
 	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 
 		/// The editor builder providing rounding and step-size configuration.

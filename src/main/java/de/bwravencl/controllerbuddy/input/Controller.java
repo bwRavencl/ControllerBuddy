@@ -46,8 +46,8 @@ public record Controller(int instanceId, @Nullable String name, String guid) {
 
 	/// Converts the SDL GUID for the given instance ID to a hex string.
 	///
-	/// Allocates a stack buffer, calls `SDL_GUIDToString`, and strips any
-	/// trailing null characters before returning the result.
+	/// Allocates a stack buffer, calls `SDL_GUIDToString`, and strips any trailing
+	/// null characters before returning the result.
 	///
 	/// @param instanceId the SDL instance ID whose GUID is requested
 	/// @return the GUID as a trimmed hex string

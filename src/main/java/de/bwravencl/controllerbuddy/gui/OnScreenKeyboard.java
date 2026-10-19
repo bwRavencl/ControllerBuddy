@@ -576,8 +576,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 
 	/// Navigation directions for moving the keyboard selector.
 	///
-	/// Used with [#moveSelector] to control which key receives focus next
-	/// during gamepad-driven navigation of the on-screen keyboard.
+	/// Used with [#moveSelector] to control which key receives focus next during
+	/// gamepad-driven navigation of the on-screen keyboard.
 	public enum Direction {
 
 		/// Upward navigation.
@@ -613,8 +613,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// contract.
 	///
 	/// Concrete subclasses implement [#press], [#release], [#poll], and
-	/// [#toggleLock] to provide key-type-specific behavior. Focus is indicated
-	/// by a red compound border applied by [#setFocus].
+	/// [#toggleLock] to provide key-type-specific behavior. Focus is indicated by a
+	/// red compound border applied by [#setFocus].
 	private abstract class AbstractKeyboardButton extends JButton {
 
 		/// Base size in pixels for each keyboard button.
@@ -762,8 +762,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// A keyboard button for alphabetic keys whose display toggles between
 	/// lowercase and uppercase based on the Shift /Caps Lock state.
 	///
-	/// The label is shown in uppercase when either Shift is held or Caps Lock
-	/// is active, and in lowercase otherwise.
+	/// The label is shown in uppercase when either Shift is held or Caps Lock is
+	/// active, and in lowercase otherwise.
 	private final class AlphabeticKeyboardButton extends ShiftableKeyboardButton {
 
 		@Serial
@@ -782,8 +782,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// reflect the current case.
 	///
 	/// When Caps Lock is toggled, each [ShiftableKeyboardButton] in the keyboard
-	/// grid is updated to show either its default or its alternative label,
-	/// taking the current Shift key state into account.
+	/// grid is updated to show either its default or its alternative label, taking
+	/// the current Shift key state into account.
 	private final class CapsLockKeyButton extends LockKeyButton {
 
 		@Serial
@@ -815,8 +815,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// toggle locking.
 	///
 	/// Short presses produce a down-up event pair; holding the button beyond
-	/// `MIN_REPEAT_PRESS_TIME` keeps the key in the down state. Right-clicking
-	/// the button toggles its lock state.
+	/// `MIN_REPEAT_PRESS_TIME` keeps the key in the down state. Right-clicking the
+	/// button toggles its lock state.
 	private class DefaultKeyboardButton extends AbstractKeyboardButton {
 
 		/// Minimum time in milliseconds a button must be held before repeating.
@@ -982,8 +982,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// state (e.g., shifted or Num Lock active).
 	///
 	/// Subclasses provide the two label values and call
-	/// [#setShowAlternativeKeyName] to switch between them in response to
-	/// modifier key or lock key state changes.
+	/// [#setShowAlternativeKeyName] to switch between them in response to modifier
+	/// key or lock key state changes.
 	private abstract class DualPurposeKeyboardButton extends DefaultKeyboardButton {
 
 		@Serial
@@ -1023,8 +1023,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// Lock). Toggling changes the button's foreground color to green when locked.
 	///
 	/// The lock state is stored in an [java.util.concurrent.atomic.AtomicBoolean]
-	/// and propagated to the input layer via `onLockKeys` or `offLockKeys`
-	/// during the next [#poll] cycle.
+	/// and propagated to the input layer via `onLockKeys` or `offLockKeys` during
+	/// the next [#poll] cycle.
 	private class LockKeyButton extends AbstractKeyboardButton {
 
 		@Serial
@@ -1104,8 +1104,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	/// The Num Lock button. Toggling this lock switches all numpad buttons between
 	/// their numeric and navigation labels.
 	///
-	/// When Num Lock is toggled, every [NumPadKeyboardButton] in the keyboard
-	/// grid is updated to show either its numeric or its navigation label.
+	/// When Num Lock is toggled, every [NumPadKeyboardButton] in the keyboard grid
+	/// is updated to show either its numeric or its navigation label.
 	private final class NumLockKeyButton extends LockKeyButton {
 
 		@Serial
@@ -1130,12 +1130,12 @@ public final class OnScreenKeyboard extends OverlayFrame {
 		}
 	}
 
-	/// A numpad keyboard button that displays its numeric label when Num Lock is
-	/// on and a navigation label (e.g., Home, End, arrows) when Num Lock is off.
+	/// A numpad keyboard button that displays its numeric label when Num Lock is on
+	/// and a navigation label (e.g., Home, End, arrows) when Num Lock is off.
 	///
 	/// The label roles are swapped relative to [DualPurposeKeyboardButton]
-	/// convention so that the navigation label is the default and the digit
-	/// label is the alternative, matching standard Num Lock-off behavior.
+	/// convention so that the navigation label is the default and the digit label
+	/// is the alternative, matching standard Num Lock-off behavior.
 	private final class NumPadKeyboardButton extends DualPurposeKeyboardButton {
 
 		@Serial
@@ -1219,8 +1219,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 			/// Constructs a [ShiftKeyboardButtonType] constant with the given DirectInput
 			/// key code name.
 			///
-			/// @param directInputKeyCodeName the DirectInput key code name for this
-			/// Shift key
+			/// @param directInputKeyCodeName the DirectInput key code name for this Shift
+			/// key
 			ShiftKeyboardButtonType(final String directInputKeyCodeName) {
 				this.directInputKeyCodeName = directInputKeyCodeName;
 			}

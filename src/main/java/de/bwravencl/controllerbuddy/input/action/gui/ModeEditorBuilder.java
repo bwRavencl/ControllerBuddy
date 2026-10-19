@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 /// on-screen keyboard mode.
 ///
 /// Used to configure which [Mode] is activated when the associated action
-/// fires, allowing the user to switch between controller mapping contexts
-/// at runtime.
+/// fires, allowing the user to switch between controller mapping contexts at
+/// runtime.
 public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 
 	/// Constructs a [ModeEditorBuilder] for the specified action property.

@@ -60,8 +60,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 	/// Action that opens a nested [EditActionsDialog] for editing the sub-actions
 	/// of a [ButtonToCycleAction].
 	///
-	/// Displayed as a button in the property editor row; when invoked it opens
-	/// the nested dialog and blocks until the user closes it.
+	/// Displayed as a button in the property editor row; when invoked it opens the
+	/// nested dialog and blocks until the user closes it.
 	private final class EditActionsAction extends AbstractAction {
 
 		@Serial

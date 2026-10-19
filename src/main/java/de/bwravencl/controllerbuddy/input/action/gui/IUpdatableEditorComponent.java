@@ -23,10 +23,10 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 /// When another editor wants to notify components created by a certain type of
 /// editor builder that they need to update their state, it calls
 /// [de.bwravencl.controllerbuddy.gui.EditActionsDialog#updateEditorComponents]
-/// with the class of said editor builder.
-/// If the supplied class is assignable from the editor builder class
-/// returned by [#getEditorBuilderClass], the [#onUpdate] method will be called.
-/// Within [#onUpdate], the editor component can then adapt to the new state.
+/// with the class of said editor builder. If the supplied class is assignable
+/// from the editor builder class returned by [#getEditorBuilderClass], the
+/// [#onUpdate] method will be called. Within [#onUpdate], the editor component
+/// can then adapt to the new state.
 public interface IUpdatableEditorComponent {
 
 	/// Returns the class of the editor builder that created this editor component.

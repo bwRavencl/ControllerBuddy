@@ -57,12 +57,11 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
 import org.jspecify.annotations.Nullable;
 
-/// Client-side run mode that receives controller input state over the
-/// network.
+/// Client-side run mode that receives controller input state over the network.
 ///
-/// Connects to a remote [ServerRunMode] via an encrypted UDP channel,
-/// receives serialized input state updates, and writes them to the
-/// local virtual output device.
+/// Connects to a remote [ServerRunMode] via an encrypted UDP channel, receives
+/// serialized input state updates, and writes them to the local virtual output
+/// device.
 public final class ClientRunMode extends OutputRunMode {
 
 	/// Number of retries when attempting to establish the initial connection.
@@ -482,8 +481,8 @@ public final class ClientRunMode extends OutputRunMode {
 
 	/// Represents the connection state of the client run mode.
 	///
-	/// Tracks whether the client is in the process of establishing a connection
-	/// to the server or has successfully connected and is receiving input data.
+	/// Tracks whether the client is in the process of establishing a connection to
+	/// the server or has successfully connected and is receiving input data.
 	private enum ClientState {
 		/// The client is attempting to establish a connection to the server
 		CONNECTING,

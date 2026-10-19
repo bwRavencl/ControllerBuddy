@@ -307,8 +307,8 @@ public final class Linux {
 	/// @param flags the mapping flags (e.g., [#MAP_SHARED])
 	/// @param fd the file descriptor of the file to map
 	/// @param offset the offset in the file
-	/// @return the mapped memory as a zero-length memory segment, or a segment
-	/// with address `-1` (`MAP_FAILED`) on error
+	/// @return the mapped memory as a zero-length memory segment, or a segment with
+	/// address `-1` (`MAP_FAILED`) on error
 	public static MemorySegment mmap(final MemorySegment addr, final long length, final int prot, final int flags,
 			final int fd, final long offset) {
 		try {
@@ -362,9 +362,8 @@ public final class Linux {
 	/// Represents the Linux `input_event` structure used for writing input events
 	/// to uinput devices.
 	///
-	/// Provides a [GroupLayout] constant and static setter methods for
-	/// populating the type, code, and value fields of an `input_event`
-	/// memory segment.
+	/// Provides a [GroupLayout] constant and static setter methods for populating
+	/// the type, code, and value fields of an `input_event` memory segment.
 	public static final class input_event {
 
 		/// Field name for the event code.
@@ -428,9 +427,8 @@ public final class Linux {
 	/// Represents the Linux `input_id` structure describing the identity of an
 	/// input device.
 	///
-	/// Provides a [GroupLayout] constant and static setter methods for
-	/// populating the bustype, vendor, and product fields of an
-	/// `input_id` memory segment.
+	/// Provides a [GroupLayout] constant and static setter methods for populating
+	/// the bustype, vendor, and product fields of an `input_id` memory segment.
 	public static final class input_id {
 
 		/// Field name for the bus type.
@@ -517,9 +515,9 @@ public final class Linux {
 	/// Represents the Linux `uinput_setup` structure used to configure a uinput
 	/// device.
 	///
-	/// Provides a [GroupLayout] constant and static accessor methods for
-	/// retrieving the `input_id` and device name member slices from a
-	/// `uinput_setup` memory segment.
+	/// Provides a [GroupLayout] constant and static accessor methods for retrieving
+	/// the `input_id` and device name member slices from a `uinput_setup` memory
+	/// segment.
 	public static final class uinput_setup {
 
 		/// Field name for the maximum number of force-feedback effects.

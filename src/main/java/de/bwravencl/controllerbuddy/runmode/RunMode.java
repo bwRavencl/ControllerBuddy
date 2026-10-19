@@ -72,8 +72,7 @@ public abstract class RunMode implements Runnable {
 	/// Flag set when the run mode is in the process of stopping.
 	private boolean stopping;
 
-	/// Constructs a [RunMode], storing references to the main application and
-	/// input
+	/// Constructs a [RunMode], storing references to the main application and input
 	/// instance and registering this run mode with the input.
 	///
 	/// @param mainFrame the main frame instance
@@ -166,17 +165,15 @@ public abstract class RunMode implements Runnable {
 		return input.poll();
 	}
 
-	/// Polls SDL events and yields the main loop, advancing the application
-	/// event
+	/// Polls SDL events and yields the main loop, advancing the application event
 	/// cycle by one step.
 	final void process() {
 		mainFrame.pollSdlEvents();
 		mainFrame.getMainLoop().yield();
 	}
 
-	/// Requests the run mode to stop by setting the run flag to false.
-	/// Subclasses may override to perform additional cleanup such as closing
-	/// sockets.
+	/// Requests the run mode to stop by setting the run flag to false. Subclasses
+	/// may override to perform additional cleanup such as closing sockets.
 	public void requestStop() {
 		run = false;
 	}

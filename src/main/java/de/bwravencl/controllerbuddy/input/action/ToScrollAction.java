@@ -63,8 +63,8 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	/// Scrolls the mouse wheel by the given delta.
 	///
 	/// Applies inversion if enabled, accumulates fractional remainders across
-	/// calls, and updates the scroll click count on the input state only when
-	/// the rounded amount is non-zero.
+	/// calls, and updates the scroll click count on the input state only when the
+	/// rounded amount is non-zero.
 	///
 	/// @param input the input instance
 	/// @param d the raw scroll delta

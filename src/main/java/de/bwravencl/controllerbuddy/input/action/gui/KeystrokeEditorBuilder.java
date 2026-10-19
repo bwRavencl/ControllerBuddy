@@ -71,9 +71,9 @@ import org.jspecify.annotations.Nullable;
 /// Editor builder for keystroke properties, rendering two filterable checkbox
 /// lists for selecting modifier and key scancodes.
 ///
-/// Displays a visualization of the resulting key combination that updates
-/// in real time as the user selects or deselects scancodes. Both lists
-/// support prefix and wildcard filtering to quickly locate specific keys.
+/// Displays a visualization of the resulting key combination that updates in
+/// real time as the user selects or deselects scancodes. Both lists support
+/// prefix and wildcard filtering to quickly locate specific keys.
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	/// Width in pixels of the key list scroll pane.
@@ -110,9 +110,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	/// Adds a label for each scancode in the list to the given panel.
 	///
-	/// If the list is empty, a horizontal strut of the standard list width is
-	/// added instead, preserving layout spacing. Non-breaking spaces replace
-	/// regular spaces in the label text, so word-wrapping does not occur.
+	/// If the list is empty, a horizontal strut of the standard list width is added
+	/// instead, preserving layout spacing. Non-breaking spaces replace regular
+	/// spaces in the label text, so word-wrapping does not occur.
 	///
 	/// @param scancodes the list of scancodes whose names are displayed
 	/// @param panel the panel to which the labels are added
@@ -157,12 +157,12 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		return -1;
 	}
 
-	/// Builds a labeled, filterable checkbox list for selecting scancodes and
-	/// adds it to the keystroke panel at the given layout constraints.
+	/// Builds a labeled, filterable checkbox list for selecting scancodes and adds
+	/// it to the keystroke panel at the given layout constraints.
 	///
 	/// The list is populated with all known scancode names and is wired to a
-	/// selection listener that updates the [Keystroke] property and refreshes
-	/// the visualization whenever the selection changes.
+	/// selection listener that updates the [Keystroke] property and refreshes the
+	/// visualization whenever the selection changes.
 	///
 	/// @param labelKey the resource bundle key for the list header label
 	/// @param keystroke the keystroke whose property is updated on selection change
@@ -257,8 +257,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		updateUpdateKeystrokeVisualization();
 	}
 
-	/// Selects the list items that correspond to the given scancodes and scrolls
-	/// to the first selected item.
+	/// Selects the list items that correspond to the given scancodes and scrolls to
+	/// the first selected item.
 	///
 	/// @param list the list in which to apply the selection
 	/// @param scancodes the scancodes that should be selected
@@ -280,8 +280,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// and key selections.
 	///
 	/// Clears the visualization panel and repopulates it with labels for the
-	/// currently selected modifier and key scancodes, separated by a "+" label
-	/// when both modifiers and keys are selected.
+	/// currently selected modifier and key scancodes, separated by a "+" label when
+	/// both modifiers and keys are selected.
 	private void updateUpdateKeystrokeVisualization() {
 		visualizationPanel.removeAll();
 
@@ -317,9 +317,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// A [JList] variant that uses a toggle-select model, rendering each item as a
 	/// checkbox so that clicking an already-selected row deselects it.
 	///
-	/// The default mouse-motion listener that would cause drag-selection is
-	/// removed to prevent unintended multi-selection when the user moves the
-	/// pointer while clicking.
+	/// The default mouse-motion listener that would cause drag-selection is removed
+	/// to prevent unintended multi-selection when the user moves the pointer while
+	/// clicking.
 	///
 	/// @param <E> the element type of the list
 	private static final class CheckboxJList<E> extends JList<E> {
@@ -428,9 +428,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		/// Sets the filter string used to hide non-matching list items.
 		///
-		/// The text is normalized to lower case before storing. If the new value
-		/// equals the current filter, no update is performed; otherwise the filter
-		/// is updated, and a property change is fired on the list to trigger a repaint.
+		/// The text is normalized to lower case before storing. If the new value equals
+		/// the current filter, no update is performed; otherwise the filter is updated,
+		/// and a property change is fired on the list to trigger a repaint.
 		///
 		/// @param text the filter string, or `null` to clear the filter
 		private void setFilter(@Nullable String text) {
@@ -586,8 +586,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// forwards each text change to the given renderer as a filter.
 		///
 		/// @param checkboxListCellRenderer the renderer whose filter is updated on
-		/// every
-		/// document change
+		/// every document change
 		private FilterTextField(final CheckboxListCellRenderer<?> checkboxListCellRenderer) {
 			super(1);
 
@@ -663,8 +662,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// @param setterMethod the setter method to invoke with the updated keystroke
 		/// @param keystroke the keystroke object that is updated and passed to the
 		/// setter
-		/// @param scancodeConsumer the consumer that receives the new scancode array
-		/// on
+		/// @param scancodeConsumer the consumer that receives the new scancode array on
 		/// each selection change
 		private JListSetPropertyListSelectionListener(final Method setterMethod, final Keystroke keystroke,
 				final Consumer<Scancode[]> scancodeConsumer) {

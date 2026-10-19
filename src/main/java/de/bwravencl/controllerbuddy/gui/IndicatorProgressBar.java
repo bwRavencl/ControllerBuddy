@@ -111,8 +111,8 @@ final class IndicatorProgressBar extends JProgressBar {
 		setForeground(overlayAxis.getColor());
 	}
 
-	/// Calculates the x-coordinate of the left edge of a centered vertical line
-	/// at the given position.
+	/// Calculates the x-coordinate of the left edge of a centered vertical line at
+	/// the given position.
 	///
 	/// @param pos the center position in pixels
 	/// @param lineThickness the thickness of the line in pixels
@@ -121,8 +121,8 @@ final class IndicatorProgressBar extends JProgressBar {
 		return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
 	}
 
-	/// Calculates the y-coordinate of the top edge of a centered horizontal line
-	/// at the given position.
+	/// Calculates the y-coordinate of the top edge of a centered horizontal line at
+	/// the given position.
 	///
 	/// @param pos the center position in pixels
 	/// @param lineThickness the thickness of the line in pixels
@@ -133,9 +133,9 @@ final class IndicatorProgressBar extends JProgressBar {
 
 	/// Draws a subdivision tick mark or detent marker at the given position.
 	///
-	/// For horizontal orientation the tick is a vertical rectangle; for
-	/// vertical orientation it is a horizontal rectangle. The width of the
-	/// rectangle is scaled by the `subdivisionScale` factor.
+	/// For horizontal orientation the tick is a vertical rectangle; for vertical
+	/// orientation it is a horizontal rectangle. The width of the rectangle is
+	/// scaled by the `subdivisionScale` factor.
 	///
 	/// @param g the graphics context to draw into
 	/// @param pos the pixel position along the progress bar's major axis

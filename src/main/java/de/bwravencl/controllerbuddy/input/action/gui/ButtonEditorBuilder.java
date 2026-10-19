@@ -35,8 +35,8 @@ import org.jspecify.annotations.Nullable;
 /// user.
 ///
 /// The display formatter adds one to the internal zero-based index so that
-/// buttons are presented to the user starting from 1, up to the total number
-/// of buttons reported by the connected controller.
+/// buttons are presented to the user starting from 1, up to the total number of
+/// buttons reported by the connected controller.
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [ButtonEditorBuilder] for the specified action property.

@@ -43,10 +43,10 @@ import java.util.stream.Stream;
 
 /// Manages a Linux uinput virtual input device.
 ///
-/// Supports creating joystick, keyboard, and mouse devices via the
-/// uinput kernel interface, emitting input events, and tearing down
-/// the device on close. Device instances are cached per [DeviceType]
-/// and shared across callers.
+/// Supports creating joystick, keyboard, and mouse devices via the uinput
+/// kernel interface, emitting input events, and tearing down the device on
+/// close. Device instances are cached per [DeviceType] and shared across
+/// callers.
 public final class UinputDevice implements Closeable {
 
 	/// USB bus type identifier used when registering the virtual device.
@@ -140,8 +140,8 @@ public final class UinputDevice implements Closeable {
 		ioctlChecked(fd, Linux.UI_DEV_CREATE, MemorySegment.NULL);
 	}
 
-	/// Returns an open [UinputDevice] for the given device type, creating it if
-	/// it does not already exist in the device cache.
+	/// Returns an open [UinputDevice] for the given device type, creating it if it
+	/// does not already exist in the device cache.
 	///
 	/// @param deviceType the type of virtual device to open or retrieve
 	/// @return the open [UinputDevice] instance
@@ -238,8 +238,8 @@ public final class UinputDevice implements Closeable {
 
 	/// Classifies a uinput virtual device by its function.
 	///
-	/// Determines which set of [Event] values the device registers with the
-	/// kernel when it is created, and how the application-level name is derived.
+	/// Determines which set of [Event] values the device registers with the kernel
+	/// when it is created, and how the application-level name is derived.
 	@SuppressWarnings("ImmutableEnumChecker")
 	enum DeviceType {
 
@@ -273,8 +273,8 @@ public final class UinputDevice implements Closeable {
 
 	/// Linux input event codes used with uinput.
 	///
-	/// Covers keyboard keys, mouse buttons, joystick buttons,
-	/// absolute axes, relative axes, and the synchronization report.
+	/// Covers keyboard keys, mouse buttons, joystick buttons, absolute axes,
+	/// relative axes, and the synchronization report.
 	public enum Event {
 
 		/// Escape key

@@ -73,9 +73,9 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 
 	/// Moves the mouse cursor by the given delta along the configured axis.
 	///
-	/// Applies inversion if enabled, accumulates subpixel remainders across
-	/// calls, and updates the corresponding cursor delta on the input state
-	/// only when the rounded movement is non-zero.
+	/// Applies inversion if enabled, accumulates subpixel remainders across calls,
+	/// and updates the corresponding cursor delta on the input state only when the
+	/// rounded movement is non-zero.
 	///
 	/// @param input the input instance
 	/// @param d the raw movement delta in pixels
@@ -114,8 +114,8 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 
 	/// Represents a mouse movement axis.
 	///
-	/// Each constant maps to a localization key used
-	/// for display in the profile editor UI.
+	/// Each constant maps to a localization key used for display in the profile
+	/// editor UI.
 	public enum MouseAxis {
 
 		/// Horizontal mouse axis.

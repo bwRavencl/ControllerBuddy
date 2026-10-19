@@ -110,8 +110,7 @@ public class OverlayFrame extends JFrame {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private @Nullable Overlay overlay;
 
-	/// The real content pane while it is rendered by the overlay, otherwise
-	/// `null`.
+	/// The real content pane while it is rendered by the overlay, otherwise `null`.
 	private @Nullable Container overlayContent;
 
 	/// Copies border changes of the root pane to the overlay while it is open.
@@ -228,8 +227,8 @@ public class OverlayFrame extends JFrame {
 		return overlay != null || super.isVisible();
 	}
 
-	/// Moves the content pane into a new overlay; falls back to a regular window
-	/// on failure.
+	/// Moves the content pane into a new overlay; falls back to a regular window on
+	/// failure.
 	///
 	/// @param connection the Wayland connection
 	/// @param pane the content pane
@@ -447,10 +446,10 @@ public class OverlayFrame extends JFrame {
 
 	/// The Wayland globals used by overlays, bound on JBR's `wl_display`.
 	///
-	/// The globals are bound on a temporary event queue, so the blocking
-	/// roundtrips do not dispatch JBR's own events. Then all proxies are moved to
-	/// the default queue, which JBR dispatches on the event dispatch thread; all
-	/// listeners therefore run on the EDT.
+	/// The globals are bound on a temporary event queue, so the blocking roundtrips
+	/// do not dispatch JBR's own events. Then all proxies are moved to the default
+	/// queue, which JBR dispatches on the event dispatch thread; all listeners
+	/// therefore run on the EDT.
 	private static final class Connection {
 
 		/// Guards [#instance] and [#initialized].
@@ -1284,8 +1283,8 @@ public class OverlayFrame extends JFrame {
 
 			/// Hands the current image to a layer surface.
 			///
-			/// The reported scale is the one the buffer was actually rendered at;
-			/// reporting the intended scale instead would give the surface a wrong size.
+			/// The reported scale is the one the buffer was actually rendered at; reporting
+			/// the intended scale instead would give the surface a wrong size.
 			///
 			/// @param target the layer surface that receives the image
 			private void presentTo(final LayerSurface target) {
@@ -1461,8 +1460,8 @@ public class OverlayFrame extends JFrame {
 
 			/// Destroys all Wayland objects of this surface.
 			///
-			/// The arena is closed later, because this may run inside one of its own
-			/// upcall stubs (for example `onClosed`).
+			/// The arena is closed later, because this may run inside one of its own upcall
+			/// stubs (for example `onClosed`).
 			private void destroyProxies() {
 				destroyed = true;
 
@@ -1544,8 +1543,8 @@ public class OverlayFrame extends JFrame {
 
 			/// Handles `zwlr_layer_surface_v1.configure`.
 			///
-			/// The configured size is ignored: Swing owns the size, and a differing size
-			/// is either outdated or a consequence of a wrong buffer scale.
+			/// The configured size is ignored: Swing owns the size, and a differing size is
+			/// either outdated or a consequence of a wrong buffer scale.
 			///
 			/// @param data unused user data
 			/// @param zwlrLayerSurfaceV1 the layer surface
@@ -1834,8 +1833,8 @@ public class OverlayFrame extends JFrame {
 				/// Allocates the shared memory and creates the buffer.
 				///
 				/// `libwayland-client` duplicates the file descriptor while marshaling, so it
-				/// is closed right away; the buffer keeps the pool alive after the pool
-				/// itself is destroyed.
+				/// is closed right away; the buffer keeps the pool alive after the pool itself
+				/// is destroyed.
 				///
 				/// @param shm the `wl_shm` global
 				/// @param width the width
@@ -1913,8 +1912,8 @@ public class OverlayFrame extends JFrame {
 		/// Translates Wayland pointer input into Swing mouse events.
 		private final class MouseTranslator {
 
-			/// Axis units per wheel step for continuous scrolling (libinput reports 15
-			/// per detent).
+			/// Axis units per wheel step for continuous scrolling (libinput reports 15 per
+			/// detent).
 			private static final double AXIS_UNITS_PER_STEP = 15.0;
 
 			/// Linux code of the left button.

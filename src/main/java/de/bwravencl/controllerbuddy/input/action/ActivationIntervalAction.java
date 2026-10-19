@@ -100,13 +100,13 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 		return minActivationInterval;
 	}
 
-	/// Applies the configured minimum and maximum activation interval logic to
-	/// the given hot state.
+	/// Applies the configured minimum and maximum activation interval logic to the
+	/// given hot state.
 	///
 	/// When the input transitions from up to down, the minimum and maximum
-	/// activation deadlines are recorded. While held, returning `false` stops
-	/// the action once the maximum interval elapses. On release, returning `true`
-	/// holds the action active until the minimum interval has passed.
+	/// activation deadlines are recorded. While held, returning `false` stops the
+	/// action once the maximum interval elapses. On release, returning `true` holds
+	/// the action active until the minimum interval has passed.
 	///
 	/// @param hot `true` if the input is currently active (pressed/in-range)
 	/// @return the effective hot state after applying interval constraints

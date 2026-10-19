@@ -23,8 +23,8 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 /// Represents the virtual axes available for input mapping.
 ///
 /// Each constant corresponds to one axis channel on the virtual device and
-/// carries default overlay orientation and rendering style metadata used
-/// when displaying the axis value in the on-screen overlay.
+/// carries default overlay orientation and rendering style metadata used when
+/// displaying the axis value in the on-screen overlay.
 public enum VirtualAxis {
 
 	/// X axis (left stick horizontal).

@@ -80,11 +80,11 @@ public final class MainLoop {
 	/// Starts the main loop, processing tasks and polling SDL events until
 	/// interrupted.
 	///
-	/// Continuously dequeues and executes [TaskQueueEntry] instances. When no
-	/// tasks are pending and SDL event polling is not active, the thread waits.
-	/// If an uncaught exception escapes a task, all remaining queued tasks are
-	/// completed exceptionally and the exception is re-thrown. On exit, SDL is
-	/// shut down via `SDL_Quit`.
+	/// Continuously dequeues and executes [TaskQueueEntry] instances. When no tasks
+	/// are pending and SDL event polling is not active, the thread waits. If an
+	/// uncaught exception escapes a task, all remaining queued tasks are completed
+	/// exceptionally and the exception is re-thrown. On exit, SDL is shut down via
+	/// `SDL_Quit`.
 	public void enterLoop() {
 		logger.info("Entering main loop");
 		try {
@@ -147,10 +147,9 @@ public final class MainLoop {
 	/// Executes a single queued task entry on the main loop thread.
 	///
 	/// Calls [Callable#call] or [Runnable#run] depending on the task type and
-	/// completes the associated [CompletableFuture] with the result. On
-	/// failure, completes the future exceptionally when one is present, or
-	/// sets the shutting-down flag and re-throws wrapped in a
-	/// [RuntimeException] otherwise.
+	/// completes the associated [CompletableFuture] with the result. On failure,
+	/// completes the future exceptionally when one is present, or sets the
+	/// shutting-down flag and re-throws wrapped in a [RuntimeException] otherwise.
 	///
 	/// @param taskQueueEntry the entry to execute
 	private void executeTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
@@ -183,12 +182,11 @@ public final class MainLoop {
 		return thread.isAlive() && !shuttingDown;
 	}
 
-	/// Returns whether the currently executing task is an instance of the
-	/// given class.
+	/// Returns whether the currently executing task is an instance of the given
+	/// class.
 	///
 	/// @param clazz the class to check against the current task
-	/// @return `true` if a task is running and its type is assignable from
-	/// `clazz`
+	/// @return `true` if a task is running and its type is assignable from `clazz`
 	public boolean isTaskOfTypeRunning(final Class<?> clazz) {
 		final var currentTaskQueueEntry = this.currentTaskQueueEntry;
 		if (currentTaskQueueEntry == null) {
@@ -208,8 +206,8 @@ public final class MainLoop {
 		addTaskQueueEntry(new TaskQueueEntry(runnable, null));
 	}
 
-	/// Submits a [Runnable] task for synchronous execution on the main loop
-	/// thread and blocks until it completes.
+	/// Submits a [Runnable] task for synchronous execution on the main loop thread
+	/// and blocks until it completes.
 	///
 	/// @param runnable the task to execute
 	/// @throws RuntimeException if the task throws an exception
@@ -226,13 +224,13 @@ public final class MainLoop {
 		}
 	}
 
-	/// Submits a [Callable] task for synchronous execution on the main loop
-	/// thread and blocks until it completes.
+	/// Submits a [Callable] task for synchronous execution on the main loop thread
+	/// and blocks until it completes.
 	///
 	/// @param <V> the return type of the callable
 	/// @param callable the task to execute
-	/// @return an [Optional] containing the task result, or empty if the
-	/// calling thread was interrupted
+	/// @return an [Optional] containing the task result, or empty if the calling
+	/// thread was interrupted
 	/// @throws RuntimeException if the task throws an exception
 	@SuppressWarnings("unchecked")
 	public <V> Optional<V> runSync(final Callable<@Nullable V> callable) {
@@ -259,11 +257,11 @@ public final class MainLoop {
 		this.mainFrame = mainFrame;
 	}
 
-	/// Shuts down the main loop by interrupting its thread and waiting for it
-	/// to terminate.
+	/// Shuts down the main loop by interrupting its thread and waiting for it to
+	/// terminate.
 	///
-	/// Disables SDL event polling, interrupts the loop thread, and spins until
-	/// the thread has fully stopped.
+	/// Disables SDL event polling, interrupts the loop thread, and spins until the
+	/// thread has fully stopped.
 	public void shutdown() {
 		pollSdlEvents = false;
 
@@ -281,8 +279,8 @@ public final class MainLoop {
 
 	/// Enables SDL event polling in the main loop and wakes the loop thread.
 	///
-	/// Once enabled, each loop iteration calls `pollSdlEvents` after
-	/// processing the task queue.
+	/// Once enabled, each loop iteration calls `pollSdlEvents` after processing the
+	/// task queue.
 	public void startSdlEventPolling() {
 		synchronized (this) {
 			pollSdlEvents = true;
@@ -290,8 +288,8 @@ public final class MainLoop {
 		}
 	}
 
-	/// Blocks the calling thread until all queued tasks and the currently
-	/// executing task have completed.
+	/// Blocks the calling thread until all queued tasks and the currently executing
+	/// task have completed.
 	public void waitForTask() {
 		while (currentTaskQueueEntry != null || !taskQueue.isEmpty()) {
 			try {

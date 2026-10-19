@@ -80,8 +80,8 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// target mode.
 	///
 	/// Has no effect if this action is already on the stack. Notifies delayed
-	/// action handlers of the mode transition and shows the on-screen keyboard
-	/// if the target mode is the on-screen keyboard mode.
+	/// action handlers of the mode transition and shows the on-screen keyboard if
+	/// the target mode is the on-screen keyboard mode.
 	///
 	/// @param input the input instance
 	/// @param profile the active profile
@@ -106,9 +106,9 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// Returns whether the button that triggers this action is not mapped in any
 	/// currently active mode.
 	///
-	/// Searches all buttons for the one assigned to this action, then checks
-	/// every mode on the active mode stack to see if that button is also mapped
-	/// in the mode. Returns `true` only when no active mode intercepts the button,
+	/// Searches all buttons for the one assigned to this action, then checks every
+	/// mode on the active mode stack to see if that button is also mapped in the
+	/// mode. Returns `true` only when no active mode intercepts the button,
 	/// indicating it is safe to activate this action's mode.
 	///
 	/// @param input the input instance
@@ -149,9 +149,9 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// Pops this action from the mode stack and restores the previous mode.
 	///
 	/// If other mode actions are stacked above this one, they are recursively
-	/// deactivated first. After popping, all activatable actions in the
-	/// previously active mode are re-initialized, overlapping axes are suspended,
-	/// and the on-screen keyboard is hidden if it was shown by this action.
+	/// deactivated first. After popping, all activatable actions in the previously
+	/// active mode are re-initialized, overlapping axes are suspended, and the
+	/// on-screen keyboard is hidden if it was shown by this action.
 	///
 	/// @param input the input instance
 	/// @param profile the active profile

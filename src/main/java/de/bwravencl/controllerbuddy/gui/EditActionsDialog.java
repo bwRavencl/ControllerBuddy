@@ -477,9 +477,8 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// Returns a map of fields to their [ActionProperty] annotations for the given
-	/// action class.
-	/// Results are cached for performance. The map includes fields from the class
-	/// itself and all superclasses that implement [IAction].
+	/// action class. Results are cached for performance. The map includes fields
+	/// from the class itself and all superclasses that implement [IAction].
 	///
 	/// @param actionClass the action class to inspect; must implement [IAction]
 	/// @return an unmodifiable map of fields to their action property annotations
@@ -521,8 +520,8 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// Depending on the action type and editor mode, the action is appended to the
 	/// button-to-mode actions map, the cycle sub-action list, or the
-	/// component-to-actions map of the currently selected mode. The assigned-
-	/// and available-actions lists are then refreshed, and the appropriate row is
+	/// component-to-actions map of the currently selected mode. The assigned- and
+	/// available-actions lists are then refreshed, and the appropriate row is
 	/// selected in the assigned-actions list.
 	///
 	/// @param action the action instance to add
@@ -559,8 +558,7 @@ public final class EditActionsDialog extends JDialog {
 
 	/// Creates and returns a new instance of the given action class, initializing
 	/// smart defaults for [ButtonToModeAction], [ToAxisAction], and
-	/// [ToButtonAction]
-	/// based on the current profile state.
+	/// [ToButtonAction] based on the current profile state.
 	///
 	/// For [ButtonToModeAction], sets the target mode to the second profile mode or
 	/// the on-screen keyboard mode as a fallback. For [ToAxisAction], assigns the
@@ -657,8 +655,8 @@ public final class EditActionsDialog extends JDialog {
 	/// Returns an array of [IAction]s representing all actions currently assigned
 	/// to the component or cycle being edited.
 	///
-	/// In cycle-editor mode, adds each action from the local cycle action list.
-	/// In component-editor mode, adds actions from the selected mode's
+	/// In cycle-editor mode, adds each action from the local cycle action list. In
+	/// component-editor mode, adds actions from the selected mode's
 	/// component-to-actions map and, for button components in the default mode,
 	/// also includes any [ButtonToModeAction] entries from the profile.
 	///
@@ -1163,8 +1161,8 @@ public final class EditActionsDialog extends JDialog {
 		helpEditorPane.setCaretPosition(0);
 	}
 
-	/// Updates the enabled state of the paste button based on whether the
-	/// clipboard contains an action that is allowed in the current context.
+	/// Updates the enabled state of the paste button based on whether the clipboard
+	/// contains an action that is allowed in the current context.
 	///
 	/// The paste button is enabled only when the application clipboard holds a
 	/// non-`null` action whose class is present in the list returned by

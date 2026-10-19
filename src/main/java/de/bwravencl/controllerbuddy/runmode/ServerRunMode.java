@@ -56,10 +56,10 @@ import org.jspecify.annotations.Nullable;
 
 /// Server-side run mode that streams input state to a remote client.
 ///
-/// Polls a locally connected controller and sends encrypted input
-/// state updates to a remote [ClientRunMode] over UDP. The server
-/// listens for client connections, performs a handshake, and then
-/// continuously streams serialized input data.
+/// Polls a locally connected controller and sends encrypted input state updates
+/// to a remote [ClientRunMode] over UDP. The server listens for client
+/// connections, performs a handshake, and then continuously streams serialized
+/// input data.
 public final class ServerRunMode extends RunMode {
 
 	/// The default UDP port used for server communication.
@@ -450,8 +450,8 @@ public final class ServerRunMode extends RunMode {
 
 	/// Identifies the type of message exchanged between client and server.
 	///
-	/// Each constant carries a numeric ID that is written into the UDP packet
-	/// so the remote side can dispatch incoming packets to the correct handler.
+	/// Each constant carries a numeric ID that is written into the UDP packet so
+	/// the remote side can dispatch incoming packets to the correct handler.
 	enum MessageType {
 
 		/// Initial handshake message sent by the client to the server
@@ -503,8 +503,8 @@ public final class ServerRunMode extends RunMode {
 
 	/// The possible states of the server run mode.
 	///
-	/// Indicates whether the server is waiting for a client or
-	/// actively streaming input data to a connected client.
+	/// Indicates whether the server is waiting for a client or actively streaming
+	/// input data to a connected client.
 	public enum ServerState {
 		/// The server is listening for incoming client connections.
 		LISTENING,

@@ -1818,8 +1818,8 @@ public final class MainFrame extends JFrame {
 	/// Returns a unique extended key code to use as the mnemonic for a menu button.
 	///
 	/// Iterates over the characters of the button's label until a character whose
-	/// extended key code
-	/// has not already been assigned to another menu item is found.
+	/// extended key code has not already been assigned to another menu item is
+	/// found.
 	///
 	/// @param button the menu button for which a mnemonic key code is needed
 	/// @param alreadyAssignedKeyCodes the set of key codes already in use; the
@@ -1845,10 +1845,8 @@ public final class MainFrame extends JFrame {
 	/// Returns the hardcoded mnemonic key code for a known menu-item action.
 	///
 	/// Maps well-known action types ([NewAction], [OpenAction], [SaveAction], etc.)
-	/// to their
-	/// designated mnemonic key codes. Returns `KeyEvent.VK_UNDEFINED` for
-	/// unrecognized actions or
-	/// when the button has no associated action.
+	/// to their designated mnemonic key codes. Returns `KeyEvent.VK_UNDEFINED` for
+	/// unrecognized actions or when the button has no associated action.
 	///
 	/// @param button the menu item button whose action is inspected
 	/// @return the key code for the matching action, or `KeyEvent.VK_UNDEFINED` if
@@ -1966,8 +1964,7 @@ public final class MainFrame extends JFrame {
 	/// Opens the given URI in the system's default browser.
 	///
 	/// Tries the Java [Desktop] API first, then falls back to `SDL_OpenURL`. If
-	/// both fail, shows
-	/// a dialog asking the user to visit the URL manually.
+	/// both fail, shows a dialog asking the user to visit the URL manually.
 	///
 	/// @param parentComponent the parent component for any fallback dialog, may be
 	/// `null`
@@ -2715,8 +2712,8 @@ public final class MainFrame extends JFrame {
 	/// Validates and applies network-related command-line options to
 	/// Main.preferences.
 	///
-	/// Processes host, port, timeout, and password options. Shows an error
-	/// dialog for each invalid value encountered.
+	/// Processes host, port, timeout, and password options. Shows an error dialog
+	/// for each invalid value encountered.
 	///
 	/// @param commandLine the parsed command line containing the network options
 	/// @return `true` if all provided network options were valid, `false` if any
@@ -2803,8 +2800,8 @@ public final class MainFrame extends JFrame {
 
 	/// Processes the remaining command-line options after profile loading.
 	///
-	/// Handles tray visibility, network options, autostart, save, export, and
-	/// quit options. On initial launch the frame visibility is also configured.
+	/// Handles tray visibility, network options, autostart, save, export, and quit
+	/// options. On initial launch the frame visibility is also configured.
 	///
 	/// @param commandLine the parsed command line to process
 	/// @param initialLaunch `true` if this is the first invocation at startup
@@ -2869,9 +2866,9 @@ public final class MainFrame extends JFrame {
 
 	/// Prompts the user to handle unsaved profile changes before proceeding.
 	///
-	/// Shows a save-changes dialog if there are unsaved changes. Returns `true`
-	/// if it is safe to proceed (no unsaved changes, or the user chose to save
-	/// or discard), or `false` if the user canceled.
+	/// Shows a save-changes dialog if there are unsaved changes. Returns `true` if
+	/// it is safe to proceed (no unsaved changes, or the user chose to save or
+	/// discard), or `false` if the user canceled.
 	///
 	/// @return `true` if the caller may proceed, `false` if the user cancelled
 	private boolean handleUnsavedChanges() {
@@ -2917,10 +2914,9 @@ public final class MainFrame extends JFrame {
 
 	/// Initializes and displays the overlay frame for the current profile.
 	///
-	/// Constructs a transparent always-on-top window showing the current mode
-	/// label and virtual axis progress bars. Does nothing if the profile has
-	/// overlay disabled or if neither multiple modes nor overlay axes are
-	/// configured.
+	/// Constructs a transparent always-on-top window showing the current mode label
+	/// and virtual axis progress bars. Does nothing if the profile has overlay
+	/// disabled or if neither multiple modes nor overlay axes are configured.
 	private void initOverlay() {
 		Objects.requireNonNull(input, "Field input must not be null");
 
@@ -3126,10 +3122,9 @@ public final class MainFrame extends JFrame {
 	/// Initializes the active profile from the command line or the last-used
 	/// profile stored in Main.preferences.
 	///
-	/// @param commandLine the parsed command line, which may specify a profile
-	/// path via the profile option
-	/// @param noControllerConnected `true` if no controller is connected at
-	/// startup
+	/// @param commandLine the parsed command line, which may specify a profile path
+	/// via the profile option
+	/// @param noControllerConnected `true` if no controller is connected at startup
 	private void initProfile(final CommandLine commandLine, final boolean noControllerConnected) {
 		final var cmdProfilePath = commandLine.getOptionValue(Main.OPTION_PROFILE);
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
@@ -3147,8 +3142,8 @@ public final class MainFrame extends JFrame {
 
 	/// Initializes the template SVG document used for controller visualizations.
 	///
-	/// Parses the bundled controller SVG resource and caches both the document
-	/// and its viewBox rectangle. Does nothing if already initialized.
+	/// Parses the bundled controller SVG resource and caches both the document and
+	/// its viewBox rectangle. Does nothing if already initialized.
 	private void initTemplateSvgDocument() {
 		if (templateSvgDocument != null) {
 			return;
@@ -3230,16 +3225,15 @@ public final class MainFrame extends JFrame {
 		return Main.preferences.getBoolean(Main.PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
-	/// Returns whether any run mode (local, client, or server) is currently
-	/// active.
+	/// Returns whether any run mode (local, client, or server) is currently active.
 	///
 	/// @return `true` if any run mode is currently active
 	private boolean isRunning() {
 		return isLocalRunning() || isClientRunning() || isServerRunning();
 	}
 
-	/// Returns whether the controller with the given instance ID is the
-	/// currently selected controller.
+	/// Returns whether the controller with the given instance ID is the currently
+	/// selected controller.
 	///
 	/// @param instanceId the SDL instance ID of the controller to check
 	/// @return `true` if the specified controller is currently selected
@@ -3306,18 +3300,18 @@ public final class MainFrame extends JFrame {
 
 	/// Loads a profile from the given file.
 	///
-	/// Stops any active run mode, deserializes the profile JSON, and applies
-	/// the loaded profile. Shows warning dialogs for version mismatches or
-	/// unknown action types unless `skipMessageDialogs` is `true`.
+	/// Stops any active run mode, deserializes the profile JSON, and applies the
+	/// loaded profile. Shows warning dialogs for version mismatches or unknown
+	/// action types unless `skipMessageDialogs` is `true`.
 	///
 	/// @param file the profile file to load
 	/// @param skipMessageDialogs `true` to suppress all message dialogs
-	/// @param performGarbageCollection `true` if a garbage collection cycle
-	/// should be requested after stopping
-	/// @param commandLine the parsed command line to process after loading,
-	/// or `null` to skip remaining command-line handling
-	/// @param initialLaunch `true` if this load is part of the initial
-	/// application startup
+	/// @param performGarbageCollection `true` if a garbage collection cycle should
+	/// be requested after stopping
+	/// @param commandLine the parsed command line to process after loading, or
+	/// `null` to skip remaining command-line handling
+	/// @param initialLaunch `true` if this load is part of the initial application
+	/// startup
 	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
 			final @Nullable CommandLine commandLine, final boolean initialLaunch) {
 		Objects.requireNonNull(input, "Field input must not be null");
@@ -3468,8 +3462,8 @@ public final class MainFrame extends JFrame {
 	/// Stops any active run mode, clears the current file reference, and
 	/// reinitializes the input handler with a blank profile.
 	///
-	/// @param performGarbageCollection `true` if a garbage collection cycle
-	/// should be requested after stopping
+	/// @param performGarbageCollection `true` if a garbage collection cycle should
+	/// be requested after stopping
 	private void newProfile(final boolean performGarbageCollection) {
 		stopLocalAndServer(performGarbageCollection);
 
@@ -3494,11 +3488,11 @@ public final class MainFrame extends JFrame {
 
 	/// Handles a change in the set of connected controllers.
 	///
-	/// Updates menus, device tabs, tray entries, and controller selection
-	/// in response to controllers being added or removed.
+	/// Updates menus, device tabs, tray entries, and controller selection in
+	/// response to controllers being added or removed.
 	///
-	/// @param selectFirstTab `true` if the first device tab should be
-	/// selected after rebuilding the tab panel
+	/// @param selectFirstTab `true` if the first device tab should be selected
+	/// after rebuilding the tab panel
 	private void onControllersChanged(final boolean selectFirstTab) {
 		final var controllerConnected = !controllers.isEmpty();
 
@@ -4425,8 +4419,7 @@ public final class MainFrame extends JFrame {
 		}
 	}
 
-	/// Loads SDL gamepad mappings from the given file path on the main loop
-	/// thread
+	/// Loads SDL gamepad mappings from the given file path on the main loop thread
 	/// and returns an error description on failure, or `null` on success.
 	///
 	/// @param path the filesystem path to the SDL gamepad mapping file
@@ -4587,8 +4580,8 @@ public final class MainFrame extends JFrame {
 	///
 	/// When the overlay is in the upper half of the total display bounds, the
 	/// indicator panel is placed at the bottom and the mode label at the top;
-	/// otherwise the positions are reversed. After repositioning the components
-	/// the frame is repacked to adjust its size.
+	/// otherwise the positions are reversed. After repositioning the components the
+	/// frame is repacked to adjust its size.
 	///
 	/// @param totalDisplayBounds the bounding rectangle covering all connected
 	/// displays
@@ -4792,9 +4785,9 @@ public final class MainFrame extends JFrame {
 	/// total display bounds have changed.
 	///
 	/// Schedules the work on the AWT event queue. When the display configuration
-	/// changes, the overlay is torn down and rebuilt at the correct position.
-	/// Also ensures the overlay and on-screen keyboard remain topmost when no
-	/// modal dialog is showing, and triggers a repaint of all overlay components.
+	/// changes, the overlay is torn down and rebuilt at the correct position. Also
+	/// ensures the overlay and on-screen keyboard remain topmost when no modal
+	/// dialog is showing, and triggers a repaint of all overlay components.
 	private void updateOverlayPosition() {
 		EventQueue.invokeLater(() -> {
 			if (!isModalDialogShowing()) {
@@ -4830,8 +4823,8 @@ public final class MainFrame extends JFrame {
 		});
 	}
 
-	/// Updates the enabled state of all editor panels based on the current
-	/// running state.
+	/// Updates the enabled state of all editor panels based on the current running
+	/// state.
 	///
 	/// Delegates to [#updatePanelAccess(boolean)] passing the result of
 	/// [#isRunning].
@@ -4846,8 +4839,7 @@ public final class MainFrame extends JFrame {
 	/// settings panel, and global settings panel while a run mode is active.
 	/// Re-enables and refreshes them when the run mode stops.
 	///
-	/// @param running `true` if a run mode is currently active, `false`
-	/// otherwise
+	/// @param running `true` if a run mode is currently active, `false` otherwise
 	private void updatePanelAccess(final boolean running) {
 		GuiUtils.setEnabledRecursive(modesPanel, !running);
 
@@ -4893,9 +4885,8 @@ public final class MainFrame extends JFrame {
 	/// Rebuilds the profile settings panel with the current profile's settings.
 	///
 	/// Clears and repopulates the panel with spinners and check boxes for
-	/// per-profile options such as key repeat interval and overlay visibility.
-	/// Does nothing if the panel has not yet been created or no input is
-	/// available.
+	/// per-profile options such as key repeat interval and overlay visibility. Does
+	/// nothing if the panel has not yet been created or no input is available.
 	private void updateProfileSettingsPanel() {
 		profileSettingsInnerPanel.removeAll();
 
@@ -4974,8 +4965,7 @@ public final class MainFrame extends JFrame {
 
 	/// Updates the enabled state of the "show window" system tray entry.
 	///
-	/// Enables the entry when the main frame is hidden and disables it when
-	/// the
+	/// Enables the entry when the main frame is hidden and disables it when the
 	/// frame is visible, so the user can always bring the window back from the
 	/// tray. Does nothing if the tray entry has not been created or the main loop
 	/// is unavailable.
@@ -4993,19 +4983,19 @@ public final class MainFrame extends JFrame {
 	///
 	/// Partitions the actions into up to three labeled groups based on their
 	/// activation timing (on-press, while-pressed, on-release) or delay status,
-	/// then writes the combined label into the SVG text element. Applies
-	/// dark-theme colors when requested and records every symbol string added
-	/// to the `usedSymbols` set so callers can build a legend.
+	/// then writes the combined label into the SVG text element. Applies dark-theme
+	/// colors when requested and records every symbol string added to the
+	/// `usedSymbols` set so callers can build a legend.
 	///
 	/// @param svgDocument the SVG document whose elements are updated
-	/// @param idPrefix the prefix used to locate the group, text, and path
-	/// elements by id
-	/// @param actions the list of actions to render, or `null`/empty to hide
-	/// the group
+	/// @param idPrefix the prefix used to locate the group, text, and path elements
+	/// by id
+	/// @param actions the list of actions to render, or `null`/empty to hide the
+	/// group
 	/// @param darkTheme `true` to apply dark-theme text and stroke colors
 	/// @param swapped `true` to append the swapped indicator symbol
-	/// @param usedSymbols set that is populated with every symbol string added
-	/// to the SVG text
+	/// @param usedSymbols set that is populated with every symbol string added to
+	/// the SVG text
 	/// @return the total extension width contributed by the rendered text
 	@SuppressWarnings("NullAway")
     private int updateSvgElements(final Document svgDocument, final String idPrefix,
@@ -5136,8 +5126,8 @@ public final class MainFrame extends JFrame {
         return extensionWidth;
     }
 
-	/// Applies the currently selected UI theme by setting the FlatLaf
-	/// look-and-feel and refreshing all Swing components.
+	/// Applies the currently selected UI theme by setting the FlatLaf look-and-feel
+	/// and refreshing all Swing components.
 	///
 	/// Resolves the [Theme#SYSTEM] value at runtime by querying the platform's
 	/// current light/dark preference via SDL. After switching the look-and-feel,
@@ -5214,9 +5204,8 @@ public final class MainFrame extends JFrame {
 
 	/// Updates the enabled state of the touchpad sensitivity panels.
 	///
-	/// Disables the cursor and scroll sensitivity controls when the touchpad is
-	/// not enabled, preventing the user from configuring settings that have no
-	/// effect.
+	/// Disables the cursor and scroll sensitivity controls when the touchpad is not
+	/// enabled, preventing the user from configuring settings that have no effect.
 	private void updateTouchpadSettings() {
 		final var enableTouchpad = isTouchpadEnabled();
 
@@ -5226,9 +5215,9 @@ public final class MainFrame extends JFrame {
 
 	/// Updates the enabled state of the start and stop system tray entries.
 	///
-	/// Enables the start entries and disables the stop entry while no run mode
-	/// is active, and reverses this when a run mode is running. Only modifies
-	/// entries that have been created (non-zero handle).
+	/// Enables the start entries and disables the stop entry while no run mode is
+	/// active, and reverses this when a run mode is running. Only modifies entries
+	/// that have been created (non-zero handle).
 	private void updateTrayEntriesEnabled() {
 		final var running = isRunning();
 
@@ -5375,8 +5364,8 @@ public final class MainFrame extends JFrame {
 			label = Main.strings.getString(labelKey);
 		}
 
-		/// Returns the [Theme] constant whose ID matches the given value, or
-		/// [#SYSTEM] if no match is found.
+		/// Returns the [Theme] constant whose ID matches the given value, or [#SYSTEM]
+		/// if no match is found.
 		///
 		/// @param id the numeric theme id to look up
 		/// @return the matching [Theme] constant, or [#SYSTEM] as default
@@ -5398,8 +5387,7 @@ public final class MainFrame extends JFrame {
 	@DBusInterfaceName("org.gnome.Shell.Extensions")
 	private interface Extensions extends DBusInterface {
 
-		/// Returns a map of all installed GNOME Shell extensions keyed by their
-		/// UUID.
+		/// Returns a map of all installed GNOME Shell extensions keyed by their UUID.
 		///
 		/// @return a map from extension UUID to a map of extension metadata properties
 		Map<String, Map<String, Variant<?>>> ListExtensions();
@@ -5463,12 +5451,12 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs an [HtmlFileChooser] for the given profile file.
 		///
-		/// Pre-fills the selected file name with the profile file's base name and
-		/// the `.html` suffix. If `profileFile` is `null`, uses the localized
-		/// "untitled" string as the base name.
+		/// Pre-fills the selected file name with the profile file's base name and the
+		/// `.html` suffix. If `profileFile` is `null`, uses the localized "untitled"
+		/// string as the base name.
 		///
-		/// @param profileFile the currently open profile file, or `null` if no
-		/// profile is loaded
+		/// @param profileFile the currently open profile file, or `null` if no profile
+		/// is loaded
 		private HtmlFileChooser(final @Nullable File profileFile) {
 			super(new FileNameExtensionFilter(Main.strings.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
 
@@ -5500,8 +5488,8 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs a [JsonContext] with all required type adapters registered.
 		///
-		/// Registers adapters for [Color], [IAction], [LockKey], and [Scancode],
-		/// and enables pretty printing.
+		/// Registers adapters for [Color], [IAction], [LockKey], and [Scancode], and
+		/// enables pretty printing.
 		///
 		/// @return a fully configured [JsonContext]
 		private static JsonContext create() {
@@ -5712,8 +5700,8 @@ public final class MainFrame extends JFrame {
 			showConnectDialog();
 		}
 
-		/// Proceeds with starting the network run mode after the user confirms
-		/// the connection settings dialog.
+		/// Proceeds with starting the network run mode after the user confirms the
+		/// connection settings dialog.
 		///
 		/// Implemented by concrete subclasses to start the appropriate run mode.
 		abstract void proceed();
@@ -5721,8 +5709,7 @@ public final class MainFrame extends JFrame {
 		/// Shows the connection settings dialog and, if the user confirms valid
 		/// settings, calls [#proceed].
 		///
-		/// On validation failure, displays an error message and re-shows the
-		/// dialog.
+		/// On validation failure, displays an error message and re-shows the dialog.
 		private void showConnectDialog() {
 			final var connectionSettingsPanel = new ConnectionSettingsPanel(withHost);
 
@@ -5867,9 +5854,8 @@ public final class MainFrame extends JFrame {
 
 	/// Action that opens the donation page in the user's default browser.
 	///
-	/// Navigates to the `/donate` path of the ControllerBuddy website.
-	/// The action's display name renders as an underlined hyperlink with a red
-	/// heart symbol.
+	/// Navigates to the `/donate` path of the ControllerBuddy website. The action's
+	/// display name renders as an underlined hyperlink with a red heart symbol.
 	private final class DonateAction extends AbstractAction {
 
 		@Serial
@@ -6225,8 +6211,8 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs a [SelectControllerAction] for the given controller.
 		///
-		/// @param controller the controller that will become selected when the
-		/// action is triggered
+		/// @param controller the controller that will become selected when the action
+		/// is triggered
 		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
@@ -6287,8 +6273,8 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs a [SelectIndicatorColorAction] for the given virtual axis.
 		///
-		/// @param virtualAxis the virtual axis whose indicator color is changed
-		/// by this action
+		/// @param virtualAxis the virtual axis whose indicator color is changed by this
+		/// action
 		private SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
@@ -6320,8 +6306,7 @@ public final class MainFrame extends JFrame {
 	///
 	/// Displays a [JColorChooser] dialog pre-seeded with the current LED color
 	/// stored in Main.preferences. If the user confirms a selection, the RGB value
-	/// is
-	/// persisted and the LED preview label is updated.
+	/// is persisted and the LED preview label is updated.
 	private final class SelectLedColorAction extends AbstractAction {
 
 		@Serial
@@ -6365,8 +6350,8 @@ public final class MainFrame extends JFrame {
 		/// The text field that provides the new mode description value.
 		private final JTextField modeDescriptionTextField;
 
-		/// Constructs a [SetModeDescriptionAction] bound to the given mode and
-		/// text field.
+		/// Constructs a [SetModeDescriptionAction] bound to the given mode and text
+		/// field.
 		///
 		/// @param mode the mode whose description is managed by this action
 		/// @param modeDescriptionTextField the text field that provides the new
@@ -6408,11 +6393,11 @@ public final class MainFrame extends JFrame {
 		/// Reads the text field content and applies it as the mode description.
 		///
 		/// When `updateTextField` is `true`, the text field is updated with the
-		/// stripped value via `EventQueue.invokeLater` if the value changed. If
-		/// the description is unchanged, no update is performed.
+		/// stripped value via `EventQueue.invokeLater` if the value changed. If the
+		/// description is unchanged, no update is performed.
 		///
-		/// @param updateTextField `true` to strip surrounding whitespace and push
-		/// the result back to the text field
+		/// @param updateTextField `true` to strip surrounding whitespace and push the
+		/// result back to the text field
 		private void setModeDescription(final boolean updateTextField) {
 			var description = modeDescriptionTextField.getText();
 
@@ -6490,8 +6475,8 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs a [SetOverlayAxisStyleAction] for the given virtual axis.
 		///
-		/// @param virtualAxis the virtual axis whose indicator style is controlled
-		/// by this action
+		/// @param virtualAxis the virtual axis whose indicator style is controlled by
+		/// this action
 		private SetOverlayAxisStyleAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 		}
@@ -6573,8 +6558,8 @@ public final class MainFrame extends JFrame {
 
 		/// Constructs a [ShowIndicatorAction] for the given virtual axis.
 		///
-		/// @param virtualAxis the virtual axis whose indicator visibility is
-		/// toggled by this action
+		/// @param virtualAxis the virtual axis whose indicator visibility is toggled by
+		/// this action
 		private ShowIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
@@ -6779,8 +6764,7 @@ public final class MainFrame extends JFrame {
 		/// Performs the action-specific logic after unsaved-changes handling has
 		/// passed.
 		///
-		/// Called by `actionPerformed` only when `handleUnsavedChanges` returns
-		/// `true`.
+		/// Called by `actionPerformed` only when `handleUnsavedChanges` returns `true`.
 		abstract void doAction();
 	}
 }

@@ -24,9 +24,9 @@ import org.jspecify.annotations.Nullable;
 
 /// Utilities for parsing and comparing version strings.
 ///
-/// Provides methods to split a version string into integer parts, get the
-/// major and minor versions of the running application, and compare an
-/// arbitrary version string against the current application version.
+/// Provides methods to split a version string into integer parts, get the major
+/// and minor versions of the running application, and compare an arbitrary
+/// version string against the current application version.
 public final class VersionUtils {
 
 	/// Prevents instantiation.

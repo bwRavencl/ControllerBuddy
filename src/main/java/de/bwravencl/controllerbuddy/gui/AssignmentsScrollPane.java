@@ -67,8 +67,8 @@ import org.lwjgl.sdl.SDLGamepad;
 ///
 /// Each button corresponds to a controller component (axis, button, or D-pad
 /// direction) and opens an assignment editor dialog when clicked. The layout
-/// mimics a physical gamepad, with sticks, triggers, bumpers, and face
-/// buttons placed in their conventional positions.
+/// mimics a physical gamepad, with sticks, triggers, bumpers, and face buttons
+/// placed in their conventional positions.
 final class AssignmentsScrollPane extends JScrollPane {
 
 	/// Height in pixels used for all component buttons.
@@ -414,8 +414,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 	/// The base class for all buttons in [AssignmentsScrollPane].
 	///
-	/// Handles theme-aware rendering using FlatLaf UI colors and supports round
-	/// or shaped button painting with anti-aliased graphics.
+	/// Handles theme-aware rendering using FlatLaf UI colors and supports round or
+	/// shaped button painting with anti-aliased graphics.
 	private static class AssignmentsButton extends JButton {
 
 		/// Stroke used for drawing the border of the button.
@@ -499,9 +499,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 			g2d.setColor(background != null ? FlatUIUtils.deriveColor(background, baseColor) : baseColor);
 		}
 
-		/// Configures the graphics context for painting the button's border by
-		/// enabling antialiasing if needed and setting the state-dependent border
-		/// color.
+		/// Configures the graphics context for painting the button's border by enabling
+		/// antialiasing if needed and setting the state-dependent border color.
 		///
 		/// @param g2d the graphics context to configure
 		final void beginBorder(final Graphics2D g2d) {
@@ -516,8 +515,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 			g2d.setColor(color);
 		}
 
-		/// Configures the graphics context for painting the button's foreground
-		/// (text and icons) by setting the state-dependent foreground color.
+		/// Configures the graphics context for painting the button's foreground (text
+		/// and icons) by setting the state-dependent foreground color.
 		///
 		/// @param g2d the graphics context to configure
 		final void beginForeground(final Graphics2D g2d) {
@@ -557,8 +556,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 			}
 		}
 
-		/// Paints the given text within the specified rectangle, wrapping it onto
-		/// two lines at the centermost space when the text contains spaces.
+		/// Paints the given text within the specified rectangle, wrapping it onto two
+		/// lines at the centermost space when the text contains spaces.
 		///
 		/// @param g the graphics context
 		/// @param textRect the bounding rectangle in which to paint the text
@@ -659,10 +658,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// pie-shaped segments for directional axes and a circular center region for
 	/// the stick press button.
 	///
-	/// Multiple instances share a button model when they represent two ends of
-	/// the same axis, so that hover and press state is synchronized. The
-	/// button's hit area and painted shape are determined by its
-	/// [CompoundButtonLocation].
+	/// Multiple instances share a button model when they represent two ends of the
+	/// same axis, so that hover and press state is synchronized. The button's hit
+	/// area and painted shape are determined by its [CompoundButtonLocation].
 	private static final class CompoundButton extends AssignmentsButton {
 
 		@Serial
@@ -702,15 +700,15 @@ final class AssignmentsScrollPane extends JScrollPane {
 		}
 
 		/// Constructs a [CompoundButton] at the specified location, optionally sharing
-		/// its button model with a peer button representing the opposite end of
-		/// the same axis.
+		/// its button model with a peer button representing the opposite end of the
+		/// same axis.
 		///
 		/// @param mainFrame the main frame instance
 		/// @param parentPanel the parent panel whose preferred size governs this
 		/// button's preferred size
 		/// @param controllerComponent the controller component this button represents
-		/// @param buttonLocation the position of this button within the circular
-		/// stick control
+		/// @param buttonLocation the position of this button within the circular stick
+		/// control
 		/// @param peer the opposing axis button that shares this button's model or
 		/// `null` if there is no peer
 		private CompoundButton(final MainFrame mainFrame, final JPanel parentPanel,
@@ -887,8 +885,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// current bounds and [CompoundButtonLocation].
 		///
 		/// For the center location the shape is a filled circle; for directional
-		/// locations it is a 90-degree pie arc with the center circle subtracted.
-		/// The shape is only recomputed when the bounds have changed.
+		/// locations it is a 90-degree pie arc with the center circle subtracted. The
+		/// shape is only recomputed when the bounds have changed.
 		private void initShape() {
 			if (shape != null && getBounds().equals(base)) {
 				return;
@@ -1056,8 +1054,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 	///
 	/// Each arm of the cross is a separate component button created via
 	/// [AssignmentsScrollPane#createComponentButton], laid out in a
-	/// [java.awt.GridBagLayout] with the up button at row 0, left and right at
-	/// row 1, and down at row 2.
+	/// [java.awt.GridBagLayout] with the up button at row 0, left and right at row
+	/// 1, and down at row 2.
 	private static final class FourWay extends JPanel {
 
 		@Serial
@@ -1110,9 +1108,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// A panel representing a gamepad analog stick, composed of compound buttons
 	/// for the stick press.
 	///
-	/// Contains one [CompoundButton] for the center (stick-press) region and
-	/// four pie-shaped buttons for the north, south, east, and west axis
-	/// directions.
+	/// Contains one [CompoundButton] for the center (stick-press) region and four
+	/// pie-shaped buttons for the north, south, east, and west axis directions.
 	private static final class Stick extends JPanel {
 
 		@Serial
@@ -1154,8 +1151,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// Identifies which analog stick (left or right) a [Stick] panel represents.
 		///
-		/// The value controls which SDL gamepad axis and button indices are used
-		/// when constructing the [CompoundButton] children of the panel.
+		/// The value controls which SDL gamepad axis and button indices are used when
+		/// constructing the [CompoundButton] children of the panel.
 		private enum StickType {
 
 			/// Left analog stick.

@@ -212,10 +212,10 @@ final class SVGPanel extends JPanel {
 	/// Applies a zoom ratio relative to the given mouse cursor position and
 	/// repaints the panel.
 	///
-	/// Clamps the resulting zoom factor between `1.0` and [#MAX_ZOOM_FACTOR].
-	/// When zooming in, the pan offset is adjusted so the area under the
-	/// cursor stays centered. When zooming out, the offset is reduced toward
-	/// zero to smoothly return the view to the center.
+	/// Clamps the resulting zoom factor between `1.0` and [#MAX_ZOOM_FACTOR]. When
+	/// zooming in, the pan offset is adjusted so the area under the cursor stays
+	/// centered. When zooming out, the offset is reduced toward zero to smoothly
+	/// return the view to the center.
 	///
 	/// @param zoomRatio the multiplicative factor to apply to the current zoom
 	/// @param mouseX the x-coordinate of the zoom focus point in component space
@@ -284,8 +284,7 @@ final class SVGPanel extends JPanel {
 	/// After updating the document, the panel is repainted to display the new
 	/// content.
 	///
-	/// @param svgDocument the SVG document to display, or `null` to clear the
-	/// panel
+	/// @param svgDocument the SVG document to display, or `null` to clear the panel
 	void setSvgDocument(final @Nullable SVGDocument svgDocument) {
 		this.svgDocument = svgDocument;
 		zoomFactor = 1f;

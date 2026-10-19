@@ -38,11 +38,11 @@ public final class ClampingSpinnerNumberModel extends SpinnerNumberModel {
 	/// Creates a clamping model for arbitrary [Number]/[Comparable] types.
 	///
 	/// The `value` is clamped against `minimum` and `maximum` before the superclass
-	/// constructor runs, so the model is never in an invalid state.
-	/// If `changeListener` is non-`null`, it is registered.
-	/// Additionally, if clamping actually changed the value, the listener is
-	/// notified immediately via [#fireStateChanged], so it observes the corrected
-	/// value right away instead of only on the next user-driven change.
+	/// constructor runs, so the model is never in an invalid state. If
+	/// `changeListener` is non-`null`, it is registered. Additionally, if clamping
+	/// actually changed the value, the listener is notified immediately via
+	/// [#fireStateChanged], so it observes the corrected value right away instead
+	/// of only on the next user-driven change.
 	///
 	/// @param value the initial value
 	/// @param minimum the minimum allowed value (inclusive) or `null`

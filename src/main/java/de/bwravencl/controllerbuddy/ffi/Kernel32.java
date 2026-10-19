@@ -27,9 +27,8 @@ import java.lang.invoke.MethodHandle;
 /// Provides Java bindings to the Windows Kernel32 native library using the
 /// Foreign Function and Memory API.
 ///
-/// All native functions are loaded at class initialization time via a
-/// global [Arena] and exposed as static methods. This class cannot
-/// be instantiated.
+/// All native functions are loaded at class initialization time via a global
+/// [Arena] and exposed as static methods. This class cannot be instantiated.
 @SuppressWarnings("restricted")
 public final class Kernel32 {
 

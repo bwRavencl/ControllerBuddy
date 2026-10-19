@@ -91,18 +91,18 @@ public abstract class EditorBuilder {
 
 	/// Called after a new value has been applied to the action property.
 	///
-	/// The default implementation is empty; subclasses may override to react
-	/// to the change.
+	/// The default implementation is empty; subclasses may override to react to the
+	/// change.
 	void onNewValueSet() {
 		editActionsDialog.updateAssignedActionsListLayout();
 	}
 
-	/// Base class that holds a reference to an action and its setter method for
-	/// use by property-setting listeners.
+	/// Base class that holds a reference to an action and its setter method for use
+	/// by property-setting listeners.
 	///
-	/// Concrete subclasses wire up specific listener types (e.g., change
-	/// listeners, selection listeners) to invoke the setter when the user
-	/// modifies the editor component.
+	/// Concrete subclasses wire up specific listener types (e.g., change listeners,
+	/// selection listeners) to invoke the setter when the user modifies the editor
+	/// component.
 	abstract static class PropertySetter {
 
 		/// The action whose property is being set.
