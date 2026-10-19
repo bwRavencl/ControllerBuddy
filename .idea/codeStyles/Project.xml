@@ -46,6 +46,10 @@
       <option name="WRAP_TEXT_IF_LONG" value="false" />
       <option name="WRAP_TEXT_INSIDE_BLOCKQUOTES" value="false" />
     </Markdown>
+    <Mermaid>
+      <option name="AFTER_COMMA" value="false" />
+      <option name="AFTER_COLON" value="false" />
+    </Mermaid>
     <Properties>
       <option name="SPACES_AROUND_KEY_VALUE_DELIMITER" value="true" />
       <option name="KEEP_BLANK_LINES" value="true" />
