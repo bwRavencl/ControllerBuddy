@@ -82,18 +82,18 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Constant naming: `UPPER_SNAKE_CASE`. Use semantic prefixes like `DEFAULT_` and `INITIAL_` for related groups of constants.
 - Non-constant naming: `lowerCamelCase`
 - Class layout and ordering: use the following group sequence. If multiple members exist within the same group, sort them **alphabetically by name**.
-    1. **Static Constants (final):** `public` → `protected` → `package` → `private`
-    2. **Static Fields (non-final):** `public` → `protected` → `package` → `private`
-    3. **Static Initializers**
-    4. **Instance Fields:** `public` → `protected` → `package` → `private`
-    5. **Instance Initializers**
-    6. **Constructors**
-    7. **Static Methods**
-    8. **Instance Methods**
-    9. **Enums**
-    10. **Interfaces**
-    11. **Static Inner Classes**
-    12. **Inner Classes (non-static)**
+  1. **Static Constants (final):** `public` → `protected` → `package` → `private`
+  2. **Static Fields (non-final):** `public` → `protected` → `package` → `private`
+  3. **Static Initializers**
+  4. **Instance Fields:** `public` → `protected` → `package` → `private`
+  5. **Instance Initializers**
+  6. **Constructors**
+  7. **Static Methods**
+  8. **Instance Methods**
+  9. **Enums**
+  10. **Interfaces**
+  11. **Static Inner Classes**
+  12. **Inner Classes (non-static)**
 - Access modifiers: always use the most restrictive access level possible. Default to `private`.
 - Use modern Java features: pattern matching with `instanceof`, switch expressions, records for immutable data holders.
 - Localization: user-facing strings go in resource bundles (`strings.properties`, `strings_de_DE.properties`), not hardcoded.
