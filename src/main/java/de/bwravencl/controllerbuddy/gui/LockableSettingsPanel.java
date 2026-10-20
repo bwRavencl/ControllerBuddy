@@ -58,14 +58,14 @@ import org.jspecify.annotations.Nullable;
 /// renders a blurred snapshot of that content tiled across its bounds, and
 /// overlays a stop-execution hint. Clicking the hint stops the current run mode
 /// and thus unlocks the panel.
+///
+/// The tile buffers needed for blurring are only allocated while the panel is
+/// locked and are released as soon as it gets unlocked or removed from its
+/// parent.
 final class LockableSettingsPanel extends JPanel {
 
 	/// Alpha channel value of the stop-execution hint background
 	public static final int HINT_BACKGROUND_ALPHA = 164;
-
-	/// Convolution operator that blurs the tile buffer used to render the
-	/// disabled-state background.
-	private static final ConvolveOp BLUR_OP;
 
 	/// Font size, in points, used for the stop-execution hint text.
 	private static final float HINT_FONT_SIZE = 16f;
@@ -77,13 +77,24 @@ final class LockableSettingsPanel extends JPanel {
 	/// Stroke width, in pixels, of the stop-execution hint's outline.
 	private static final float HINT_STROKE_WIDTH = 2f;
 
+	/// Shared stroke used to draw the stop-execution hint's outline.
+	private static final BasicStroke HINT_STROKE = new BasicStroke(HINT_STROKE_WIDTH);
+
 	/// Stop-execution hint text
 	private static final String HINT_TEXT = Main.strings.getString("STOP_EXECUTION_HINT");
 
-	/// Radius, in pixels, of the blur kernel used by [#BLUR_OP].
+	/// Convolution operator performing the horizontal pass of the separable box
+	/// blur.
+	private static final ConvolveOp HORIZONTAL_BLUR_OP;
+
+	/// Identity transform used to reset [#bufferGraphics] before rendering each
+	/// tile.
+	private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
+
+	/// Radius, in pixels, of the blur kernel.
 	private static final int KERNEL_RADIUS = 4;
 
-	/// Edge length, in pixels, of the square blur kernel, derived from
+	/// Length, in pixels, of the one-dimensional blur kernel, derived from
 	/// [#KERNEL_RADIUS].
 	private static final int KERNEL_SIZE = 2 * KERNEL_RADIUS + 1;
 
@@ -98,29 +109,23 @@ final class LockableSettingsPanel extends JPanel {
 	/// Edge length of the visible part of a tile.
 	private static final int TILE_SIZE = 256;
 
-	/// Edge length, in pixels, of the tile buffer image, including the margin
+	/// Edge length, in pixels, of the tile buffer images, including the margin
 	/// painted on each side.
 	private static final int BUFFER_SIZE = TILE_SIZE + 2 * TILE_MARGIN;
+
+	/// Convolution operator performing the vertical pass of the separable box blur.
+	private static final ConvolveOp VERTICAL_BLUR_OP;
 
 	@Serial
 	private static final long serialVersionUID = -45498586038994599L;
 
 	static {
-		final var data = new float[KERNEL_SIZE * KERNEL_SIZE];
-		Arrays.fill(data, 1f / (KERNEL_SIZE * KERNEL_SIZE));
+		final var data = new float[KERNEL_SIZE];
+		Arrays.fill(data, 1f / KERNEL_SIZE);
 
-		BLUR_OP = new ConvolveOp(new Kernel(KERNEL_SIZE, KERNEL_SIZE, data), ConvolveOp.EDGE_NO_OP, null);
+		HORIZONTAL_BLUR_OP = new ConvolveOp(new Kernel(KERNEL_SIZE, 1, data), ConvolveOp.EDGE_NO_OP, null);
+		VERTICAL_BLUR_OP = new ConvolveOp(new Kernel(1, KERNEL_SIZE, data), ConvolveOp.EDGE_NO_OP, null);
 	}
-
-	/// Buffer holding one rendered tile, including its margin, before it is blurred
-	/// and drawn.
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final BufferedImage bufferImage = new BufferedImage(BUFFER_SIZE, BUFFER_SIZE,
-			BufferedImage.TYPE_INT_ARGB_PRE);
-
-	/// Graphics context used to render into [#bufferImage].
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Graphics2D bufferGraphics = bufferImage.createGraphics();
 
 	/// Layer that intercepts and consumes mouse events over the settings content
 	/// while the panel is disabled.
@@ -133,15 +138,28 @@ final class LockableSettingsPanel extends JPanel {
 	/// events stop arriving.
 	private final Timer resizeSettleTimer;
 
-	/// Reusable transform applied to [#bufferGraphics] while rendering each tile.
-	private final AffineTransform tileTransform = new AffineTransform();
+	/// Graphics context used to render into [#bufferImage], or `null` while no
+	/// buffers are allocated.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private @Nullable Graphics2D bufferGraphics;
 
-	/// Corner arc diameter, in pixels, of the stop-execution hint's rounded
-	/// rectangle background.
+	/// Buffer holding one rendered tile, including its margin. Also receives the
+	/// final result of the blur. `null` while the panel is unlocked.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private @Nullable BufferedImage bufferImage;
+
+	/// Arc diameter, in pixels, of the stop-execution hint's rounded rectangle
+	/// background.
 	private float hintArc;
 
 	/// Background color of the stop-execution hint in its default state.
 	private @Nullable Color hintBackground;
+
+	/// Base font from which [#hintFont] was derived, used to detect font changes.
+	private @Nullable Font hintBaseFont;
+
+	/// Cached bold font used for the stop-execution hint text.
+	private @Nullable Font hintFont;
 
 	/// Foreground color used for the stop-execution hint's text and outline.
 	private @Nullable Color hintForeground;
@@ -150,20 +168,41 @@ final class LockableSettingsPanel extends JPanel {
 	/// it.
 	private @Nullable Color hintHoverBackground;
 
+	/// Panel height for which the cached hint layout was computed.
+	private int hintLayoutHeight;
+
+	/// Panel width for which the cached hint layout was computed.
+	private int hintLayoutWidth;
+
 	/// Background color of the stop-execution hint while it is pressed.
 	private @Nullable Color hintPressedBackground;
+
+	/// Cached x coordinate of the stop-execution hint text baseline origin.
+	private int hintTextX;
+
+	/// Cached y coordinate of the stop-execution hint text baseline.
+	private int hintTextY;
 
 	/// Whether the panel is currently within the resize-settle delay window, during
 	/// which blurring is skipped.
 	private boolean resizing;
 
+	/// Intermediate buffer receiving the horizontal blur pass. `null` while the
+	/// panel is unlocked.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private @Nullable BufferedImage scratchImage;
+
 	/// Bounds of the stop-execution hint's background rectangle, or `null` if the
-	/// hint has not been painted yet.
+	/// hint has not been laid out yet.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private @Nullable Shape stopHintBounds;
 
 	/// Whether the pointer currently hovers over the stop-execution hint.
 	private boolean stopHintHovered;
+
+	/// Cached outline shape of the stop-execution hint.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private @Nullable Shape stopHintOutline;
 
 	/// Whether the stop-execution hint is currently pressed.
 	private boolean stopHintPressed;
@@ -184,12 +223,14 @@ final class LockableSettingsPanel extends JPanel {
 
 			@Override
 			public void eventDispatched(final AWTEvent e, final JLayer<? extends JComponent> l) {
-				if (isEnabled() || !(e instanceof final MouseEvent mouseEvent)) {
+				final var panel = LockableSettingsPanel.this;
+
+				if (panel.isEnabled() || !(e instanceof final MouseEvent mouseEvent)) {
 					super.eventDispatched(e, l);
 					return;
 				}
 
-				final var point = SwingUtilities.convertPoint(mouseEvent.getComponent(), mouseEvent.getPoint(), l);
+				final var point = SwingUtilities.convertPoint(mouseEvent.getComponent(), mouseEvent.getPoint(), panel);
 				final var isHovered = stopHintBounds != null && stopHintBounds.contains(point);
 				final var isLeftButton = SwingUtilities.isLeftMouseButton(mouseEvent);
 
@@ -223,7 +264,7 @@ final class LockableSettingsPanel extends JPanel {
 				}
 
 				if (needsRepaint) {
-					l.repaint();
+					repaintStopHint();
 				}
 
 				mouseEvent.consume();
@@ -273,12 +314,15 @@ final class LockableSettingsPanel extends JPanel {
 			return;
 		}
 
-		final var targetContainer = isEnabled() ? this : layerContainer;
-
 		// noinspection ConstantValue
 		if (constraints == null || BorderLayout.CENTER.equals(constraints)) {
-			targetContainer.removeAll();
-			super.addImpl(comp, BorderLayout.CENTER, -1);
+			if (isEnabled()) {
+				removeAll();
+				super.addImpl(comp, BorderLayout.CENTER, -1);
+			} else {
+				layerContainer.removeAll();
+				layerContainer.add(comp, BorderLayout.CENTER);
+			}
 		} else {
 			super.addImpl(comp, constraints, index);
 		}
@@ -289,6 +333,62 @@ final class LockableSettingsPanel extends JPanel {
 		return !isEnabled();
 	}
 
+	/// Renders the content tile by tile into the tile buffer, blurs each tile with
+	/// a separable box blur and draws the visible part of it.
+	///
+	/// Allocates the tile buffers on first use. No images are allocated per paint.
+	///
+	/// @param g the graphics context to draw the blurred content into
+	private void paintBlurredContent(final Graphics g) {
+		var image = bufferImage;
+		var scratch = scratchImage;
+		var graphics = bufferGraphics;
+
+		if (image == null || scratch == null || graphics == null) {
+			releaseBuffers();
+
+			image = new BufferedImage(BUFFER_SIZE, BUFFER_SIZE, BufferedImage.TYPE_INT_ARGB_PRE);
+			scratch = new BufferedImage(BUFFER_SIZE, BUFFER_SIZE, BufferedImage.TYPE_INT_ARGB_PRE);
+			graphics = image.createGraphics();
+
+			bufferImage = image;
+			scratchImage = scratch;
+			bufferGraphics = graphics;
+		}
+
+		final var width = getWidth();
+		final var height = getHeight();
+
+		for (var tileY = 0; tileY < height; tileY += TILE_SIZE) {
+			final var drawHeight = Math.min(TILE_SIZE, height - tileY);
+
+			for (var tileX = 0; tileX < width; tileX += TILE_SIZE) {
+				final var drawWidth = Math.min(TILE_SIZE, width - tileX);
+
+				if (!g.hitClip(tileX, tileY, drawWidth, drawHeight)) {
+					continue;
+				}
+
+				final var originX = tileX - TILE_MARGIN;
+				final var originY = tileY - TILE_MARGIN;
+
+				graphics.setTransform(IDENTITY_TRANSFORM);
+				graphics.translate(-originX, -originY);
+				graphics.setClip(originX, originY, BUFFER_SIZE, BUFFER_SIZE);
+				graphics.setComposite(AlphaComposite.Clear);
+				graphics.fillRect(originX, originY, BUFFER_SIZE, BUFFER_SIZE);
+				graphics.setComposite(AlphaComposite.SrcOver);
+				super.paintChildren(graphics);
+
+				HORIZONTAL_BLUR_OP.filter(image, scratch);
+				VERTICAL_BLUR_OP.filter(scratch, image);
+
+				g.drawImage(image, tileX, tileY, tileX + drawWidth, tileY + drawHeight, TILE_MARGIN, TILE_MARGIN,
+						TILE_MARGIN + drawWidth, TILE_MARGIN + drawHeight, null);
+			}
+		}
+	}
+
 	@Override
 	protected void paintChildren(final Graphics g) {
 		if (isEnabled()) {
@@ -297,66 +397,28 @@ final class LockableSettingsPanel extends JPanel {
 		}
 
 		if (!resizing) {
-			final var width = getWidth();
-			final var height = getHeight();
-
-			for (var tileY = 0; tileY < height; tileY += TILE_SIZE) {
-				final var drawHeight = Math.min(TILE_SIZE, height - tileY);
-
-				for (var tileX = 0; tileX < width; tileX += TILE_SIZE) {
-					final var drawWidth = Math.min(TILE_SIZE, width - tileX);
-
-					if (!g.hitClip(tileX, tileY, drawWidth, drawHeight)) {
-						continue;
-					}
-
-					final var originX = tileX - TILE_MARGIN;
-					final var originY = tileY - TILE_MARGIN;
-
-					tileTransform.setToIdentity();
-					bufferGraphics.setTransform(tileTransform);
-					bufferGraphics.setClip(null);
-					bufferGraphics.setComposite(AlphaComposite.Clear);
-					bufferGraphics.fillRect(0, 0, BUFFER_SIZE, BUFFER_SIZE);
-					bufferGraphics.setComposite(AlphaComposite.SrcOver);
-
-					tileTransform.setToTranslation(-originX, -originY);
-					bufferGraphics.setTransform(tileTransform);
-					bufferGraphics.setClip(originX, originY, BUFFER_SIZE, BUFFER_SIZE);
-					super.paintChildren(bufferGraphics);
-
-					final var tileGraphics = (Graphics2D) g.create(tileX, tileY, drawWidth, drawHeight);
-					try {
-						tileGraphics.drawImage(bufferImage, BLUR_OP, -TILE_MARGIN, -TILE_MARGIN);
-					} finally {
-						tileGraphics.dispose();
-					}
-				}
-			}
+			paintBlurredContent(g);
 		}
 
-		final var g2d = (Graphics2D) g;
+		paintStopHint((Graphics2D) g);
+	}
+
+	/// Paints the stop-execution hint centered on the panel.
+	///
+	/// @param g2d the graphics context to paint the hint into
+	private void paintStopHint(final Graphics2D g2d) {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-		g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, HINT_FONT_SIZE));
+		updateHintLayout(g2d);
 
-		final var fontMetrics = g2d.getFontMetrics();
-		final var textWidth = fontMetrics.stringWidth(HINT_TEXT);
-		final var textAscent = fontMetrics.getAscent();
-		final var textDescent = fontMetrics.getDescent();
-		final var textHeight = textAscent + textDescent;
-
-		final var x = (getWidth() - textWidth) / 2;
-		final var y = (getHeight() + textAscent - textDescent) / 2;
-
-		final var rectX = x - HINT_PADDING;
-		final var rectY = y - textAscent - HINT_PADDING;
-		final var rectWidth = textWidth + (HINT_PADDING * 2);
-		final var rectHeight = textHeight + (HINT_PADDING * 2);
-
-		stopHintBounds = FlatUIUtils.createComponentRectangle(rectX, rectY, rectWidth, rectHeight, hintArc);
+		final var font = hintFont;
+		final var bounds = stopHintBounds;
+		final var outline = stopHintOutline;
+		if (font == null || bounds == null || outline == null) {
+			return;
+		}
 
 		final Color currentBackground;
 		if (stopHintPressed && hintPressedBackground != null) {
@@ -368,19 +430,13 @@ final class LockableSettingsPanel extends JPanel {
 		}
 
 		g2d.setColor(currentBackground);
-		g2d.fill(stopHintBounds);
+		g2d.fill(bounds);
 
+		g2d.setFont(font);
 		g2d.setColor(hintForeground);
-		g2d.drawString(HINT_TEXT, x, y);
+		g2d.drawString(HINT_TEXT, hintTextX, hintTextY);
 
-		g2d.setStroke(new BasicStroke(HINT_STROKE_WIDTH));
-		g2d.setColor(hintForeground);
-
-		final var strokeOffset = HINT_STROKE_WIDTH / 2f;
-		final var outlineArc = Math.max(0f, hintArc - HINT_STROKE_WIDTH);
-
-		final var outline = FlatUIUtils.createComponentRectangle(rectX + strokeOffset, rectY + strokeOffset,
-				rectWidth - HINT_STROKE_WIDTH, rectHeight - HINT_STROKE_WIDTH, outlineArc);
+		g2d.setStroke(HINT_STROKE);
 		g2d.draw(outline);
 	}
 
@@ -390,7 +446,19 @@ final class LockableSettingsPanel extends JPanel {
 	/// @throws NotSerializableException always
 	@Serial
 	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
-		throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		throw new NotSerializableException(LockableSettingsPanel.class.getName());
+	}
+
+	/// Disposes the tile buffer graphics context and drops the tile buffers so they
+	/// can be garbage collected.
+	private void releaseBuffers() {
+		if (bufferGraphics != null) {
+			bufferGraphics.dispose();
+			bufferGraphics = null;
+		}
+
+		bufferImage = null;
+		scratchImage = null;
 	}
 
 	@Override
@@ -399,8 +467,22 @@ final class LockableSettingsPanel extends JPanel {
 		resizing = false;
 		stopHintHovered = false;
 		stopHintPressed = false;
+		releaseBuffers();
 
 		super.removeNotify();
+	}
+
+	/// Repaints only the area covered by the stop-execution hint, so that hover and
+	/// press feedback does not re-render and re-blur the entire content.
+	private void repaintStopHint() {
+		final var bounds = stopHintBounds;
+		if (bounds == null) {
+			repaint();
+			return;
+		}
+
+		final var rect = bounds.getBounds();
+		repaint(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2);
 	}
 
 	@Override
@@ -410,6 +492,10 @@ final class LockableSettingsPanel extends JPanel {
 		}
 
 		super.setEnabled(enabled);
+
+		if (enabled) {
+			releaseBuffers();
+		}
 
 		if (!(getLayout() instanceof final BorderLayout borderLayout)) {
 			return;
@@ -441,6 +527,50 @@ final class LockableSettingsPanel extends JPanel {
 		}
 	}
 
+	/// Recomputes the cached hint font, text position and shapes if the panel size
+	/// or font changed since the last computation.
+	///
+	/// @param g2d the graphics context whose font and rendering hints are used for
+	/// measuring the hint text
+	private void updateHintLayout(final Graphics2D g2d) {
+		final var baseFont = g2d.getFont();
+		final var width = getWidth();
+		final var height = getHeight();
+
+		if (hintFont != null && baseFont.equals(hintBaseFont) && width == hintLayoutWidth
+				&& height == hintLayoutHeight) {
+			return;
+		}
+
+		final var font = baseFont.deriveFont(Font.BOLD, HINT_FONT_SIZE);
+		final var fontMetrics = g2d.getFontMetrics(font);
+		final var textWidth = fontMetrics.stringWidth(HINT_TEXT);
+		final var textAscent = fontMetrics.getAscent();
+		final var textDescent = fontMetrics.getDescent();
+		final var textHeight = textAscent + textDescent;
+
+		final var x = (width - textWidth) / 2;
+		final var y = (height + textAscent - textDescent) / 2;
+
+		final var rectX = x - HINT_PADDING;
+		final var rectY = y - textAscent - HINT_PADDING;
+		final var rectWidth = textWidth + (HINT_PADDING * 2);
+		final var rectHeight = textHeight + (HINT_PADDING * 2);
+
+		final var strokeOffset = HINT_STROKE_WIDTH / 2f;
+		final var outlineArc = Math.max(0f, hintArc - HINT_STROKE_WIDTH);
+
+		hintBaseFont = baseFont;
+		hintFont = font;
+		hintLayoutWidth = width;
+		hintLayoutHeight = height;
+		hintTextX = x;
+		hintTextY = y;
+		stopHintBounds = FlatUIUtils.createComponentRectangle(rectX, rectY, rectWidth, rectHeight, hintArc);
+		stopHintOutline = FlatUIUtils.createComponentRectangle(rectX + strokeOffset, rectY + strokeOffset,
+				rectWidth - HINT_STROKE_WIDTH, rectHeight - HINT_STROKE_WIDTH, outlineArc);
+	}
+
 	@Override
 	public void updateUI() {
 		super.updateUI();
@@ -464,6 +594,7 @@ final class LockableSettingsPanel extends JPanel {
 		}
 
 		hintArc = (float) UIManager.getInt("Button.arc");
+		hintBaseFont = null;
 	}
 
 	/// Prevents serialization.
@@ -472,6 +603,6 @@ final class LockableSettingsPanel extends JPanel {
 	/// @throws NotSerializableException always
 	@Serial
 	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
-		throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		throw new NotSerializableException(LockableSettingsPanel.class.getName());
 	}
 }
