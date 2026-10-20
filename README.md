@@ -281,7 +281,7 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 |----------------------------------------|-----------------------------|
 | Generate `Constants.java` source file  | `gradlew generateConstants` |
 | Run all checks                         | `gradlew check`             |
-| Apply Spotless formatting              | `gradlew spotlessApply`     |
+| Apply formatting                       | `gradlew spotlessApply`     |
 | Run ControllerBuddy                    | `gradlew run`               |
 | Run all tests                          | `gradlew test`              |
 | Generate test coverage report          | `gradlew jacocoTestReport`  |
