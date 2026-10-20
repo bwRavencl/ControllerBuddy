@@ -164,7 +164,7 @@ public final class GuiUtils {
 		final long windowId;
 		try {
 			@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
-			final var awtAccessorClass = Class.forName("sun.awt.AWTAccessor");
+			final var awtAccessorClass = Class.forName("sun.awt.AWTAccessor", false, null);
 
 			final var getComponentAccessor = awtAccessorClass.getMethod("getComponentAccessor");
 			final var componentAccessor = getComponentAccessor.invoke(null);

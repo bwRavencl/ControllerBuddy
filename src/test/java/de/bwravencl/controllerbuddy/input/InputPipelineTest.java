@@ -4065,7 +4065,8 @@ final class InputPipelineTest {
 		@DisplayName("ControllerState inner final class exists with expected fields")
 		void controllerStateClassExists() {
 			try {
-				final var controllerStateClass = Class.forName("de.bwravencl.controllerbuddy.input.ControllerState");
+				final var controllerStateClass = Class.forName("de.bwravencl.controllerbuddy.input.ControllerState",
+						false, ReflectionSanityTests.class.getClassLoader());
 				controllerStateClass.getDeclaredField("axes");
 				controllerStateClass.getDeclaredField("buttons");
 				controllerStateClass.getDeclaredField("sdlGamepad");

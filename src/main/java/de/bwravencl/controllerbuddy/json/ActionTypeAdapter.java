@@ -77,7 +77,7 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 		final var data = get(wrapper, PROPERTY_DATA);
 
 		try {
-			final var actualType = Class.forName(typeNameString);
+			final var actualType = Class.forName(typeNameString, false, ActionTypeAdapter.class.getClassLoader());
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
 			if (typeOfT instanceof final ParameterizedType parameterizedType) {

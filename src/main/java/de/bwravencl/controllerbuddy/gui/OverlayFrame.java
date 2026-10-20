@@ -610,10 +610,10 @@ public class OverlayFrame extends JFrame {
 		private static long getJbrDisplayPointer() {
 			try {
 				@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
-				final var displayClass = Class.forName("sun.awt.wl.WLDisplay");
+				final var displayClass = Class.forName("sun.awt.wl.WLDisplay", false, null);
 				final var getInstanceMethod = displayClass.getDeclaredMethod("getInstance");
-				final var getDisplayPtrMethod = displayClass.getDeclaredMethod("getDisplayPtr");
 				getInstanceMethod.setAccessible(true);
+				final var getDisplayPtrMethod = displayClass.getDeclaredMethod("getDisplayPtr");
 				getDisplayPtrMethod.setAccessible(true);
 
 				return (long) getDisplayPtrMethod.invoke(getInstanceMethod.invoke(null));
