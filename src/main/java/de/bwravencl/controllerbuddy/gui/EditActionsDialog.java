@@ -199,7 +199,7 @@ public final class EditActionsDialog extends JDialog {
 						return true;
 					}
 				}, 1)) {
-			final var classLoader = ClassLoader.getSystemClassLoader();
+			final var classLoader = EditActionsDialog.class.getClassLoader();
 			scanResult.getClassesWithAnnotation(Action.class.getName()).stream().map(classInfo -> {
 				try {
 					return Class.forName(classInfo.getName(), false, classLoader);
