@@ -36,13 +36,13 @@ runs:
         curl -fsSL -o "$RUNNER_TEMP/java_package.tar.gz" "https://cache-redirector.jetbrains.com/intellij-jbr/jbrsdk-$JAVA_VERSION-$jdk_os-$jdk_arch-b$JBR_BUILD.tar.gz"
         echo "java_semver=$(echo "$JAVA_VERSION" | cut -d. -f1-3)" >> "$GITHUB_OUTPUT"
     - name: Install JDK
-      uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+      uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v5
       with:
         distribution: jdkfile
         jdk-file: ${{ runner.temp }}/java_package.tar.gz
         java-version: ${{ steps.download-jbr.outputs.java_semver }}
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+      uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
       with:
         cache-disabled: true
     - name: Execute Gradle Task
