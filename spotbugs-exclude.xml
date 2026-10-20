@@ -13,6 +13,15 @@
 		<Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" />
 	</Match>
 	<Match>
+		<Bug pattern="MS_CANNOT_BE_FINAL" />
+	</Match>
+	<Match>
+		<Bug pattern="MS_EXPOSE_REP" />
+	</Match>
+	<Match>
+		<Bug pattern="MS_OOI_PKGPROTECT" />
+	</Match>
+	<Match>
 		<Bug pattern="THROWS_METHOD_THROWS_RUNTIMEEXCEPTION" />
 	</Match>
 </FindBugsFilter>
