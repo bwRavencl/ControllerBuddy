@@ -880,7 +880,8 @@ public final class OnScreenKeyboard extends OverlayFrame {
 
 			keystroke = new Keystroke(keyScancodes, modifierScancodes);
 
-			addMouseListener(new MouseListener() {
+			// noinspection UnnecessarySuperQualifier
+			super.addMouseListener(new MouseListener() {
 
 				@Override
 				public void mouseClicked(final MouseEvent e) {

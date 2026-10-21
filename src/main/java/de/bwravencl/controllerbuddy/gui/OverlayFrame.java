@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.ffi.Linux;
 import de.bwravencl.controllerbuddy.ffi.Wayland;
+import de.bwravencl.controllerbuddy.ffi.Xlib;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,6 +52,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +98,12 @@ import org.jspecify.annotations.Nullable;
 @SuppressWarnings("restricted")
 class OverlayFrame extends JFrame {
 
+	/// EWMH source indication for requests from normal applications.
+	private static final long SOURCE_INDICATION_NORMAL_APPLICATION = 1L;
+
+	/// EWMH `_NET_WM_STATE` client message action that adds the given states.
+	private static final long _NET_WM_STATE_ADD = 1L;
+
 	private static final Logger logger = Logger.getLogger(OverlayFrame.class.getName());
 
 	@Serial
@@ -117,14 +125,15 @@ class OverlayFrame extends JFrame {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private @Nullable PropertyChangeListener rootBorderMirror;
 
-	/// Whether the `STEAM_GAME` Xlib window property has been added.
-	private boolean steamGameX11WindowPropertyAdded;
+	/// The X11 window ID of the frame.
+	private long x11WindowId;
 
-	/// Creates a frame with a title.
+	/// Constructs an [OverlayFrame] with a title.
 	///
 	/// @param title the title
 	OverlayFrame(final String title) {
 		super(title);
+		GuiUtils.setWindowIcon(this);
 	}
 
 	/// Runs a Wayland event handler and logs any exception, because an exception
@@ -200,6 +209,7 @@ class OverlayFrame extends JFrame {
 			idleOverlay.dispose();
 			idleOverlay = null;
 		}
+		x11WindowId = 0L;
 		super.dispose();
 	}
 
@@ -385,24 +395,103 @@ class OverlayFrame extends JFrame {
 			return;
 		}
 
-		if (!MainFrame.IS_WAYLAND_TOOLKIT) {
-			super.setVisible(true);
-
-			if (MainFrame.IS_X11_TOOLKIT && !steamGameX11WindowPropertyAdded) {
-				steamGameX11WindowPropertyAdded = GuiUtils.addSteamGameX11WindowProperty(this);
+		if (MainFrame.IS_WAYLAND_TOOLKIT) {
+			final var connection = Connection.getInstance();
+			if (connection == null || Wayland.isNull(connection.layerShell)
+					|| !(super.getContentPane() instanceof final JComponent pane)) {
+				super.setVisible(true);
+				return;
 			}
 
+			openOverlay(connection, pane);
 			return;
 		}
 
-		final var connection = Connection.getInstance();
-		if (connection == null || Wayland.isNull(connection.layerShell)
-				|| !(super.getContentPane() instanceof final JComponent pane)) {
-			super.setVisible(true);
-			return;
-		}
+		super.setVisible(true);
 
-		openOverlay(connection, pane);
+		if (MainFrame.IS_X11_TOOLKIT && x11WindowId == 0L) {
+			if (!isDisplayable()) {
+				throw new IllegalStateException("Frame is not displayable");
+			}
+
+			try {
+				@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
+				final var awtAccessorClass = Class.forName("sun.awt.AWTAccessor", false, null);
+
+				final var getComponentAccessor = awtAccessorClass.getMethod("getComponentAccessor");
+				final var componentAccessor = getComponentAccessor.invoke(null);
+
+				final var getPeerMethod = componentAccessor.getClass().getMethod("getPeer", Component.class);
+				getPeerMethod.setAccessible(true);
+				final var peer = getPeerMethod.invoke(componentAccessor, this);
+
+				if (peer == null) {
+					throw new IllegalStateException("Could not retrieve native Xlib window peer");
+				}
+
+				final var getWindowMethod = peer.getClass().getMethod("getWindow");
+				x11WindowId = (long) getWindowMethod.invoke(peer);
+			} catch (final ReflectiveOperationException e) {
+				throw new RuntimeException(e);
+			}
+
+			if (x11WindowId == 0L) {
+				throw new IllegalStateException("Could not retrieve native Xlib window ID");
+			}
+
+			try (final var arena = Arena.ofConfined()) {
+				final var display = Xlib.XOpenDisplay(MemorySegment.NULL);
+				if (MemorySegment.NULL.equals(display)) {
+					throw new RuntimeException("Failed to open X11 display");
+				}
+
+				try {
+					final var netWmState = Xlib.XInternAtom(display,
+							arena.allocateFrom("_NET_WM_STATE", StandardCharsets.UTF_8), 0);
+					final var skipTaskbar = Xlib.XInternAtom(display,
+							arena.allocateFrom("_NET_WM_STATE_SKIP_TASKBAR", StandardCharsets.UTF_8), 0);
+					final var skipPager = Xlib.XInternAtom(display,
+							arena.allocateFrom("_NET_WM_STATE_SKIP_PAGER", StandardCharsets.UTF_8), 0);
+
+					final var event = arena.allocate(Xlib.XEvent.LAYOUT);
+					final var xclient = Xlib.XEvent.getXclient(event);
+					Xlib.XClientMessageEvent.setType(xclient, Xlib.ClientMessage);
+					Xlib.XClientMessageEvent.setDisplay(xclient, display);
+					Xlib.XClientMessageEvent.setWindow(xclient, x11WindowId);
+					Xlib.XClientMessageEvent.setMessage_type(xclient, netWmState);
+					Xlib.XClientMessageEvent.setFormat(xclient, 32);
+					Xlib.XClientMessageEvent.setData_l(xclient, new long[] { _NET_WM_STATE_ADD, skipTaskbar, skipPager,
+							SOURCE_INDICATION_NORMAL_APPLICATION, 0L });
+
+					final var root = Xlib.XDefaultRootWindow(display);
+					Xlib.XSendEvent(display, root, 0, Xlib.SubstructureRedirectMask | Xlib.SubstructureNotifyMask,
+							event);
+					Xlib.XFlush(display);
+
+					final var steamAppId = System.getenv("SteamAppId");
+					if (steamAppId != null && !steamAppId.isBlank()) {
+						try {
+							final var propNameSeg = arena.allocateFrom("STEAM_GAME", StandardCharsets.UTF_8);
+							final var typeNameSeg = arena.allocateFrom("CARDINAL", StandardCharsets.UTF_8);
+
+							final var propertyAtom = Xlib.XInternAtom(display, propNameSeg, 0);
+							final var cardinalTypeAtom = Xlib.XInternAtom(display, typeNameSeg, 0);
+
+							final var dataBuffer = arena.allocate(ValueLayout.JAVA_LONG);
+							dataBuffer.set(ValueLayout.JAVA_LONG, 0L, Long.parseLong(steamAppId));
+
+							Xlib.XChangeProperty(display, x11WindowId, propertyAtom, cardinalTypeAtom, 32, 0,
+									dataBuffer, 1);
+							Xlib.XFlush(display);
+						} catch (final NumberFormatException e) {
+							logger.log(Level.WARNING, e.getMessage(), e);
+						}
+					}
+				} finally {
+					Xlib.XCloseDisplay(display);
+				}
+			}
+		}
 	}
 
 	/// Returns the idle overlay if it matches the current background, otherwise
