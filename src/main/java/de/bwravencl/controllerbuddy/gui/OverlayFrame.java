@@ -94,7 +94,7 @@ import org.jspecify.annotations.Nullable;
 /// event dispatch thread: JBR dispatches the default event queue there, and
 /// that is where the overlay's objects live.
 @SuppressWarnings("restricted")
-public class OverlayFrame extends JFrame {
+class OverlayFrame extends JFrame {
 
 	private static final Logger logger = Logger.getLogger(OverlayFrame.class.getName());
 
@@ -120,14 +120,10 @@ public class OverlayFrame extends JFrame {
 	/// Whether the `STEAM_GAME` Xlib window property has been added.
 	private boolean steamGameX11WindowPropertyAdded;
 
-	/// Creates an untitled frame.
-	public OverlayFrame() {
-	}
-
 	/// Creates a frame with a title.
 	///
 	/// @param title the title
-	public OverlayFrame(final String title) {
+	OverlayFrame(final String title) {
 		super(title);
 	}
 
