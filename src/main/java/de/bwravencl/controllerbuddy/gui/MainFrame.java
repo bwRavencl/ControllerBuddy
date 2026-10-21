@@ -3583,10 +3583,8 @@ public final class MainFrame extends JFrame {
 						Main.strings.getString("SHOW_TRAY_ENTRY_LABEL"), SDLTray.SDL_TRAYENTRY_BUTTON);
 				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, !isVisible());
 				SDLTray.SDL_SetTrayEntryCallback(showTrayEntry, (_, _) -> EventQueue.invokeLater(() -> {
-					final var openEvent = new WindowEvent(this, WindowEvent.WINDOW_OPENED);
-					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
-					setVisible(true);
 					setExtendedState(NORMAL);
+					setVisible(true);
 				}), 0x0);
 
 				SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, (ByteBuffer) null, 0x0);
