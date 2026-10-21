@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.10.5" sequence="0" timestamp="1792530054428" analysisTimestamp="1792530054428" release="">
+<BugCollection version="4.10.5" sequence="0" timestamp="1792577367474" analysisTimestamp="1792577367474" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/VersionUtils.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/util/MainLoop$TaskQueueEntry.class</Jar>
@@ -137,12 +137,14 @@
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux$input_event.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/VjoyInterface.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Kernel32.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Xlib$XClientMessageEvent.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/User32$INPUT$KEYBDINPUT.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Wayland$wl_interface.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Wayland.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Wayland$wl_message.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/User32$INPUT.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux$timeval.class</Jar>
+    <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Xlib$XEvent.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/User32$INPUT$HARDWAREINPUT.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux.class</Jar>
     <Jar>/home/matteo/Projekte/ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/ffi/Linux$uinput_setup.class</Jar>
@@ -959,77 +961,77 @@
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.MainFrame.stopAll(boolean, boolean, boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="276" end="5128" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-        <Message>At MainFrame.java:[lines 276-5128]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="276" end="5126" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+        <Message>At MainFrame.java:[lines 276-5126]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.MainFrame</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.MainFrame" name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="4136" end="4145" startBytecode="0" endBytecode="144" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="4134" end="4143" startBytecode="0" endBytecode="144" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.MainFrame.stopAll(boolean, boolean, boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true" start="4143" end="4143" startBytecode="34" endBytecode="34" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-      <Message>At MainFrame.java:[line 4143]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true" start="4141" end="4141" startBytecode="34" endBytecode="34" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+      <Message>At MainFrame.java:[line 4141]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_GC" priority="1" rank="16" abbrev="Dm" category="PERFORMANCE" instanceHash="95889fdfb021a707914bdeaa452a8ee1" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.MainFrame.stopLocalAndServer(boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="276" end="5128" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-        <Message>At MainFrame.java:[lines 276-5128]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="276" end="5126" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+        <Message>At MainFrame.java:[lines 276-5126]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.MainFrame</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.MainFrame" name="stopLocalAndServer" signature="(Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="4210" end="4218" startBytecode="0" endBytecode="114" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" start="4208" end="4216" startBytecode="0" endBytecode="114" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.MainFrame.stopLocalAndServer(boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true" start="4216" end="4216" startBytecode="28" endBytecode="28" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-      <Message>At MainFrame.java:[line 4216]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame" primary="true" start="4214" end="4214" startBytecode="28" endBytecode="28" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+      <Message>At MainFrame.java:[line 4214]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2" rank="17" abbrev="SF" category="STYLE" instanceHash="ce4fc464105ded7aefb3d1954629c51c" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="484">
     <ShortMessage>Switch statement found where one case falls through to the next case</ShortMessage>
     <LongMessage>Switch statement found in de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser.approveSelection() where one case falls through to the next case</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" start="5215" end="5237" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-        <Message>At MainFrame.java:[lines 5215-5237]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" start="5213" end="5235" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+        <Message>At MainFrame.java:[lines 5213-5235]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" name="approveSelection" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" start="5222" end="5237" startBytecode="0" endBytecode="218" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" start="5220" end="5235" startBytecode="0" endBytecode="218" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser.approveSelection()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" primary="true" start="5229" end="5231" startBytecode="89" endBytecode="92" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
-      <Message>At MainFrame.java:[lines 5229-5231]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$AbstractProfileFileChooser" primary="true" start="5227" end="5229" startBytecode="89" endBytecode="92" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java">
+      <Message>At MainFrame.java:[lines 5227-5229]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS" priority="3" rank="20" abbrev="SIC" category="PERFORMANCE" instanceHash="b1f88137e06039463ff1b964fc515060" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Could be refactored into a static inner class</ShortMessage>
     <LongMessage>The class de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel could be refactored into a _static_ inner class</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel" start="5529" end="5613" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java" synthetic="true">
-        <Message>At MainFrame.java:[lines 5529-5613]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel" start="5527" end="5611" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java" synthetic="true">
+        <Message>At MainFrame.java:[lines 5527-5611]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel" start="5529" end="5613" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java" synthetic="true">
-      <Message>At MainFrame.java:[lines 5529-5613]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.MainFrame$ConnectionSettingsPanel" start="5527" end="5611" sourcefile="MainFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/MainFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/MainFrame.java" synthetic="true">
+      <Message>At MainFrame.java:[lines 5527-5611]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="e46fc5addf2d33bbddd8ae5107b2747e" instanceOccurrenceNum="0" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="69" end="555" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 69-555]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="63" end="556" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 63-556]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="357" end="395" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="358" end="396" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedColumn" signature="I" isStatic="false" primary="true">
@@ -1038,21 +1040,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="380" end="380" startBytecode="133" endBytecode="133" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 380]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="381" end="381" startBytecode="133" endBytecode="133" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 381]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="e46fc5addf2d33bbddd8ae5107b2747e" instanceOccurrenceNum="1" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="69" end="555" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 69-555]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="63" end="556" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 63-556]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="357" end="395" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="358" end="396" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedColumn" signature="I" isStatic="false" primary="true">
@@ -1061,21 +1063,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedColumn</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="387" end="387" startBytecode="184" endBytecode="184" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 387]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="388" end="388" startBytecode="184" endBytecode="184" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 388]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="96165ccd9c45b8078fbc06fbf74432b3" instanceOccurrenceNum="0" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="69" end="555" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 69-555]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="63" end="556" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 63-556]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="357" end="395" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="358" end="396" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedRow" signature="I" isStatic="false" primary="true">
@@ -1084,21 +1086,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="362" end="362" startBytecode="54" endBytecode="54" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 362]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="363" end="363" startBytecode="54" endBytecode="54" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 363]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="VO_VOLATILE_INCREMENT" priority="2" rank="14" abbrev="VO" category="MT_CORRECTNESS" instanceHash="96165ccd9c45b8078fbc06fbf74432b3" instanceOccurrenceNum="1" instanceOccurrenceMax="1" cweid="567">
     <ShortMessage>An increment to a volatile field isn&apos;t atomic</ShortMessage>
     <LongMessage>Increment of volatile field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow in de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="69" end="555" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 69-555]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="63" end="556" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+        <Message>At OnScreenKeyboard.java:[lines 63-556]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="lambda$moveSelector$0" signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard$Direction;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="357" end="395" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="358" end="396" startBytecode="0" endBytecode="365" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.lambda$moveSelector$0(OnScreenKeyboard$Direction)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="selectedRow" signature="I" isStatic="false" primary="true">
@@ -1107,191 +1109,191 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.selectedRow</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="371" end="371" startBytecode="100" endBytecode="100" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
-      <Message>At OnScreenKeyboard.java:[line 371]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true" start="372" end="372" startBytecode="100" endBytecode="100" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+      <Message>At OnScreenKeyboard.java:[line 372]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="823d7697a760e51dbeb33aacebe49dfb" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onGlobal(MemorySegment, MemorySegment, int, MemorySegment, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onGlobal" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;ILjava/lang/foreign/MemorySegment;I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="618" end="654" startBytecode="0" endBytecode="114" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="703" end="739" startBytecode="0" endBytecode="114" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onGlobal(MemorySegment, MemorySegment, int, MemorySegment, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="618" end="654" startBytecode="0" endBytecode="114" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 618-654]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="703" end="739" startBytecode="0" endBytecode="114" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 703-739]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="8c942852069ee519837ba0c186833e6b" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onOutputName(MemorySegment, MemorySegment, MemorySegment) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onOutputName" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="663" end="665" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="748" end="750" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onOutputName(MemorySegment, MemorySegment, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="663" end="665" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 663-665]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="748" end="750" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 748-750]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="2acf875f5b4b218f6ab3ec43565baef1" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerAxis(MemorySegment, MemorySegment, int, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerAxis" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;III)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="677" end="682" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="762" end="767" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerAxis(MemorySegment, MemorySegment, int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="677" end="682" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 677-682]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="762" end="767" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 762-767]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="b435c05b5988999ba8d9186626fa5190" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerAxisDiscrete(MemorySegment, MemorySegment, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerAxisDiscrete" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;II)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="693" end="698" startBytecode="0" endBytecode="101" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="778" end="783" startBytecode="0" endBytecode="101" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerAxisDiscrete(MemorySegment, MemorySegment, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="693" end="698" startBytecode="0" endBytecode="101" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 693-698]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="778" end="783" startBytecode="0" endBytecode="101" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 778-783]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="8975b994b41ce550e25732d1bf9ba6fd" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerButton(MemorySegment, MemorySegment, int, int, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerButton" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;IIII)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="711" end="716" startBytecode="0" endBytecode="122" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="796" end="801" startBytecode="0" endBytecode="122" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerButton(MemorySegment, MemorySegment, int, int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="711" end="716" startBytecode="0" endBytecode="122" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 711-716]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="796" end="801" startBytecode="0" endBytecode="122" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 796-801]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="bde15144fa28cad101cf4033cf598dbd" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerEnter(MemorySegment, MemorySegment, int, MemorySegment, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerEnter" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;ILjava/lang/foreign/MemorySegment;II)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="729" end="735" startBytecode="0" endBytecode="124" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="814" end="820" startBytecode="0" endBytecode="124" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerEnter(MemorySegment, MemorySegment, int, MemorySegment, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="729" end="735" startBytecode="0" endBytecode="124" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 729-735]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="814" end="820" startBytecode="0" endBytecode="124" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 814-820]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="f579fc465360544824c3f16c730fb362" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerFrame(MemorySegment, MemorySegment) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerFrame" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="743" end="748" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="828" end="833" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerFrame(MemorySegment, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="743" end="748" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 743-748]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="828" end="833" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 828-833]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="36f79dd79810c0effcfc5d1ac57e5e20" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerLeave(MemorySegment, MemorySegment, int, MemorySegment) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerLeave" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;ILjava/lang/foreign/MemorySegment;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="759" end="766" startBytecode="0" endBytecode="98" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="844" end="851" startBytecode="0" endBytecode="98" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerLeave(MemorySegment, MemorySegment, int, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="759" end="766" startBytecode="0" endBytecode="98" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 759-766]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="844" end="851" startBytecode="0" endBytecode="98" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 844-851]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="c372ba03ac6192a0394358bc544617cf" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerMotion(MemorySegment, MemorySegment, int, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onPointerMotion" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;III)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="778" end="783" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="863" end="868" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onPointerMotion(MemorySegment, MemorySegment, int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="778" end="783" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 778-783]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="863" end="868" startBytecode="0" endBytecode="112" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 863-868]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="bf2f4e756231158b49dddd43e267b82f" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onSeatCapabilities(MemorySegment, MemorySegment, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="436" end="819" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 436-819]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="521" end="904" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 521-904]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" name="onSeatCapabilities" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="792" end="808" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="877" end="893" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection.onSeatCapabilities(MemorySegment, MemorySegment, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="792" end="808" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 792-808]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Connection" start="877" end="893" startBytecode="0" endBytecode="90" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 877-893]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="692703d825c14ac73edb269c8c46b26" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;closed&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="831" end="1033" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 831-1033]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="916" end="1118" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 916-1118]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" name="open" signature="(Lde/bwravencl/controllerbuddy/gui/OverlayFrame$Connection;Ljavax/swing/JComponent;Ljava/awt/Rectangle;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="965" end="987" startBytecode="0" endBytecode="500" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="1050" end="1072" startBytecode="0" endBytecode="500" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay.open(OverlayFrame$Connection, JComponent, Rectangle)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" name="closed" signature="Z" isStatic="false" primary="true">
@@ -1300,21 +1302,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay.closed</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true" start="966" end="966" startBytecode="7" endBytecode="7" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-      <Message>At OverlayFrame.java:[line 966]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true" start="1051" end="1051" startBytecode="7" endBytecode="7" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+      <Message>At OverlayFrame.java:[line 1051]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="af67bb1864548a2076ca63bb93a97d27" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;closed&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="831" end="1033" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 831-1033]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="916" end="1118" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 916-1118]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" name="release" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="991" end="997" startBytecode="0" endBytecode="104" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" start="1076" end="1082" startBytecode="0" endBytecode="104" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay.release()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" name="closed" signature="Z" isStatic="false" primary="true">
@@ -1323,21 +1325,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay.closed</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true" start="991" end="991" startBytecode="2" endBytecode="2" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-      <Message>At OverlayFrame.java:[line 991]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay" primary="true" start="1076" end="1076" startBytecode="2" endBytecode="2" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+      <Message>At OverlayFrame.java:[line 1076]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="89e1d1568de74065060fd5dddfaad465" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;destroyed&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="destroyProxies" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1423" end="1448" startBytecode="0" endBytecode="353" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1508" end="1533" startBytecode="0" endBytecode="353" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.destroyProxies()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="destroyed" signature="Z" isStatic="false" primary="true">
@@ -1346,162 +1348,93 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.destroyed</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true" start="1423" end="1423" startBytecode="2" endBytecode="2" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-      <Message>At OverlayFrame.java:[line 1423]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true" start="1508" end="1508" startBytecode="2" endBytecode="2" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+      <Message>At OverlayFrame.java:[line 1508]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="20aff7b3435a7b8044a3746786cbe8e4" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onBufferRelease(MemorySegment, MemorySegment) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="onBufferRelease" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1471" end="1482" startBytecode="0" endBytecode="79" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1556" end="1567" startBytecode="0" endBytecode="79" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onBufferRelease(MemorySegment, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1471" end="1482" startBytecode="0" endBytecode="79" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 1471-1482]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1556" end="1567" startBytecode="0" endBytecode="79" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 1556-1567]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="6905bda49ad70068b88defb8163da10b" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onClosed(MemorySegment, MemorySegment) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="onClosed" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1490" end="1499" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1575" end="1584" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onClosed(MemorySegment, MemorySegment)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1490" end="1499" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 1490-1499]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1575" end="1584" startBytecode="0" endBytecode="78" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 1575-1584]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="e7e4e6bd6044fbec242dec1ce1cfa26f" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onConfigure(MemorySegment, MemorySegment, int, int, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="onConfigure" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;III)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1513" end="1524" startBytecode="0" endBytecode="109" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1598" end="1609" startBytecode="0" endBytecode="109" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onConfigure(MemorySegment, MemorySegment, int, int, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1513" end="1524" startBytecode="0" endBytecode="109" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 1513-1524]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1598" end="1609" startBytecode="0" endBytecode="109" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 1598-1609]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="ea91ad17cd446d752a14cce451811af" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onFrameDone(MemorySegment, MemorySegment, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="onFrameDone" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1533" end="1541" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1618" end="1626" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onFrameDone(MemorySegment, MemorySegment, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1533" end="1541" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 1533-1541]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1618" end="1626" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 1618-1626]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="e4997077bfc2d1e118941ef7c556060c" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="561">
     <ShortMessage>Private method is never called</ShortMessage>
     <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onSyncDone(MemorySegment, MemorySegment, int) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1300" end="1750" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
-        <Message>At OverlayFrame.java:[lines 1300-1750]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1385" end="1835" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java">
+        <Message>At OverlayFrame.java:[lines 1385-1835]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" name="onSyncDone" signature="(Ljava/lang/foreign/MemorySegment;Ljava/lang/foreign/MemorySegment;I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1550" end="1559" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1635" end="1644" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface.onSyncDone(MemorySegment, MemorySegment, int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1550" end="1559" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
-      <Message>At OverlayFrame.java:[lines 1550-1559]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="65ae1e02cf618da15ac56ac7a8f0e342" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
-    <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
-    <LongMessage>This write of the 64-bit primitive variable &quot;selectedSdlGamepad&quot; may not be atomic</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="53" end="928" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 53-928]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="openController" signature="(Lde/bwravencl/controllerbuddy/input/Controller;)Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="460" end="494" startBytecode="0" endBytecode="399" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.Input.openController(Controller)</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.input.Input" name="selectedSdlGamepad" signature="J" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>In Input.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.Input.selectedSdlGamepad</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="474" end="474" startBytecode="77" endBytecode="77" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 474]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="fa8f361f8df230b2071ea57198bc1997" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
-    <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
-    <LongMessage>This write of the 64-bit primitive variable &quot;lastPollNanoTime&quot; may not be atomic</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="53" end="928" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 53-928]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="reset" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="716" end="745" startBytecode="0" endBytecode="266" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.Input.reset()</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.input.Input" name="lastPollNanoTime" signature="J" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>In Input.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.Input.lastPollNanoTime</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="720" end="720" startBytecode="22" endBytecode="22" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 720]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="c9fd0a2f53729b41e846078034869835" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
-    <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
-    <LongMessage>This write of the 64-bit primitive variable &quot;lastHotSwapPollNanoTime&quot; may not be atomic</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="53" end="928" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>At Input.java:[lines 53-928]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.Input" name="resetLastHotSwapPollNanoTime" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="749" end="750" startBytecode="0" endBytecode="57" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.Input.resetLastHotSwapPollNanoTime()</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.input.Input" name="lastHotSwapPollNanoTime" signature="J" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-        <Message>In Input.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.Input.lastHotSwapPollNanoTime</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="749" end="749" startBytecode="8" endBytecode="8" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-      <Message>At Input.java:[line 749]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OverlayFrame$Overlay$LayerSurface" start="1635" end="1644" startBytecode="0" endBytecode="89" sourcefile="OverlayFrame.java" sourcepath="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" relSourcepath="java/de/bwravencl/controllerbuddy/gui/OverlayFrame.java" synthetic="true">
+      <Message>At OverlayFrame.java:[lines 1635-1644]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="4474d066e3d01713fdb70a93c4a1447f" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
@@ -1971,29 +1904,6 @@
       <Message>At ScancodeAdapter.java:[line 42]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="2817dda2240482c95835ffe2dcbbc5d8" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
-    <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
-    <LongMessage>This write of the 64-bit primitive variable &quot;lastKeyboardEventNanos&quot; may not be atomic</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="92" end="1166" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 92-1166]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" name="doKeyboardInput" signature="(Lde/bwravencl/controllerbuddy/input/Scancode;Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="408" end="437" startBytecode="0" endBytecode="540" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(Scancode, boolean)</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" name="lastKeyboardEventNanos" signature="J" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/OutputRunMode.java">
-        <Message>In OutputRunMode.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.runmode.OutputRunMode.lastKeyboardEventNanos</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="432" end="432" startBytecode="210" endBytecode="210" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/OutputRunMode.java">
-      <Message>At OutputRunMode.java:[line 432]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="b2e34a56106d19543d39452bee12e373" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
     <ShortMessage>This write of this shared primitive variable may not be visible to other threads</ShortMessage>
     <LongMessage>Shared primitive variable &quot;kdeGlobalShortcutsBlocked&quot; in one thread may not yield the value of the most recent write from another thread</LongMessage>
@@ -2038,29 +1948,6 @@
     </Field>
     <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="819" end="819" startBytecode="45" endBytecode="45" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/OutputRunMode.java">
       <Message>At OutputRunMode.java:[line 819]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="AT_NONATOMIC_64BIT_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="33b35e7037072d2a41091b2a99213512" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="667">
-    <ShortMessage>This write of this 64-bit primitive variable may not be atomic</ShortMessage>
-    <LongMessage>This write of the 64-bit primitive variable &quot;pollingPeriodNanos&quot; may not be atomic</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.runmode.RunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="40" end="196" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/RunMode.java">
-        <Message>At RunMode.java:[lines 40-196]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.runmode.RunMode</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.runmode.RunMode" name="setPollingRate" signature="(I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="185" end="186" startBytecode="0" endBytecode="66" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/RunMode.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.runmode.RunMode.setPollingRate(int)</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.runmode.RunMode" name="pollingPeriodNanos" signature="J" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/RunMode.java">
-        <Message>In RunMode.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.runmode.RunMode.pollingPeriodNanos</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" primary="true" start="185" end="185" startBytecode="7" endBytecode="7" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java/de/bwravencl/controllerbuddy/runmode/RunMode.java">
-      <Message>At RunMode.java:[line 185]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" priority="2" rank="14" abbrev="AT" category="MT_CORRECTNESS" instanceHash="16467fa3e242b29ff70bd2aa79c8fb10" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="413">
@@ -2276,25 +2163,6 @@ increments/decrements could be lost.
 
     ]]></Details>
   </BugPattern>
-  <BugPattern type="AT_NONATOMIC_64BIT_PRIMITIVE" abbrev="AT" category="MT_CORRECTNESS" cweid="667">
-    <ShortDescription>This write of this 64-bit primitive variable may not be atomic</ShortDescription>
-    <Details><![CDATA[
-      
-        <p>
-          The long and the double are 64-bit primitive types, and depending on the Java Virtual Machine implementation assigning a value to them can be treated as two separate 32-bit writes, and as such it's not atomic.
-          See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.7">JSL 17.7. Non-Atomic Treatment of double and long</a>.
-          See SEI CERT rule <a href="https://cmu-sei.github.io/secure-coding-standards/sei-cert-oracle-coding-standard-for-java/rules/visibility-and-atomicity-vna/vna05-j/">VNA05-J. Ensure atomicity when reading and writing 64-bit values</a> and
-          <a href="https://cwe.mitre.org/data/definitions/667.html">CWE-667: Improper Locking</a> for more info.
-
-          This bug can be ignored in platforms which guarantee that 64-bit long and double type read and write operations are atomic.
-        </p>
-        <p>
-          To fix it, declare the variable volatile, change the type of the field to the corresponding atomic type from <code>java.lang.concurrent.atomic</code> or correctly synchronize the code.
-          Declaring the variable volatile may not be enough in some cases: e.g. when the variable is assigned a value which depends on the current value or on the result of nonatomic compound operations.
-        </p>
-     
-    ]]></Details>
-  </BugPattern>
   <BugPattern type="DM_EXIT" abbrev="Dm" category="BAD_PRACTICE" cweid="382">
     <ShortDescription>Method invokes System.exit(...)</ShortDescription>
     <Details><![CDATA[
@@ -2355,7 +2223,7 @@ increments/decrements could be lost.
       <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1222)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Tue, 20 Oct 2026 23:00:54 +0200" total_classes="0" referenced_classes="0" total_bugs="89" total_size="0" num_packages="7" java_version="25.0.4.1" vm_version="25.0.4.1+1-b635.75" cpu_seconds="34.87" clock_seconds="5.89" peak_mbytes="1250.04" alloc_mbytes="24048.00" gc_seconds="0.10" priority_3="52" priority_2="35" priority_1="2">
+  <FindBugsSummary timestamp="Wed, 21 Oct 2026 12:09:27 +0200" total_classes="0" referenced_classes="0" total_bugs="84" total_size="0" num_packages="7" java_version="25.0.4.1" vm_version="25.0.4.1+1-b635.75" cpu_seconds="33.04" clock_seconds="5.62" peak_mbytes="1222.92" alloc_mbytes="24048.00" gc_seconds="0.09" priority_3="52" priority_2="30" priority_1="2">
     <FileStats path="de/bwravencl/controllerbuddy/Main.java" bugCount="2" size="0" bugHash="299a1258baa08812c4e742881927bf04"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Kernel32.java" bugCount="1" size="0" bugHash="1096895cfaf56254a50175985769b6c9"/>
     <FileStats path="de/bwravencl/controllerbuddy/ffi/Linux.java" bugCount="1" size="0" bugHash="a428af3e932c179c07d6066a83813cb1"/>
@@ -2363,17 +2231,17 @@ increments/decrements could be lost.
     <FileStats path="de/bwravencl/controllerbuddy/ffi/VjoyInterface.java" bugCount="25" size="0" bugHash="6f3a892fcecab3fd136e6735b1d1c779"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsScrollPane.java" bugCount="1" size="0" bugHash="f3516e0adc86dcb061f2efff0ce22419"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/LockableSettingsPanel.java" bugCount="2" size="0" bugHash="41ecc8a8f1ac9abf86f8206adf82cc72"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/MainFrame.java" bugCount="4" size="0" bugHash="91c20786f0aace612d10d5cef7d48abb"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="4" size="0" bugHash="3bdc0a116ece0cc5c333b7b83290774b"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" bugCount="18" size="0" bugHash="3d2a0efa89aa94f9cb3f4f3465975cb0"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17" size="0" bugHash="2d090d959355cb2381493d3d04f56302"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/MainFrame.java" bugCount="4" size="0" bugHash="13eee6bd77ff8b78506c217955c40b45"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="4" size="0" bugHash="342828a94a5dd748ead1162f7f1cb0ee"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/OverlayFrame.java" bugCount="18" size="0" bugHash="a6a9504e0e149aa8a9409fac654f45c8"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="14" size="0" bugHash="4facd041e4355dae38e08dcc278470a7"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/ActivationEditorBuilder.java" bugCount="1" size="0" bugHash="d187072387dc65dab31459e07e3d90c1"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/ButtonEditorBuilder.java" bugCount="1" size="0" bugHash="bd42a6c3b51f74a7eaa99a6e6294686e"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/ColorTypeAdapter.java" bugCount="1" size="0" bugHash="688c647175a18626339683154f229777"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/LockKeyAdapter.java" bugCount="1" size="0" bugHash="9f4a1d8733fafd4e0e59193369cb8c07"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/ScancodeAdapter.java" bugCount="1" size="0" bugHash="d0c3c38bea30bc73665d26ce69d9a3eb"/>
-    <FileStats path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" bugCount="3" size="0" bugHash="d9a92c4d79a0791607835c45fc697b32"/>
-    <FileStats path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="2" size="0" bugHash="7794debfff484c5873491a325ec37963"/>
+    <FileStats path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" bugCount="2" size="0" bugHash="6e51c995bce773bcb7953d32ff8797f9"/>
+    <FileStats path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="1" size="0" bugHash="d2b1a17209429718434ef3be523481cd"/>
     <FileStats path="de/bwravencl/controllerbuddy/runmode/UinputDevice.java" bugCount="1" size="0" bugHash="d8a16240c45f58831cd1f061a72daa88"/>
     <FindBugsProfile></FindBugsProfile>
   </FindBugsSummary>
