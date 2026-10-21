@@ -32,6 +32,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragGestureRecognizer;
@@ -64,6 +65,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import jdk.swing.interop.DragSourceContextWrapper;
@@ -124,7 +126,18 @@ class OverlayFrame extends JFrame {
 	/// @param title the title
 	OverlayFrame(final String title) {
 		super(title);
+
+		setType(Window.Type.POPUP);
+		setUndecorated(true);
+		setResizable(false);
+		setFocusableWindowState(false);
+		setAlwaysOnTop(true);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setBackground(MainFrame.TRANSPARENT);
 		GuiUtils.setWindowIcon(this);
+
+		rootPane.setWindowDecorationStyle(JRootPane.NONE);
+		rootPane.setBackground(MainFrame.TRANSPARENT);
 	}
 
 	/// Runs a Wayland event handler and logs any exception, because an exception

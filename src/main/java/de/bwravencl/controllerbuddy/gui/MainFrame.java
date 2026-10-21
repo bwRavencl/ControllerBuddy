@@ -86,7 +86,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -180,7 +179,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
@@ -2933,17 +2931,7 @@ public final class MainFrame extends JFrame {
 		}
 
 		overlayFrame = new OverlayFrame("Overlay");
-		final var overlayFrameRootPane = overlayFrame.getRootPane();
-		overlayFrameRootPane.setWindowDecorationStyle(JRootPane.NONE);
-		overlayFrameRootPane.setBackground(TRANSPARENT);
-		overlayFrame.setUndecorated(true);
-		overlayFrame.setResizable(false);
-		overlayFrame.setType(Window.Type.POPUP);
 		overlayFrame.setLayout(new BorderLayout());
-		overlayFrame.setFocusableWindowState(false);
-		overlayFrame.setBackground(TRANSPARENT);
-		overlayFrame.setAlwaysOnTop(true);
-		overlayFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		if (multipleModes) {
 			currentModePanel = new JPanel();
@@ -3019,6 +3007,7 @@ public final class MainFrame extends JFrame {
 					BorderLayout.CENTER);
 		}
 
+		final var overlayFrameRootPane = overlayFrame.getRootPane();
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
 
 			private static final Border ALTERNATING_BORDER = new Border() {

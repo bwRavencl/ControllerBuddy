@@ -33,7 +33,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -52,7 +51,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -212,17 +210,6 @@ public final class OnScreenKeyboard extends OverlayFrame {
 		selectedColumn = keyboardButtons[selectedRow].length / 2;
 
 		frameDragListener = new FrameDragListener(mainFrame, this);
-
-		rootPane.setWindowDecorationStyle(JRootPane.NONE);
-		setUndecorated(true);
-		setResizable(false);
-		setTitle(OnScreenKeyboard.class.getSimpleName());
-		setType(Window.Type.POPUP);
-		setFocusableWindowState(false);
-		setBackground(MainFrame.TRANSPARENT);
-		rootPane.setBackground(MainFrame.TRANSPARENT);
-		setAlwaysOnTop(true);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		addMouseListener(frameDragListener);
 		addMouseMotionListener(frameDragListener);
