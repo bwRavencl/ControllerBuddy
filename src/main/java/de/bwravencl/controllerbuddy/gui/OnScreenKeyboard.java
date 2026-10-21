@@ -126,6 +126,7 @@ public final class OnScreenKeyboard extends OverlayFrame {
 	///
 	/// @param mainFrame the main frame instance
 	OnScreenKeyboard(final MainFrame mainFrame) {
+		super("On-Screen Keyboard");
 		this.mainFrame = mainFrame;
 
 		capsLockKeyButton = new CapsLockKeyButton();
