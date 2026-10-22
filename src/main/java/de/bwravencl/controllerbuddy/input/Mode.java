@@ -154,7 +154,7 @@ public final class Mode implements Cloneable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(uuid);
+		return Objects.hashCode(uuid);
 	}
 
 	/// Sets the mapping from button indices to their associated actions.
