@@ -37,7 +37,9 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
+import java.awt.Transparency;
 import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -74,39 +76,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
 
-	/// Stroke used for drawing the controller outline.
-	private static final Stroke CONTROLLER_STROKE = new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
-	/// Texture tile size in pixels.
-	private static final int TEXTURE_TILE_SIZE = 8;
-
-	/// Texture used for filling the controller shape.
-	private static final TexturePaint controllerTexture;
-
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
-
-	static {
-		final var textureImage = new BufferedImage(TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
-		final var g2d = textureImage.createGraphics();
-
-		final var backgroundColor = new Color(MainFrame.LIGHT_BLUE_COLOR.getRed(),
-				MainFrame.LIGHT_BLUE_COLOR.getGreen(), MainFrame.LIGHT_BLUE_COLOR.getBlue(), 128);
-		g2d.setColor(backgroundColor);
-		g2d.fillRect(0, 0, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE);
-
-		final var patternColor = new Color(48, 48, 48, 32);
-		g2d.setColor(patternColor);
-		g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4,
-				TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4);
-		g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4,
-				TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4);
-
-		g2d.dispose();
-
-		controllerTexture = new TexturePaint(textureImage,
-				new Rectangle2D.Float(0f, 0f, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE));
-	}
 
 	/// The panel that holds the arranged controller component buttons.
 	private final JPanel assignmentsPanel = new JPanel();
@@ -209,44 +180,134 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		final var centeringPanel = new JPanel(new GridBagLayout()) {
 
+			private static final Stroke CONTROLLER_STROKE = new BasicStroke(5f, BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_ROUND);
+
+			private static final double MARGIN = 1.0;
+
+			private static final int TEXTURE_TILE_SIZE = 8;
+
+			private static final Path2D controllerPath;
+
+			private static final TexturePaint controllerTexture;
+
 			@Serial
 			private static final long serialVersionUID = -3144368069964550322L;
+
+			static {
+				controllerPath = new Path2D.Float();
+				controllerPath.moveTo(-0.28, -0.42);
+				controllerPath.quadTo(0.0, -0.3696, 0.28, -0.42);
+				controllerPath.curveTo(0.42, -0.4704, 0.49, -0.42, 0.56, -0.168);
+				controllerPath.curveTo(0.665, 0.168, 0.735, 0.504, 0.665, 0.7056);
+				controllerPath.curveTo(0.63, 0.8736, 0.42, 0.8736, 0.315, 0.672);
+				controllerPath.quadTo(0.0, 0.5544, -0.315, 0.672);
+				controllerPath.curveTo(-0.42, 0.8736, -0.63, 0.8736, -0.665, 0.7056);
+				controllerPath.curveTo(-0.735, 0.504, -0.665, 0.168, -0.56, -0.168);
+				controllerPath.curveTo(-0.49, -0.42, -0.42, -0.4704, -0.28, -0.42);
+				controllerPath.closePath();
+
+				final var textureImage = new BufferedImage(TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE,
+						BufferedImage.TYPE_INT_ARGB);
+				final var g2d = textureImage.createGraphics();
+
+				final var backgroundColor = new Color(MainFrame.LIGHT_BLUE_COLOR.getRed(),
+						MainFrame.LIGHT_BLUE_COLOR.getGreen(), MainFrame.LIGHT_BLUE_COLOR.getBlue(), 128);
+				g2d.setColor(backgroundColor);
+				g2d.fillRect(0, 0, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE);
+
+				final var patternColor = new Color(48, 48, 48, 32);
+				g2d.setColor(patternColor);
+				g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4,
+						TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4);
+				g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4,
+						TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4);
+
+				g2d.dispose();
+
+				controllerTexture = new TexturePaint(textureImage,
+						new Rectangle2D.Float(0f, 0f, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE));
+			}
+
+			private boolean cachedDark;
+
+			private int cachedHeight = -1;
+
+			private @Nullable BufferedImage cachedImage;
+
+			private double cachedScaleX;
+
+			private double cachedScaleY;
+
+			private int cachedWidth = -1;
+
+			private double originX;
+
+			private double originY;
 
 			@Override
 			protected void paintComponent(final Graphics g) {
 				super.paintComponent(g);
 
+				final var bounds = assignmentsPanel.getBounds();
+				if (bounds.isEmpty()) {
+					return;
+				}
+
 				final var g2d = (Graphics2D) g.create();
 				try {
-					g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-							RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+					final var transform = g2d.getTransform();
+					final var scaleX = transform.getScaleX();
+					final var scaleY = transform.getScaleY();
+					final var dark = mainFrame.isDarkLookAndFeel();
 
-					final var bounds = assignmentsPanel.getBounds();
-					g2d.translate(bounds.getCenterX(), bounds.getCenterY() - 72);
+					if (cachedImage == null || bounds.width != cachedWidth || bounds.height != cachedHeight
+							|| scaleX != cachedScaleX || scaleY != cachedScaleY || dark != cachedDark) {
+						final var shape = AffineTransform.getScaleInstance(bounds.width, bounds.height)
+								.createTransformedShape(controllerPath);
+						final var outline = CONTROLLER_STROKE.createStrokedShape(shape).getBounds2D();
 
-					final var w = bounds.getWidth();
-					final var h = bounds.getHeight();
+						final var imageWidth = (int) Math.ceil((outline.getWidth() + 2.0 * MARGIN) * scaleX);
+						final var imageHeight = (int) Math.ceil((outline.getHeight() + 2.0 * MARGIN) * scaleY);
 
-					final var path = new Path2D.Float();
-					path.moveTo(-0.28 * w, -0.42 * h);
-					path.quadTo(0.0, -0.3696 * h, 0.28 * w, -0.42 * h);
-					path.curveTo(0.42 * w, -0.4704 * h, 0.49 * w, -0.42 * h, 0.56 * w, -0.168 * h);
-					path.curveTo(0.665 * w, 0.168 * h, 0.735 * w, 0.504 * h, 0.665 * w, 0.7056 * h);
-					path.curveTo(0.63 * w, 0.8736 * h, 0.42 * w, 0.8736 * h, 0.315 * w, 0.672 * h);
-					path.quadTo(0.0, 0.5544 * h, -0.315 * w, 0.672 * h);
-					path.curveTo(-0.42 * w, 0.8736 * h, -0.63 * w, 0.8736 * h, -0.665 * w, 0.7056 * h);
-					path.curveTo(-0.735 * w, 0.504 * h, -0.665 * w, 0.168 * h, -0.56 * w, -0.168 * h);
-					path.curveTo(-0.49 * w, -0.42 * h, -0.42 * w, -0.4704 * h, -0.28 * w, -0.42 * h);
-					path.closePath();
+						final var graphicsConfiguration = g2d.getDeviceConfiguration();
+						final var image = graphicsConfiguration != null
+								? graphicsConfiguration.createCompatibleImage(imageWidth, imageHeight,
+										Transparency.TRANSLUCENT)
+								: new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB_PRE);
 
-					g2d.setStroke(CONTROLLER_STROKE);
-					g2d.setColor(mainFrame.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
-					g2d.draw(path);
+						final var ig = image.createGraphics();
+						try {
+							ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+							ig.scale(scaleX, scaleY);
+							ig.translate(MARGIN - outline.getX(), MARGIN - outline.getY());
 
-					g2d.setPaint(controllerTexture);
+							ig.setPaint(controllerTexture);
+							ig.fill(shape);
 
-					g2d.fill(path);
+							ig.setStroke(CONTROLLER_STROKE);
+							ig.setColor(dark ? Color.LIGHT_GRAY : Color.BLACK);
+							ig.draw(shape);
+						} finally {
+							ig.dispose();
+						}
+
+						if (cachedImage != null) {
+							cachedImage.flush();
+						}
+						cachedImage = image;
+						cachedWidth = bounds.width;
+						cachedHeight = bounds.height;
+						cachedScaleX = scaleX;
+						cachedScaleY = scaleY;
+						cachedDark = dark;
+						originX = outline.getX() - MARGIN;
+						originY = outline.getY() - MARGIN;
+					}
+
+					g2d.translate(bounds.getCenterX() + originX, bounds.getCenterY() - 72 + originY);
+					g2d.scale(1.0 / scaleX, 1.0 / scaleY);
+					g2d.drawImage(cachedImage, 0, 0, null);
 				} finally {
 					g2d.dispose();
 				}
