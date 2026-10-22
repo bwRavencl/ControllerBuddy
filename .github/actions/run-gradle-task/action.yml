@@ -20,7 +20,7 @@ runs:
       shell: bash
       env:
         JAVA_VERSION: 25.0.4.1
-        JBR_BUILD: 635.75
+        JBR_BUILD: 635.78
       run: |
         case "$RUNNER_OS" in
           Linux)   jdk_os=linux ;;
