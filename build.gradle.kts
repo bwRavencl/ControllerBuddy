@@ -123,7 +123,7 @@ repositories { mavenCentral() }
 java { toolchain(javaToolchainSpec) }
 
 dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.50.0")
+  errorprone("com.google.errorprone:error_prone_core:2.51.0")
   errorprone("com.uber.nullaway:nullaway:0.14.2")
   spotbugs("com.github.spotbugs:spotbugs:4.10.5")
 
