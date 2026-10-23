@@ -1,0 +1,111 @@
+name: Update JBR
+
+on:
+  schedule:
+    - cron: 0 */6 * * *
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  update-jbr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Check for JBR Update and Open PR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          latest_tag=$(gh api --paginate 'repos/JetBrains/JetBrainsRuntime/releases?per_page=100' \
+            --jq '.[] | select(.prerelease | not) | .tag_name | select(startswith("jbr-release-"))' \
+            | sort -V | tail -n 1)
+
+          if [[ -z "$latest_tag" ]]
+          then
+            echo "::error::No JBR release found."
+            exit 1
+          fi
+
+          echo "Latest tag: $latest_tag"
+
+          if [[ ! "$latest_tag" =~ ^jbr-release-(([0-9]+)(\.[0-9]+)*)b([0-9]+(\.[0-9]+)*)$ ]]
+          then
+            echo "::error::Unexpected tag format: $latest_tag"
+            exit 1
+          fi
+
+          java_version=${BASH_REMATCH[1]}
+          java_major=${BASH_REMATCH[2]}
+          jbr_build=${BASH_REMATCH[4]}
+          jbr_version="${java_version}b${jbr_build}"
+
+          python3 - "$java_version" "$jbr_build" "$java_major" << 'EOF'
+          import re
+          import sys
+
+          java_version, jbr_build, java_major = sys.argv[1:]
+
+          def update(path, replacements):
+              with open(path, encoding='utf-8') as f:
+                  content = f.read()
+              for pattern, replacement in replacements:
+                  content, count = re.subn(pattern, replacement, content)
+                  if count == 0:
+                      print(f'::error::Pattern {pattern!r} not found in {path}')
+                      sys.exit(1)
+              with open(path, 'w', encoding='utf-8') as f:
+                  f.write(content)
+
+          update('.github/actions/run-gradle-task/action.yml', [
+              (r'JAVA_VERSION:\s*[\d.]+', f'JAVA_VERSION: {java_version}'),
+              (r'JBR_BUILD:\s*[\d.]+', f'JBR_BUILD: {jbr_build}'),
+          ])
+
+          update('AGENTS.md', [
+              (r'\*\*Language:\*\*\s*Java\s+\d+', f'**Language:** Java {java_major}'),
+          ])
+
+          update('build.gradle.kts', [
+              (r'languageVersion\.set\(JavaLanguageVersion\.of\(\d+\)\)', f'languageVersion.set(JavaLanguageVersion.of({java_major}))'),
+          ])
+
+          update('.idea/misc.xml', [
+              (r'languageLevel="JDK_\d+"', f'languageLevel="JDK_{java_major}"'),
+              (r'project-jdk-name="jbr-\d+"', f'project-jdk-name="jbr-{java_major}"'),
+          ])
+          EOF
+
+          if git diff --exit-code
+          then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          branch_name="update-jbr-$jbr_version"
+
+          if git ls-remote --exit-code --heads origin "$branch_name" > /dev/null
+          then
+            echo "Branch $branch_name already exists, skipping."
+            exit 0
+          fi
+
+          git checkout -b "$branch_name"
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name 'github-actions[bot]'
+          git commit -a -m "chore: update JBR to $jbr_version"
+          git push origin "$branch_name"
+
+          gh pr create \
+            --fill \
+            --base master \
+            --head "$branch_name"
