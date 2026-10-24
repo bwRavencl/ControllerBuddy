@@ -159,7 +159,7 @@ dependencies {
     exclude(group = "org.slf4j", module = "slf4j-api")
   }
   implementation("com.github.weisj:jsvg:2.2.0")
-  implementation("com.google.code.gson:gson:2.14.0")
+  implementation("com.google.code.gson:gson:2.15.0")
   implementation("io.github.classgraph:classgraph:6.0.0")
   implementation("org.jspecify:jspecify:1.0.1")
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
