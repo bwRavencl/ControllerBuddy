@@ -539,8 +539,8 @@ public final class Input {
 
 		if (hotSwappingButtonId != HotSwappingButton.NONE.id
 				&& currentNanoTime - lastHotSwapPollNanoTime > HOT_SWAP_POLL_INTERVAL_NS) {
-			final var sdlGamepadToControllerStateMapIterator = sdlGamepadToControllerStateMap.entrySet().iterator();
-			while (sdlGamepadToControllerStateMapIterator.hasNext()) {
+			for (final var sdlGamepadToControllerStateMapIterator = sdlGamepadToControllerStateMap.entrySet()
+					.iterator(); sdlGamepadToControllerStateMapIterator.hasNext();) {
 				final var entry = sdlGamepadToControllerStateMapIterator.next();
 				final long sdlGamepad = entry.getKey();
 
@@ -550,35 +550,43 @@ public final class Input {
 
 				final var controllerState = entry.getValue();
 
-				if (controllerState.update()) {
-					final var instanceId = SDLGamepad.SDL_GetGamepadID(sdlGamepad);
-
-					if (controllerState.getButtons()[hotSwappingButtonId]) {
-						hotSwappingButtonDownInstanceIds.add(instanceId);
-					} else if (hotSwappingButtonDownInstanceIds.contains(instanceId)) {
-						final var optionalController = mainFrame.getControllers().stream()
-								.filter(controller -> controller.instanceId() == instanceId).findFirst();
-
-						if (optionalController.isPresent()) {
-							final var controller = optionalController.get();
-
-							logger.info(MainFrame.assembleControllerLoggingMessage("Initiating hot swap to controller ",
-									controller));
-
-							hotSwappingButtonId = HotSwappingButton.NONE.id;
-							EventQueue.invokeLater(() -> {
-								mainFrame.setSelectedControllerAndUpdateInput(controller, axes);
-								mainFrame.updateDeviceMenuSelection();
-								mainFrame.restartLast();
-							});
-
-							break;
-						}
-					}
-				} else {
+				if (!controllerState.update()) {
 					sdlGamepadToControllerStateMapIterator.remove();
 					updateHotSwappingButtonId();
+					continue;
 				}
+
+				final var instanceId = SDLGamepad.SDL_GetGamepadID(sdlGamepad);
+
+				if (controllerState.getButtons()[hotSwappingButtonId]) {
+					hotSwappingButtonDownInstanceIds.add(instanceId);
+					continue;
+				}
+
+				if (!hotSwappingButtonDownInstanceIds.contains(instanceId)) {
+					continue;
+				}
+
+				final var optionalController = mainFrame.getControllers().stream()
+						.filter(controller -> controller.instanceId() == instanceId).findFirst();
+
+				if (optionalController.isEmpty()) {
+					continue;
+				}
+
+				final var controller = optionalController.get();
+
+				logger.info(
+						MainFrame.assembleControllerLoggingMessage("Initiating hot swap to controller ", controller));
+
+				hotSwappingButtonId = HotSwappingButton.NONE.id;
+				EventQueue.invokeLater(() -> {
+					mainFrame.setSelectedControllerAndUpdateInput(controller, axes);
+					mainFrame.updateDeviceMenuSelection();
+					mainFrame.restartLast();
+				});
+
+				break;
 			}
 
 			lastHotSwapPollNanoTime = currentNanoTime;
