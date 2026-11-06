@@ -244,12 +244,8 @@ public final class Input {
 			}
 		}
 
-		final var sdlGamepadsIterator = sdlGamepadToControllerStateMap.keySet().iterator();
-		while (sdlGamepadsIterator.hasNext()) {
-			final var sdlGamepad = sdlGamepadsIterator.next();
-			SDLGamepad.SDL_CloseGamepad(sdlGamepad);
-			sdlGamepadsIterator.remove();
-		}
+		sdlGamepadToControllerStateMap.keySet().forEach(SDLGamepad::SDL_CloseGamepad);
+		sdlGamepadToControllerStateMap.clear();
 	}
 
 	/// Converts a floating-point axis value in the range `[-1, 1]` to an integer
