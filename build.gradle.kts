@@ -337,9 +337,6 @@ data class DependencyMetadata(
 
 data class License(val name: String, val url: String)
 
-fun buildNoLicenseException(coordinate: Coordinate): GradleException =
-    GradleException("No license metadata found for dependency: $coordinate")
-
 fun getLicensesForDependency(
     file: File,
     coordinate: Coordinate,
@@ -361,12 +358,7 @@ fun getLicensesForDependency(
 
   val dependency = project.dependencies.create("$coordinate@pom")
   val pomConfiguration = project.configurations.detachedConfiguration(dependency)
-  val pomFile: File =
-      try {
-        pomConfiguration.resolve().first()
-      } catch (_: ResolveException) {
-        throw buildNoLicenseException(coordinate)
-      }
+  val pomFile: File = pomConfiguration.resolve().first()
   val docBuilder =
       DocumentBuilderFactory.newInstance()
           .apply {
@@ -423,7 +415,7 @@ fun getLicensesForDependency(
     }
   }
 
-  throw buildNoLicenseException(initialCoordinate)
+  throw GradleException("No license metadata found for dependency: $coordinate")
 }
 
 private fun Element.getChildText(tagName: String): String? {
