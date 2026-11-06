@@ -21,6 +21,7 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import net.ltgt.gradle.errorprone.errorprone
+import org.apache.tools.ant.util.LayoutPreservingProperties
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -1057,23 +1058,25 @@ tasks.register("customizeLoggingProperties") {
   val projectName = project.name
 
   doLast {
-    ant.withGroovyBuilder {
-      "propertyfile"("file" to loggingPropertiesFile) {
-        "entry"(
-            "key" to "handlers",
-            "value" to "java.util.logging.FileHandler, java.util.logging.ConsoleHandler",
-        )
-        "entry"("key" to "java.util.logging.FileHandler.pattern", "value" to "%t/$projectName.log")
-        "entry"(
-            "key" to "java.util.logging.FileHandler.formatter",
-            "value" to "java.util.logging.SimpleFormatter",
-        )
-        "entry"(
-            "key" to "java.util.logging.SimpleFormatter.format",
-            "value" to $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n",
-        )
-      }
-    }
+    val file = loggingPropertiesFile.asFile
+    val properties = LayoutPreservingProperties()
+    file.inputStream().use { properties.load(it) }
+
+    properties.setProperty(
+        "handlers",
+        "java.util.logging.FileHandler, java.util.logging.ConsoleHandler",
+    )
+    properties.setProperty("java.util.logging.FileHandler.pattern", "%t/$projectName.log")
+    properties.setProperty(
+        "java.util.logging.FileHandler.formatter",
+        "java.util.logging.SimpleFormatter",
+    )
+    properties.setProperty(
+        "java.util.logging.SimpleFormatter.format",
+        $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n",
+    )
+
+    file.outputStream().use { properties.store(it, null) }
   }
 }
 
