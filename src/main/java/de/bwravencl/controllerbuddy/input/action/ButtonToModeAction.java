@@ -156,8 +156,13 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// @param input the input instance
 	/// @param profile the active profile
 	private void deactivateMode(final Input input, final Profile profile) {
-		for (var topmostModeAction = BUTTON_TO_MODE_ACTION_STACK
-				.peek(); topmostModeAction != this; topmostModeAction = BUTTON_TO_MODE_ACTION_STACK.peek()) {
+		for (;;) {
+			// noinspection DataFlowIssue
+			final var topmostModeAction = BUTTON_TO_MODE_ACTION_STACK.peek();
+			if (topmostModeAction == this) {
+				break;
+			}
+
 			if (topmostModeAction != null) {
 				topmostModeAction.deactivateMode(input, profile);
 			}
@@ -168,6 +173,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		BUTTON_TO_MODE_ACTION_STACK.pop();
 
 		final Mode previousMode;
+		// noinspection DataFlowIssue
 		final var previousButtonToModeAction = BUTTON_TO_MODE_ACTION_STACK.peek();
 		if (previousButtonToModeAction != null) {
 			previousMode = previousButtonToModeAction.getMode(input);

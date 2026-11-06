@@ -4626,7 +4626,7 @@ public final class MainFrame extends JFrame {
 				repaint = true;
 			}
 
-			@SuppressWarnings("DataFlowIssue")
+			// noinspection DataFlowIssue
 			final var newValue = -input.getAxes().getOrDefault(virtualAxis, 0) - minimum
 					- (negativeMinAxisValue ? 1 : 0);
 			if (progressBar.getValue() != newValue) {
@@ -5049,7 +5049,7 @@ public final class MainFrame extends JFrame {
 			groupCPrefix = Activation.ON_RELEASE.getSymbol();
 		} else {
 			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions)
-					.flatMap(Collection::stream).toList();
+					.<IAction<?>>flatMap(Collection::stream).toList();
 			actionGroupB = delayedActions;
 			actionGroupC = List.of();
 			groupAPrefix = IDelayableAction.INSTANT_SYMBOL;

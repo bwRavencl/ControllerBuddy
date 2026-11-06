@@ -310,6 +310,7 @@ public final class MainLoop {
 		}
 
 		for (;;) {
+			// noinspection DataFlowIssue
 			final var taskQueueEntry = taskQueue.poll();
 			if (taskQueueEntry == null) {
 				break;

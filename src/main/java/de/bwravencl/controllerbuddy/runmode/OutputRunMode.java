@@ -1196,7 +1196,7 @@ public abstract class OutputRunMode extends RunMode {
 					Thread.sleep(10L);
 				}
 
-				if (confirmDialogTask.get() == JOptionPane.YES_OPTION) {
+				if (Objects.equals(confirmDialogTask.get(), JOptionPane.YES_OPTION)) {
 					restart = true;
 				} else {
 					forceStop = true;

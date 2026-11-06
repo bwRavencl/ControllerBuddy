@@ -1671,6 +1671,7 @@ class OverlayFrame extends JFrame {
 			@SuppressWarnings("unused")
 			private void onSyncDone(final MemorySegment data, final MemorySegment wlCallback, final int callbackData) {
 				handleEvent("wl_callback.done", () -> {
+					// noinspection DataFlowIssue
 					final var pendingMargin = pendingMargins.poll();
 					if (pendingMargin != null) {
 						appliedMarginX = pendingMargin.x();

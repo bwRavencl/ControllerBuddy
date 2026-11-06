@@ -75,6 +75,7 @@ final class ScancodeTest {
 		@Test
 		@DisplayName("is unmodifiable")
 		void isUnmodifiable() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(UnsupportedOperationException.class,
 					() -> Scancode.EXTENDED_KEY_SCAN_CODES_SET.add(0));
 		}
@@ -87,6 +88,7 @@ final class ScancodeTest {
 		@Test
 		@DisplayName("is unmodifiable")
 		void isUnmodifiable() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(UnsupportedOperationException.class, () -> Scancode.KEY_CODE_TO_SCAN_CODE_MAP.put(0,
 					Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A)));
 		}
@@ -111,6 +113,7 @@ final class ScancodeTest {
 		@Test
 		@DisplayName("is unmodifiable")
 		void isUnmodifiable() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(UnsupportedOperationException.class,
 					() -> Scancode.NAME_TO_SCAN_CODE_MAP.put("X", Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A)));
 		}

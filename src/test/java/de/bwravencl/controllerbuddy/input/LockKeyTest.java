@@ -53,6 +53,7 @@ final class LockKeyTest {
 		@Test
 		@DisplayName("is unmodifiable")
 		void isUnmodifiable() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(UnsupportedOperationException.class,
 					() -> LockKey.NAME_TO_LOCK_KEY_MAP.put("X", LockKey.CAPS_LOCK_LOCK_KEY));
 		}
@@ -84,6 +85,7 @@ final class LockKeyTest {
 		@Test
 		@DisplayName("is unmodifiable")
 		void isUnmodifiable() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(UnsupportedOperationException.class,
 					() -> LockKey.VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP.put(0, LockKey.CAPS_LOCK_LOCK_KEY));
 		}

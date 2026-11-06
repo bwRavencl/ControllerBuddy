@@ -1031,7 +1031,7 @@ tasks.register<Exec>("jpackage") {
           "--verbose",
       )
 
-  var jvmArgs = runJvmArgs.toMutableList()
+  val jvmArgs = runJvmArgs.toMutableList()
   if (os.isWindows) {
     jvmArgs += windowsJvmArgs
   } else if (os.isLinux) {
