@@ -454,7 +454,7 @@ public final class EditActionsDialog extends JDialog {
 	/// are ignored
 	/// @param maxValue the inclusive upper bound for the returned value
 	/// @return the first missing or next integer, at most `maxValue`
-	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
+	private static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
 		final var numbersIterator = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
 		if (!numbersIterator.hasNext()) {

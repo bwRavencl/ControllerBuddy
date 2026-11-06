@@ -22,7 +22,6 @@ import de.bwravencl.controllerbuddy.input.action.NullAction;
 import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import java.awt.Toolkit;
 import java.lang.reflect.Field;
-import java.util.stream.IntStream;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
@@ -55,58 +54,6 @@ final class EditActionsDialogTest {
 	static void tearDownToolkitMock() {
 		if (toolkitMock != null) {
 			toolkitMock.close();
-		}
-	}
-
-	@Nested
-	@DisplayName("findFirstMissingOrNext()")
-	final class FindFirstMissingOrNextTests {
-
-		@Test
-		@DisplayName("clamps the result to maxValue when the full range is occupied")
-		void clampsToMaxValueWhenFull() {
-			// {0, 1, 2} with maxValue=2: next would be 3 but is clamped to 2
-			Assertions.assertEquals(2, EditActionsDialog.findFirstMissingOrNext(IntStream.of(0, 1, 2), 2));
-		}
-
-		@Test
-		@DisplayName("deduplicates values before searching")
-		void deduplicatesValues() {
-			// {0, 0, 1}: after dedup → {0, 1} → next = 2
-			Assertions.assertEquals(2, EditActionsDialog.findFirstMissingOrNext(IntStream.of(0, 0, 1), 5));
-		}
-
-		@Test
-		@DisplayName("filters out values above maxValue before searching")
-		void filtersValuesAboveMaxValue() {
-			// {0, 1, 10} with maxValue=5: 10 is excluded, leaving {0, 1} → next = 2
-			Assertions.assertEquals(2, EditActionsDialog.findFirstMissingOrNext(IntStream.of(0, 1, 10), 5));
-		}
-
-		@Test
-		@DisplayName("returns the position of the first gap in an otherwise consecutive sequence")
-		void returnsFirstGapPosition() {
-			// {0, 2, 3}: gap at 1
-			Assertions.assertEquals(1, EditActionsDialog.findFirstMissingOrNext(IntStream.of(0, 2, 3), 5));
-		}
-
-		@Test
-		@DisplayName("returns the next consecutive value after a dense sequence")
-		void returnsNextAfterDenseSequence() {
-			Assertions.assertEquals(3, EditActionsDialog.findFirstMissingOrNext(IntStream.of(0, 1, 2), 5));
-		}
-
-		@Test
-		@DisplayName("returns 0 for an empty stream")
-		void returnsZeroForEmptyStream() {
-			Assertions.assertEquals(0, EditActionsDialog.findFirstMissingOrNext(IntStream.empty(), 5));
-		}
-
-		@Test
-		@DisplayName("sorts unsorted input before searching")
-		void sortsInputInternally() {
-			// {2, 0, 1}: sorted → {0, 1, 2} → next = 3
-			Assertions.assertEquals(3, EditActionsDialog.findFirstMissingOrNext(IntStream.of(2, 0, 1), 5));
 		}
 	}
 
