@@ -441,17 +441,19 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
-	/// Returns the smallest non-negative integer not present in the given stream,
-	/// or the next integer after the maximum present value, capped at `maxValue`.
+	/// Returns the first integer missing from the run of consecutive values that
+	/// starts at the smallest value in the given stream, capped at `maxValue`.
 	///
-	/// Returns `0` if the stream is empty. If the sequence is contiguous from the
-	/// first value, returns the value immediately following the last element,
+	/// Returns `0` if the stream is empty. If the values are contiguous from the
+	/// smallest value, returns the value immediately following the largest one,
 	/// capped at `maxValue`.
+	///
+	/// For example, `[0, 2]` yields `1`, and `[1, 2]` yields `3`.
 	///
 	/// @param numbers the stream of integers to examine; values above `maxValue`
 	/// are ignored
 	/// @param maxValue the inclusive upper bound for the returned value
-	/// @return the first missing or next integer in the range 0 to maxValue
+	/// @return the first missing or next integer, at most `maxValue`
 	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
 		final var numbersIterator = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
@@ -459,21 +461,16 @@ public final class EditActionsDialog extends JDialog {
 			return 0;
 		}
 
-		var expected = numbersIterator.nextInt();
-		if (expected > maxValue) {
-			return maxValue;
-		}
-
+		var previous = numbersIterator.nextInt();
 		while (numbersIterator.hasNext()) {
 			final var current = numbersIterator.nextInt();
-			if (current != expected + 1) {
-				final var candidate = expected + 1;
-				return Math.min(candidate, maxValue);
+			if (current != previous + 1) {
+				break;
 			}
-			expected = current;
+			previous = current;
 		}
 
-		return Math.min(expected + 1, maxValue);
+		return previous < maxValue ? previous + 1 : maxValue;
 	}
 
 	/// Returns a map of fields to their [ActionProperty] annotations for the given
