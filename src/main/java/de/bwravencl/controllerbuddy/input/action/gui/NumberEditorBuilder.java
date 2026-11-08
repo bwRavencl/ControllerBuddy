@@ -50,6 +50,10 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(NumberEditorBuilder.class.getName());
 
+	/// The spinner model used to manage the numeric value and enforce clamping.
+	@Nullable
+	ClampingSpinnerNumberModel model;
+
 	/// The spinner component used to display and edit the numeric value.
 	@Nullable
 	JSpinner spinner;
@@ -83,8 +87,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	public void buildEditor(final JPanel parentPanel) {
 		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
 
-		final var model = new ClampingSpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(),
-				getStepSize(), new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
+		model = new ClampingSpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize(),
+				new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
 		spinner = createSpinner(model);
 
 		final var editor = spinner.getEditor();

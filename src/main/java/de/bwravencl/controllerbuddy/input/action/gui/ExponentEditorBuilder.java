@@ -58,13 +58,14 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 		super.buildEditor(parentPanel);
 		Objects.requireNonNull(spinner, "Field spinner must not be null");
+		Objects.requireNonNull(model, "Field model must not be null");
 
 		parentPanel.add(Box.createHorizontalStrut(MainFrame.DEFAULT_HGAP));
 
 		final var powerFunctionPlotter = new PowerFunctionPlotter((float) initialValue);
 		parentPanel.add(powerFunctionPlotter);
 
-		for (final var changeListener : spinner.getChangeListeners()) {
+		for (final var changeListener : model.getChangeListeners()) {
 			if (changeListener instanceof final JSpinnerSetPropertyChangeListener spinnerSetPropertyChangeListener) {
 				spinnerSetPropertyChangeListener.setValueConsumer(powerFunctionPlotter);
 				break;
