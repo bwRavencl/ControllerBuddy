@@ -157,8 +157,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		/// Sets a consumer that receives each new value after it is applied to the
 		/// action.
 		///
-		/// @param valueConsumer the consumer to notify on each value change, or `null`
-		/// to remove the current consumer
+		/// @param valueConsumer the consumer to notify on each value change
 		void setValueConsumer(final Consumer<Object> valueConsumer) {
 			this.valueConsumer = valueConsumer;
 		}
