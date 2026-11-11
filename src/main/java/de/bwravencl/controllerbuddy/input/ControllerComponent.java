@@ -62,8 +62,10 @@ public record ControllerComponent(MainFrame mainFrame, ControllerComponentType t
 	/// Used by [ControllerComponent] to distinguish between axis and button
 	/// mappings when resolving stick-swap indices.
 	public enum ControllerComponentType {
+
 		/// An axis component.
 		AXIS,
+
 		/// A button component.
 		BUTTON
 	}

@@ -973,6 +973,7 @@ public final class Input {
 
 		/// Light notification pulse using only the high-frequency motor.
 		LIGHT((short) 0, Short.MAX_VALUE, 64),
+
 		/// Strong impact effect using both motors at maximum intensity.
 		STRONG(Short.MAX_VALUE, Short.MAX_VALUE, 72);
 

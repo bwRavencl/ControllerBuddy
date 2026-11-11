@@ -5355,12 +5355,16 @@ public final class MainFrame extends JFrame {
 	/// can restart the correct mode after a controller hot-swap or other
 	/// interruption.
 	private enum RunModeType {
+
 		/// No run mode is currently active.
 		NONE,
+
 		/// Local feeder run mode.
 		LOCAL,
+
 		/// Client run mode.
 		CLIENT,
+
 		/// Server run mode.
 		SERVER
 	}
@@ -5375,8 +5379,10 @@ public final class MainFrame extends JFrame {
 
 		/// System-detected theme that follows the platform's appearance setting.
 		SYSTEM(0, "THEME_SYSTEM"),
+
 		/// Light theme.
 		LIGHT(1, "THEME_LIGHT"),
+
 		/// Dark theme.
 		DARK(2, "THEME_DARK");
 

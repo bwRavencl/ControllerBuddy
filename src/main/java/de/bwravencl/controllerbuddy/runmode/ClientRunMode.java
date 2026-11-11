@@ -486,6 +486,7 @@ public final class ClientRunMode extends OutputRunMode {
 	/// Tracks whether the client is in the process of establishing a connection to
 	/// the server or has successfully connected and is receiving input data.
 	private enum ClientState {
+
 		/// The client is attempting to establish a connection to the server
 		CONNECTING,
 

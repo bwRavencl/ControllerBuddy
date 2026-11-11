@@ -1199,6 +1199,7 @@ public final class OnScreenKeyboard extends OverlayFrame {
 
 			/// Left Shift key.
 			LEFT(Scancode.DIK_LSHIFT),
+
 			/// Right Shift key.
 			RIGHT(Scancode.DIK_RSHIFT);
 

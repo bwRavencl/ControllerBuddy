@@ -29,18 +29,25 @@ public enum VirtualAxis {
 
 	/// X axis (left stick horizontal).
 	X(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+
 	/// Y axis (left stick vertical).
 	Y(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+
 	/// Z axis (additional axis).
 	Z(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+
 	/// RX axis (right stick horizontal).
 	RX(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+
 	/// RY axis (right stick vertical).
 	RY(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+
 	/// RZ axis (additional rotational axis).
 	RZ(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+
 	/// Slider 0 axis.
 	S0(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+
 	/// Slider 1 axis.
 	S1(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID);
 

@@ -1024,12 +1024,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			/// East (right) segment.
 			EAST(-45f),
+
 			/// Center (stick press) region.
 			CENTER(0f),
+
 			/// North (up) segment.
 			NORTH(45f),
+
 			/// West (left) segment.
 			WEST(135f),
+
 			/// South (down) segment.
 			SOUTH(225f);
 
@@ -1217,6 +1221,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			/// Left analog stick.
 			LEFT,
+
 			/// Right analog stick.
 			RIGHT
 		}

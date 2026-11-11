@@ -62,16 +62,22 @@ public @interface Action {
 	/// The category determines which input component types an action is offered for
 	/// in the profile editor UI.
 	enum ActionCategory {
+
 		/// No restrictions
 		ALL,
+
 		/// Axis actions
 		AXIS,
+
 		/// Axis and trigger actions
 		AXIS_AND_TRIGGER,
+
 		/// Button actions
 		BUTTON,
+
 		/// Button and cycle actions
 		BUTTON_AND_CYCLES,
+
 		/// On-screen keyboard mode actions
 		ON_SCREEN_KEYBOARD_MODE
 	}

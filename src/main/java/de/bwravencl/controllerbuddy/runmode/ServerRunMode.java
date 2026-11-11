@@ -519,6 +519,7 @@ public final class ServerRunMode extends RunMode {
 	/// Indicates whether the server is waiting for a client or actively streaming
 	/// input data to a connected client.
 	private enum ServerState {
+
 		/// The server is listening for incoming client connections.
 		LISTENING,
 

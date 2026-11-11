@@ -140,6 +140,7 @@ public final class OverlayAxis implements Cloneable {
 
 		/// Horizontal axis orientation.
 		HORIZONTAL("OVERLAY_AXIS_ORIENTATION_HORIZONTAL"),
+
 		/// Vertical axis orientation.
 		VERTICAL("OVERLAY_AXIS_ORIENTATION_VERTICAL");
 
@@ -178,6 +179,7 @@ public final class OverlayAxis implements Cloneable {
 
 		/// Solid-fill rendering for the axis indicator.
 		SOLID("OVERLAY_AXIS_STYLE_SOLID"),
+
 		/// Line-style rendering for the axis indicator.
 		LINE("OVERLAY_AXIS_STYLE_LINE");
 
