@@ -154,7 +154,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void addMouseListener(final MouseListener listener) {
+	public final synchronized void addMouseListener(final MouseListener listener) {
 		super.addMouseListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.addMouseListener(listener);
@@ -162,7 +162,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void addMouseMotionListener(final MouseMotionListener listener) {
+	public final synchronized void addMouseMotionListener(final MouseMotionListener listener) {
 		super.addMouseMotionListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.addMouseMotionListener(listener);
@@ -170,7 +170,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void addMouseWheelListener(final MouseWheelListener listener) {
+	public final synchronized void addMouseWheelListener(final MouseWheelListener listener) {
 		super.addMouseWheelListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.addMouseWheelListener(listener);
@@ -178,7 +178,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void addNotify() {
+	public final void addNotify() {
 		super.addNotify();
 
 		if (!MainFrame.IS_X11_TOOLKIT) {
@@ -280,7 +280,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void dispose() {
+	public final void dispose() {
 		closeOverlay();
 		if (idleOverlay != null) {
 			idleOverlay.dispose();
@@ -290,22 +290,22 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public Container getContentPane() {
+	public final Container getContentPane() {
 		return overlayContent != null ? overlayContent : super.getContentPane();
 	}
 
 	@Override
-	public Point getLocationOnScreen() {
+	public final Point getLocationOnScreen() {
 		return overlay != null ? getLocation() : super.getLocationOnScreen();
 	}
 
 	@Override
-	public boolean isShowing() {
+	public final boolean isShowing() {
 		return overlay != null || super.isShowing();
 	}
 
 	@Override
-	public boolean isVisible() {
+	public final boolean isVisible() {
 		return overlay != null || super.isVisible();
 	}
 
@@ -380,7 +380,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void pack() {
+	public final void pack() {
 		if (overlay == null) {
 			super.pack();
 			return;
@@ -401,7 +401,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void removeMouseListener(final MouseListener listener) {
+	public final synchronized void removeMouseListener(final MouseListener listener) {
 		super.removeMouseListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.removeMouseListener(listener);
@@ -409,7 +409,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void removeMouseMotionListener(final MouseMotionListener listener) {
+	public final synchronized void removeMouseMotionListener(final MouseMotionListener listener) {
 		super.removeMouseMotionListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.removeMouseMotionListener(listener);
@@ -417,7 +417,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public synchronized void removeMouseWheelListener(final MouseWheelListener listener) {
+	public final synchronized void removeMouseWheelListener(final MouseWheelListener listener) {
 		super.removeMouseWheelListener(listener);
 		if (overlay != null) {
 			overlay.surfacePanel.removeMouseWheelListener(listener);
@@ -425,7 +425,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void repaint(final long time, final int x, final int y, final int width, final int height) {
+	public final void repaint(final long time, final int x, final int y, final int width, final int height) {
 		if (overlayContent != null) {
 			overlayContent.repaint(time, x, y, width, height);
 		} else {
@@ -434,7 +434,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void setBounds(final int x, final int y, final int width, final int height) {
+	public final void setBounds(final int x, final int y, final int width, final int height) {
 		if (overlay == null) {
 			super.setBounds(x, y, width, height);
 			return;
@@ -445,7 +445,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void setContentPane(final Container contentPane) {
+	public final void setContentPane(final Container contentPane) {
 		if (overlay == null) {
 			super.setContentPane(contentPane);
 			return;
@@ -504,7 +504,7 @@ class OverlayFrame extends JFrame {
 	}
 
 	@Override
-	public void validate() {
+	public final void validate() {
 		if (overlay != null) {
 			overlay.validateContent();
 		} else {
