@@ -63,6 +63,8 @@ final class ScancodeTest {
 			assertIsExtended(Scancode.DIK_SYSRQ);
 			assertIsExtended(Scancode.DIK_DIVIDE);
 			assertIsExtended(Scancode.DIK_NUMPADENTER);
+			assertIsExtended(Scancode.DIK_LWIN);
+			assertIsExtended(Scancode.DIK_RWIN);
 		}
 
 		@Test

@@ -434,7 +434,8 @@ public record Scancode(String name, int keyCode, Event event) {
 					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
 					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)
 					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_SYSRQ.equals(name)
-					|| DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name);
+					|| DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name) || DIK_LWIN.equals(name)
+					|| DIK_RWIN.equals(name);
 		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
 	}
 
