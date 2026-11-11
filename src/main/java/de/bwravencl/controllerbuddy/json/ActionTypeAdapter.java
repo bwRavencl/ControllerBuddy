@@ -78,6 +78,11 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 
 		try {
 			final var actualType = Class.forName(typeNameString, false, ActionTypeAdapter.class.getClassLoader());
+			if (!IAction.class.isAssignableFrom(actualType)) {
+				throw new JsonParseException(
+						"Class '" + typeNameString + "' does not implement '" + IAction.class.getSimpleName() + "'");
+			}
+
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
 			if (typeOfT instanceof final ParameterizedType parameterizedType) {
