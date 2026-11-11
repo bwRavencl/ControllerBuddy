@@ -460,16 +460,14 @@ public final class ClientRunMode extends OutputRunMode {
 					MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 		} catch (final SocketException e) {
-			if (forceStop) {
-				return;
+			if (!forceStop) {
+				forceStop = true;
+
+				logger.log(Level.INFO, e.getMessage(), e);
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
+						Main.strings.getString("SOCKET_ERROR_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 			}
-
-			forceStop = true;
-
-			logger.log(Level.INFO, e.getMessage(), e);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
-					Main.strings.getString("SOCKET_ERROR_DIALOG_TEXT"), Main.strings.getString("ERROR_DIALOG_TITLE"),
-					JOptionPane.ERROR_MESSAGE, true));
 		} catch (final IOException e) {
 			handleIOException(e);
 		} finally {
