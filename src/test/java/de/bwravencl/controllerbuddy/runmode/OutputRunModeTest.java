@@ -60,6 +60,26 @@ final class OutputRunModeTest {
 	}
 
 	@Nested
+	@DisplayName("deInit()")
+	final class DeInitTests {
+
+		@Test
+		@DisplayName("deinitializes the input before resetting it so that all gamepads are closed")
+		void deInitializesInputBeforeResettingIt() {
+			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
+			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			final var runMode = new LocalRunMode(mockMainFrame);
+
+			runMode.deInit();
+
+			final var inOrder = Mockito.inOrder(mockInput);
+			inOrder.verify(mockInput).deInit();
+			inOrder.verify(mockInput).reset();
+		}
+	}
+
+	@Nested
 	@DisplayName("DeviceValue")
 	final class DeviceValueTests {
 
