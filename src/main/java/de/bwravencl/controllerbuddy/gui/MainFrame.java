@@ -2310,7 +2310,7 @@ public final class MainFrame extends JFrame {
 
 			final var labelElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "label");
 			final var labelSpanElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "span");
-			labelSpanElement.setTextContent("Mode: ");
+			labelSpanElement.setTextContent(Main.strings.getString("MODE_LABEL") + ": ");
 			labelSpanElement.setAttribute("style", "font-size:1.2rem;font-weight:bold");
 			labelElement.appendChild(labelSpanElement);
 			headerDivElement.appendChild(labelElement);
