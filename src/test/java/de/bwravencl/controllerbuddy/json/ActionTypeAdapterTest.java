@@ -59,7 +59,7 @@ final class ActionTypeAdapterTest {
 	final class DeserializeTests {
 
 		@Test
-		@DisplayName("delegates to context and returns the deserialized action when the final class is found")
+		@DisplayName("delegates to context and returns the deserialized action when the class is found")
 		void deserializesKnownClass() {
 			final var adapter = createAdapter();
 			final var data = new JsonObject();
@@ -76,7 +76,7 @@ final class ActionTypeAdapterTest {
 		}
 
 		@Test
-		@DisplayName("wraps ClassNotFoundException in a JsonParseException when the final class is not found and typeOfT is not IAction")
+		@DisplayName("wraps ClassNotFoundException in a JsonParseException when the class is not found and typeOfT is not IAction")
 		void rethrowsAsJsonParseExceptionForUnknownClassWhenTypeIsNotIAction() {
 			final var adapter = createAdapter();
 			final var wrapper = new JsonObject();
@@ -101,7 +101,7 @@ final class ActionTypeAdapterTest {
 		}
 
 		@Test
-		@DisplayName("returns a NullAction and records the final class name when the final class is not found and typeOfT is IAction")
+		@DisplayName("returns a NullAction and records the class name when the class is not found and typeOfT is IAction")
 		void substitutesNullActionForUnknownClassWhenTypeIsIAction() {
 			final var adapter = createAdapter();
 			final var wrapper = new JsonObject();
@@ -115,7 +115,7 @@ final class ActionTypeAdapterTest {
 		}
 
 		@Test
-		@DisplayName("records the unknown final class name when typeOfT is a ParameterizedType whose raw type is IAction")
+		@DisplayName("records the unknown class name when typeOfT is a ParameterizedType whose raw type is IAction")
 		void substitutesNullActionForUnknownClassWhenTypeIsParameterizedIAction() {
 			final var adapter = createAdapter();
 			final var wrapper = new JsonObject();
@@ -189,7 +189,7 @@ final class ActionTypeAdapterTest {
 		}
 
 		@Test
-		@DisplayName("produces a JsonObject with 'type' set to the action's final class name and 'data' set to the serialized action")
+		@DisplayName("produces a JsonObject with 'type' set to the action's class name and 'data' set to the serialized action")
 		void producesWrapperWithTypeAndData() {
 			final var adapter = createAdapter();
 			final var serializedData = new JsonObject();
@@ -201,7 +201,7 @@ final class ActionTypeAdapterTest {
 
 			Assertions.assertInstanceOf(JsonObject.class, result);
 			final var resultObject = result.getAsJsonObject();
-			// mockAction.getClass() returns the Mockito proxy final class at runtime;
+			// mockAction.getClass() returns the Mockito proxy class at runtime;
 			// the adapter calls src.getClass().getName() on the same object, so
 			// comparing against mockAction.getClass().getName() is always correct.
 			Assertions.assertEquals(mockAction.getClass().getName(), resultObject.get("type").getAsString());

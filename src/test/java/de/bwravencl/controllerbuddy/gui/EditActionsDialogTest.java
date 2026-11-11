@@ -39,7 +39,7 @@ final class EditActionsDialogTest {
 	/// [EditActionsDialog]'s static initializer calls [Toolkit#createCustomCursor],
 	/// which throws [java.awt.HeadlessException] in headless mode. We mock
 	/// [Toolkit#getDefaultToolkit] in [BeforeAll] so the mock is active when the
-	/// final class initializer first runs (triggered by the first reference to
+	/// class initializer first runs (triggered by the first reference to
 	/// [EditActionsDialog] inside a test method body).
 	private static @Nullable MockedStatic<Toolkit> toolkitMock;
 
@@ -83,7 +83,7 @@ final class EditActionsDialogTest {
 		}
 
 		@Test
-		@DisplayName("returns an empty map for an action final class with no @ActionProperty fields")
+		@DisplayName("returns an empty map for an action class with no @ActionProperty fields")
 		void returnsEmptyMapForActionWithNoProperties() {
 			Assertions.assertTrue(EditActionsDialog.getFieldToActionPropertiesMap(NullAction.class).isEmpty());
 		}
@@ -98,7 +98,7 @@ final class EditActionsDialogTest {
 		}
 
 		@Test
-		@DisplayName("throws IllegalArgumentException for a final class that does not implement IAction")
+		@DisplayName("throws IllegalArgumentException for a class that does not implement IAction")
 		void throwsForNonIActionClass() {
 			Assertions.assertThrows(IllegalArgumentException.class,
 					() -> EditActionsDialog.getFieldToActionPropertiesMap(String.class));

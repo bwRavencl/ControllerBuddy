@@ -48,7 +48,7 @@ final class AssignmentsScrollPaneTest {
 	@Mock
 	MainFrame mockMainFrame;
 
-	/// Creates a `CompoundButton` (the only concrete sub-final class of the
+	/// Creates a `CompoundButton` (the only concrete subclass of the
 	/// private-abstract `CustomButton`) via reflection, using the left-stick button
 	/// component so the constructor follows the
 	/// [ControllerComponentType#BUTTON]/[SDLGamepad#SDL_GAMEPAD_BUTTON_LEFT_STICK]
@@ -64,7 +64,7 @@ final class AssignmentsScrollPaneTest {
 		return constructor.newInstance(mockMainFrame, new JPanel(), controllerComponent);
 	}
 
-	/// Invokes `CustomButton.paintText` (declared on the super-final class of
+	/// Invokes `CustomButton.paintText` (declared on the superclass of
 	/// `CompoundButton`) via reflection.
 	private void invokePaintText(final Object button, final Graphics g, final Rectangle textRect, final String text)
 			throws ReflectiveOperationException {
