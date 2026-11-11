@@ -2191,6 +2191,7 @@ public final class MainFrame extends JFrame {
 	/// indicator panel, current mode label, and virtual axis progress bar map.
 	private void deInitOverlay() {
 		if (overlayFrame != null) {
+			var interrupted = false;
 			for (var i = 0; i < 10; i++) {
 				overlayFrame.dispose();
 
@@ -2201,8 +2202,12 @@ public final class MainFrame extends JFrame {
 				try {
 					Thread.sleep(100L);
 				} catch (InterruptedException _) {
-					Thread.currentThread().interrupt();
+					interrupted = true;
 				}
+			}
+
+			if (interrupted) {
+				Thread.currentThread().interrupt();
 			}
 
 			overlayFrame = null;
