@@ -3192,17 +3192,20 @@ public final class MainFrame extends JFrame {
 		initDocumentBuilder();
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 
+		final Document svgDocument;
 		try (final var inputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME)) {
 			if (inputStream == null) {
 				throw new RuntimeException("Resource not found: " + CONTROLLER_SVG_FILENAME);
 			}
 
-			templateSvgDocument = documentBuilder.parse(inputStream);
+			svgDocument = documentBuilder.parse(inputStream);
 		} catch (final IOException | SAXException e) {
 			throw new RuntimeException(e);
 		}
 
-		final var viewBox = templateSvgDocument.getDocumentElement().getAttribute("viewBox");
+		templateSvgDocument = svgDocument;
+
+		final var viewBox = svgDocument.getDocumentElement().getAttribute("viewBox");
 		final var viewBoxParts = viewBox.split(" ", -1);
 		if (viewBoxParts.length != 4) {
 			throw new RuntimeException("Invalid viewBox attribute: " + viewBox);
