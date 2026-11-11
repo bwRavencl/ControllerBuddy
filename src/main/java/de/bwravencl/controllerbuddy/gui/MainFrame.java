@@ -143,6 +143,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -518,7 +519,7 @@ public final class MainFrame extends JFrame {
 
 	/// Set of currently connected controllers discovered via SDL.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Set<Controller> controllers = new HashSet<>();
+	private final Set<Controller> controllers = ConcurrentHashMap.newKeySet();
 
 	/// Menu providing device-specific actions in the menu bar.
 	private final JMenu deviceMenu = new JMenu(Main.strings.getString("DEVICE_MENU"));
