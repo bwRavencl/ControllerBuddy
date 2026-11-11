@@ -140,7 +140,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		/// @return the Y pixel coordinate corresponding to the given X
 		private int calculateY(final int x, final int plotWidth, final int plotHeight) {
 			return plotHeight - 1
-					- (x == 0 ? 0 : (int) (plotHeight / Math.pow((double) (plotWidth - 1) / (double) x, power)));
+					- (x == 0 ? 0 : (int) ((plotHeight - 1) / Math.pow((double) (plotWidth - 1) / (double) x, power)));
 		}
 
 		@Override
