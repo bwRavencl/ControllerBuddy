@@ -295,9 +295,9 @@ final class GuiUtilsTest {
 			theUnsafeField.setAccessible(true);
 			unsafe = (Unsafe) theUnsafeField.get(null);
 
-			final var preferecesField = Main.class.getDeclaredField("preferences");
-			preferencesFieldBase = unsafe.staticFieldBase(preferecesField);
-			preferencesFieldOffset = unsafe.staticFieldOffset(preferecesField);
+			final var preferencesField = Main.class.getDeclaredField("preferences");
+			preferencesFieldBase = unsafe.staticFieldBase(preferencesField);
+			preferencesFieldOffset = unsafe.staticFieldOffset(preferencesField);
 
 			originalPreferences = (Preferences) unsafe.getObject(preferencesFieldBase, preferencesFieldOffset);
 
