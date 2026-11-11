@@ -141,7 +141,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	/// Sets the optional detent (snap) value for the virtual axis.
 	///
 	/// @param detentValue the detent value, or `null` to disable
-	public void setDetentValue(final Float detentValue) {
+	public void setDetentValue(final @Nullable Float detentValue) {
 		this.detentValue = detentValue;
 	}
 
