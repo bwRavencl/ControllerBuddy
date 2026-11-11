@@ -715,9 +715,6 @@ public final class MainFrame extends JFrame {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private volatile @Nullable RunMode runMode;
 
-	/// Whether an on-screen keyboard mode switch has been scheduled.
-	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-
 	/// The controller currently selected for input, or `null` if none.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private volatile @Nullable Controller selectedController;
@@ -2825,25 +2822,6 @@ public final class MainFrame extends JFrame {
 		}
 
 		return valid;
-	}
-
-	/// Handles a pending on-screen keyboard mode switch by activating the
-	/// corresponding `ButtonToModeAction` if a switch was previously scheduled.
-	public void handleOnScreenKeyboardModeChange() {
-		if (!scheduleOnScreenKeyboardModeSwitch || input == null) {
-			return;
-		}
-
-		for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
-			for (final var buttonToModeAction : buttonToModeActions) {
-				if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-					buttonToModeAction.doAction(input, -1, true, null);
-					break;
-				}
-			}
-		}
-
-		scheduleOnScreenKeyboardModeSwitch = false;
 	}
 
 	/// Processes the remaining command-line options after profile loading.

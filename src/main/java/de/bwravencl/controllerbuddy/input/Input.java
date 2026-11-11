@@ -732,7 +732,6 @@ public final class Input {
 		}
 
 		EventQueue.invokeLater(() -> mainFrame.updateOverlayAxisIndicators(false));
-		mainFrame.handleOnScreenKeyboardModeChange();
 
 		return true;
 	}
