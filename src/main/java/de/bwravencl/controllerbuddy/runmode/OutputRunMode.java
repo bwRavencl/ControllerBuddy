@@ -426,9 +426,10 @@ public abstract class OutputRunMode extends RunMode {
 	/// corresponding uinput event to the keyboard device.
 	///
 	/// On Windows, keys whose scan code has an 0xE0 prefix must be flagged as
-	/// extended keys. These are derived from the DirectInput key code: all keys
-	/// with the high bit set are extended, except Pause (0xE1 prefix) and the NEC
-	/// PC-98 numpad equals key (no 0xE0 prefix).
+	/// extended keys and sent with the scan code without the high bit, which would
+	/// otherwise mark a key release. These are derived from the DirectInput key
+	/// code: all keys with the high bit set are extended, except Pause (0xE1
+	/// prefix) and the NEC PC-98 numpad equals key (no 0xE0 prefix).
 	///
 	/// @param scancode the scancode of the key to press or release
 	/// @param down `true` to press the key, `false` to release it
@@ -440,11 +441,12 @@ public abstract class OutputRunMode extends RunMode {
 				INPUT.setType(input, INPUT.INPUT_KEYBOARD);
 				final var ki = INPUT.getKi(input);
 				final var keyCode = scancode.keyCode();
-				INPUT.KEYBDINPUT.setWScan(ki, (short) keyCode);
-				var flags = (down ? 0 : INPUT.KEYBDINPUT.KEYEVENTF_KEYUP) | INPUT.KEYBDINPUT.KEYEVENTF_SCANCODE;
 				final var name = scancode.name();
-				if ((keyCode & 0x80) != 0 && !Scancode.DIK_PAUSE.equals(name)
-						&& !Scancode.DIK_NUMPADEQUALS.equals(name)) {
+				final var extended = (keyCode & 0x80) != 0 && !Scancode.DIK_PAUSE.equals(name)
+						&& !Scancode.DIK_NUMPADEQUALS.equals(name);
+				INPUT.KEYBDINPUT.setWScan(ki, (short) (extended ? keyCode & 0x7F : keyCode));
+				var flags = (down ? 0 : INPUT.KEYBDINPUT.KEYEVENTF_KEYUP) | INPUT.KEYBDINPUT.KEYEVENTF_SCANCODE;
+				if (extended) {
 					flags |= INPUT.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
 				}
 				INPUT.KEYBDINPUT.setDwFlags(ki, flags);
