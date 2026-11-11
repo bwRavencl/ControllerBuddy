@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
 ///
 /// The checkbox state is initialized from the current property value and
 /// updates the action property immediately when toggled.
-public class BooleanEditorBuilder extends EditorBuilder {
+public final class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(BooleanEditorBuilder.class.getName());
 
@@ -55,7 +55,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	}
 
 	@Override
-	public final void buildEditor(final JPanel parentPanel) {
+	public void buildEditor(final JPanel parentPanel) {
 		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
 
 		checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));

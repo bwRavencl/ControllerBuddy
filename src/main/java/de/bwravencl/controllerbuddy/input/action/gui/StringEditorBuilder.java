@@ -38,7 +38,7 @@ import javax.swing.event.DocumentListener;
 ///
 /// This ensures the property value stays in sync with the text field contents
 /// regardless of how the user commits the input.
-public class StringEditorBuilder extends EditorBuilder {
+public final class StringEditorBuilder extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(StringEditorBuilder.class.getName());
 
@@ -55,7 +55,7 @@ public class StringEditorBuilder extends EditorBuilder {
 	}
 
 	@Override
-	public final void buildEditor(final JPanel parentPanel) {
+	public void buildEditor(final JPanel parentPanel) {
 		final var textField = GuiUtils.createTextFieldWithMenu((String) initialValue, 17);
 		textField.setCaretPosition(0);
 
