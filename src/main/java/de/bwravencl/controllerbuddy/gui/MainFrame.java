@@ -328,6 +328,18 @@ public final class MainFrame extends JFrame {
 	/// Vertical gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_VGAP = 5;
 
+	/// Maximum allowed network port.
+	private static final int MAX_PORT = 65_534;
+
+	/// Maximum allowed network timeout in milliseconds.
+	private static final int MAX_TIMEOUT = 60_000;
+
+	/// Minimum allowed network port.
+	private static final int MIN_PORT = 1024;
+
+	/// Minimum allowed network timeout in milliseconds.
+	private static final int MIN_TIMEOUT = 10;
+
 	/// Maximum width in pixels of the overlay mode label.
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
@@ -2696,6 +2708,45 @@ public final class MainFrame extends JFrame {
 		return Main.preferences.get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
 	}
 
+	/// Validates the value of an integer command-line option and stores it in the
+	/// preferences if it is valid.
+	///
+	/// Shows an error dialog if the value is not an integer or lies outside the
+	/// allowed range.
+	///
+	/// @param commandLine the parsed command line containing the option
+	/// @param option the name of the command-line option
+	/// @param preferencesKey the preferences key under which the value is stored
+	/// @param minimum the minimum allowed value (inclusive)
+	/// @param maximum the maximum allowed value (inclusive)
+	/// @return `true` if the option is absent or its value is valid, `false` if the
+	/// value was rejected
+	private boolean handleIntegerCommandLineOption(final CommandLine commandLine, final String option,
+			final String preferencesKey, final int minimum, final int maximum) {
+		final var value = commandLine.getOptionValue(option);
+		if (value == null) {
+			return true;
+		}
+
+		try {
+			final var intValue = Integer.parseInt(value);
+			if (intValue >= minimum && intValue <= maximum) {
+				Main.preferences.putInt(preferencesKey, intValue);
+				return true;
+			}
+		} catch (NumberFormatException _) {
+			// handled below
+		}
+
+		GuiUtils.showMessageDialog(this, this,
+				MessageFormat.format(
+						Main.strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"), option,
+						value, minimum, maximum),
+				Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true);
+
+		return false;
+	}
+
 	/// Validates and applies network-related command-line options to
 	/// Main.preferences.
 	///
@@ -2723,33 +2774,10 @@ public final class MainFrame extends JFrame {
 			}
 		}
 
-		final var port = commandLine.getOptionValue(Main.OPTION_PORT);
-		if (port != null) {
-			try {
-				Main.preferences.putInt(Main.PREFERENCES_PORT, Integer.parseInt(port));
-			} catch (NumberFormatException _) {
-				valid = false;
-				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(
-								Main.strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
-								Main.OPTION_PORT, port),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true);
-			}
-		}
-
-		final var timeout = commandLine.getOptionValue(Main.OPTION_TIMEOUT);
-		if (timeout != null) {
-			try {
-				Main.preferences.putInt(Main.PREFERENCES_TIMEOUT, Integer.parseInt(timeout));
-			} catch (NumberFormatException _) {
-				valid = false;
-				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(
-								Main.strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
-								Main.OPTION_TIMEOUT, timeout),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true);
-			}
-		}
+		valid &= handleIntegerCommandLineOption(commandLine, Main.OPTION_PORT, Main.PREFERENCES_PORT, MIN_PORT,
+				MAX_PORT);
+		valid &= handleIntegerCommandLineOption(commandLine, Main.OPTION_TIMEOUT, Main.PREFERENCES_TIMEOUT, MIN_TIMEOUT,
+				MAX_TIMEOUT);
 
 		final var password = commandLine.getOptionValue(Main.OPTION_PASSWORD);
 		if (password != null) {
@@ -5772,7 +5800,7 @@ public final class MainFrame extends JFrame {
 			portLabel.setPreferredSize(shortSettingsLabelDimension);
 			portPanel.add(portLabel);
 
-			portSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPort(), 1024, 65_534, 1, null));
+			portSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPort(), MIN_PORT, MAX_PORT, 1, null));
 			final var portSpinnerEditor = new NumberEditor(portSpinner, "#");
 			((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			portSpinner.setEditor(portSpinnerEditor);
@@ -5785,7 +5813,8 @@ public final class MainFrame extends JFrame {
 			timeoutLabel.setPreferredSize(shortSettingsLabelDimension);
 			timeoutPanel.add(timeoutLabel);
 
-			timeoutSpinner = new JSpinner(new ClampingSpinnerNumberModel(getTimeout(), 10, 60_000, 1, null));
+			timeoutSpinner = new JSpinner(
+					new ClampingSpinnerNumberModel(getTimeout(), MIN_TIMEOUT, MAX_TIMEOUT, 1, null));
 			GuiUtils.makeMillisecondSpinner(timeoutSpinner);
 			timeoutPanel.add(timeoutSpinner);
 
