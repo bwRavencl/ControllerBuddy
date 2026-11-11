@@ -5402,7 +5402,7 @@ public final class MainFrame extends JFrame {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final var selectedOption = GuiUtils.showConfirmDialog(null, this,
-						MessageFormat.format(file.getName(), Main.strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						MessageFormat.format(Main.strings.getString("FILE_EXISTS_DIALOG_TEXT"), file.getName()),
 						Main.strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (selectedOption) {
 				case JOptionPane.CANCEL_OPTION:
