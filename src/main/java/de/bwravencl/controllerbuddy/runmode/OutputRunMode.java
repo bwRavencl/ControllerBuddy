@@ -422,7 +422,8 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// Sends a keyboard key press or release event for the given scancode.
 	///
-	/// On Windows this uses `SendInput` with the scancode; on Linux it emits the
+	/// On Windows this uses `SendInput` with the scancode, flagging keys whose scan
+	/// code has an 0xE0 prefix as extended keys; on Linux it emits the
 	/// corresponding uinput event to the keyboard device.
 	///
 	/// @param scancode the scancode of the key to press or release
@@ -434,9 +435,17 @@ public abstract class OutputRunMode extends RunMode {
 				final var input = arena.allocate(INPUT.LAYOUT);
 				INPUT.setType(input, INPUT.INPUT_KEYBOARD);
 				final var ki = INPUT.getKi(input);
-				INPUT.KEYBDINPUT.setWScan(ki, (short) scancode.keyCode());
+				final var keyCode = scancode.keyCode();
+				INPUT.KEYBDINPUT.setWScan(ki, (short) keyCode);
 				var flags = (down ? 0 : INPUT.KEYBDINPUT.KEYEVENTF_KEYUP) | INPUT.KEYBDINPUT.KEYEVENTF_SCANCODE;
-				if (Scancode.EXTENDED_KEY_SCAN_CODES_SET.contains(scancode.keyCode())) {
+
+				// DirectInput key codes with the high bit set correspond to scan codes with an
+				// 0xE0 prefix, which must be sent as extended keys. The only exceptions are
+				// Pause, whose scan code uses an 0xE1 prefix, and the NEC PC-98 numpad equals
+				// key, which has no 0xE0 prefixed scan code.
+				final var name = scancode.name();
+				if ((keyCode & 0x80) != 0 && !Scancode.DIK_PAUSE.equals(name)
+						&& !Scancode.DIK_NUMPADEQUALS.equals(name)) {
 					flags |= INPUT.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
 				}
 				INPUT.KEYBDINPUT.setDwFlags(ki, flags);

@@ -27,63 +27,6 @@ import org.junit.jupiter.api.Test;
 final class ScancodeTest {
 
 	@Nested
-	@DisplayName("EXTENDED_KEY_SCAN_CODES_SET")
-	final class ExtendedKeyScancodesSetTests {
-
-		private static void assertIsExtended(final String scancodeName) {
-			Assertions.assertTrue(isExtended(scancodeName));
-		}
-
-		private static void assertIsNotExtended(final String scancodeName) {
-			Assertions.assertFalse(isExtended(scancodeName));
-		}
-
-		private static boolean isExtended(final String scancodeName) {
-			final var scanCode = Scancode.NAME_TO_SCAN_CODE_MAP.get(scancodeName);
-
-			Assertions.assertNotNull(scanCode);
-			return Scancode.EXTENDED_KEY_SCAN_CODES_SET.contains(scanCode.keyCode());
-		}
-
-		@Test
-		@DisplayName("contains the key codes of all extended keys")
-		void containsKeyCodesOfExtendedKeys() {
-			assertIsExtended(Scancode.DIK_RCONTROL);
-			assertIsExtended(Scancode.DIK_RMENU);
-			assertIsExtended(Scancode.DIK_INSERT);
-			assertIsExtended(Scancode.DIK_DELETE);
-			assertIsExtended(Scancode.DIK_HOME);
-			assertIsExtended(Scancode.DIK_END);
-			assertIsExtended(Scancode.DIK_PRIOR);
-			assertIsExtended(Scancode.DIK_NEXT);
-			assertIsExtended(Scancode.DIK_UP);
-			assertIsExtended(Scancode.DIK_DOWN);
-			assertIsExtended(Scancode.DIK_LEFT);
-			assertIsExtended(Scancode.DIK_RIGHT);
-			assertIsExtended(Scancode.DIK_SYSRQ);
-			assertIsExtended(Scancode.DIK_DIVIDE);
-			assertIsExtended(Scancode.DIK_NUMPADENTER);
-			assertIsExtended(Scancode.DIK_LWIN);
-			assertIsExtended(Scancode.DIK_RWIN);
-		}
-
-		@Test
-		@DisplayName("does not contain the key codes of non-extended keys")
-		void doesNotContainKeyCodesOfNonExtendedKeys() {
-			assertIsNotExtended(Scancode.DIK_A);
-			assertIsNotExtended(Scancode.DIK_ESCAPE);
-		}
-
-		@Test
-		@DisplayName("is unmodifiable")
-		void isUnmodifiable() {
-			// noinspection DataFlowIssue
-			Assertions.assertThrows(UnsupportedOperationException.class,
-					() -> Scancode.EXTENDED_KEY_SCAN_CODES_SET.add(0));
-		}
-	}
-
-	@Nested
 	@DisplayName("KEY_CODE_TO_SCAN_CODE_MAP")
 	final class KeyCodeToScancodeMapTests {
 

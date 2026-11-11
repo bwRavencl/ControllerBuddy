@@ -21,10 +21,7 @@ import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /// Represents a keyboard scancode mapping a display name to a DirectInput key
 /// code and a Linux input event.
@@ -250,6 +247,9 @@ public record Scancode(String name, int keyCode, Event event) {
 	/// Numeric keypad enter key
 	public static final String DIK_NUMPADENTER = "NumEnter";
 
+	/// Numeric keypad equals ('=') key (NEC PC-98)
+	public static final String DIK_NUMPADEQUALS = "Num=";
+
 	/// 'O' key
 	public static final String DIK_O = "O";
 
@@ -337,9 +337,6 @@ public record Scancode(String name, int keyCode, Event event) {
 	/// 'Z' key
 	public static final String DIK_Z = "Z";
 
-	/// Set of scancodes that correspond to extended keys.
-	public static final Set<Integer> EXTENDED_KEY_SCAN_CODES_SET;
-
 	/// Map from AWT key codes to their corresponding scancode instances.
 	public static final Map<Integer, Scancode> KEY_CODE_TO_SCAN_CODE_MAP;
 
@@ -351,8 +348,6 @@ public record Scancode(String name, int keyCode, Event event) {
 	private static final String DIK_NEXTTRACK = "Next";
 
 	private static final String DIK_NUMLOCK = "NumLock";
-
-	private static final String DIK_NUMPADEQUALS = "Num=";
 
 	private static final String DIK_OEM_102 = "OEM_102";
 
@@ -427,16 +422,6 @@ public record Scancode(String name, int keyCode, Event event) {
 
 		NAME_TO_SCAN_CODE_MAP = Collections.unmodifiableMap(modifiableNameToScancodeMap);
 		KEY_CODE_TO_SCAN_CODE_MAP = Collections.unmodifiableMap(modifiableKeyCodeToScancodeMap);
-
-		EXTENDED_KEY_SCAN_CODES_SET = KEY_CODE_TO_SCAN_CODE_MAP.entrySet().stream().filter(entry -> {
-			final var name = entry.getValue().name;
-			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
-					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
-					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)
-					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_SYSRQ.equals(name)
-					|| DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name) || DIK_LWIN.equals(name)
-					|| DIK_RWIN.equals(name);
-		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
 	}
 
 	@Override
