@@ -32,10 +32,9 @@ import java.lang.invoke.VarHandle;
 /// Provides Java bindings to the Xlib native library using the Foreign Function
 /// and Memory API.
 ///
-/// This class exposes native functions for managing X11 displays, inter-client
-/// communication, window properties, and event synchronization, as well as
-/// memory layout definitions for the event structures used to send client
-/// messages.
+/// This class exposes native functions for managing X11 displays, atoms, window
+/// attributes, and window properties, as well as the memory layout definition
+/// of the window attributes structure.
 @SuppressWarnings("restricted")
 public final class Xlib {
 
@@ -182,8 +181,8 @@ public final class Xlib {
 	/// Represents the `XSetWindowAttributes` structure used to change window
 	/// attributes.
 	///
-	/// Provides a [GroupLayout] constant for LP64 platforms and static setter
-	/// methods for populating the fields of an `XSetWindowAttributes` memory
+	/// Provides a [GroupLayout] constant for LP64 platforms and a [VarHandle] for
+	/// setting the `override_redirect` field of an `XSetWindowAttributes` memory
 	/// segment.
 	public static final class XSetWindowAttributes {
 
