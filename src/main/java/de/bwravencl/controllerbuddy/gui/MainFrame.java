@@ -4977,8 +4977,8 @@ public final class MainFrame extends JFrame {
 	/// @return the total extension width contributed by the rendered text
 	@SuppressWarnings("NullAway")
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
-								  final @Nullable List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
-								  final Set<String> usedSymbols) {
+			final @Nullable List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
+			final Set<String> usedSymbols) {
 		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
 				.orElseThrow(() -> new IllegalArgumentException(
 						"group element with id '" + idPrefix + "Group' not found in SVG document"));
@@ -5001,9 +5001,9 @@ public final class MainFrame extends JFrame {
 				delayedActions.add(delayableAction);
 			} else if (action instanceof final IActivatableAction<?> activatableAction) {
 				switch (activatableAction.getActivation()) {
-					case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
-					case ON_PRESS -> onPressActions.add(activatableAction);
-					case ON_RELEASE -> onReleaseActions.add(activatableAction);
+				case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
+				case ON_PRESS -> onPressActions.add(activatableAction);
+				case ON_RELEASE -> onReleaseActions.add(activatableAction);
 				}
 
 				if (action instanceof ButtonToCycleAction) {
