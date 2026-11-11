@@ -2730,8 +2730,9 @@ public final class MainFrame extends JFrame {
 								Main.strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_HOST_DIALOG_TEXT"),
 								Main.OPTION_HOST, host),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true);
+			} else {
+				Main.preferences.put(Main.PREFERENCES_HOST, host);
 			}
-			Main.preferences.put(Main.PREFERENCES_HOST, host);
 		}
 
 		final var port = commandLine.getOptionValue(Main.OPTION_PORT);
@@ -2771,8 +2772,9 @@ public final class MainFrame extends JFrame {
 								Main.strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_PASSWORD_DIALOG_TEXT"),
 								Main.OPTION_PASSWORD, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true);
+			} else {
+				Main.preferences.put(Main.PREFERENCES_PASSWORD, password);
 			}
-			Main.preferences.put(Main.PREFERENCES_PASSWORD, password);
 		}
 
 		return valid;
