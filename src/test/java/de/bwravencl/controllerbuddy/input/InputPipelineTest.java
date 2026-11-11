@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -3569,6 +3570,41 @@ final class InputPipelineTest {
 	}
 
 	@Nested
+	@DisplayName("Hot swapping")
+	final class HotSwappingTests {
+
+		@SuppressWarnings("unchecked")
+		@Test
+		@DisplayName("closes and removes the gamepad of a disconnected hot swapping candidate controller")
+		void closesDisconnectedCandidateGamepad() throws ReflectiveOperationException {
+			setUpButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 0);
+
+			final var candidateSdlGamepad = 2L;
+
+			final var sdlGamepadToControllerStateMapField = Input.class
+					.getDeclaredField("sdlGamepadToControllerStateMap");
+			sdlGamepadToControllerStateMapField.setAccessible(true);
+			final var sdlGamepadToControllerStateMap = (Map<Long, ControllerState>) sdlGamepadToControllerStateMapField
+					.get(input);
+			sdlGamepadToControllerStateMap.put(candidateSdlGamepad,
+					new ControllerState(candidateSdlGamepad, false, false));
+
+			final var hotSwappingButtonIdField = Input.class.getDeclaredField("hotSwappingButtonId");
+			hotSwappingButtonIdField.setAccessible(true);
+			hotSwappingButtonIdField.set(input, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK);
+
+			final var lastHotSwapPollNanoTimeField = Input.class.getDeclaredField("lastHotSwapPollNanoTime");
+			lastHotSwapPollNanoTimeField.setAccessible(true);
+			lastHotSwapPollNanoTimeField.set(input, System.nanoTime() - TimeUnit.SECONDS.toNanos(1L));
+
+			pollWithState(noAxes(), noButtons());
+
+			sdlGamepadMock.verify(() -> SDLGamepad.SDL_CloseGamepad(candidateSdlGamepad));
+			Assertions.assertFalse(sdlGamepadToControllerStateMap.containsKey(candidateSdlGamepad));
+		}
+	}
+
+	@Nested
 	@DisplayName("Keystroke mapping")
 	final class KeystrokeMappingTests {
 
@@ -4065,7 +4101,7 @@ final class InputPipelineTest {
 		@DisplayName("all reflected Input fields exist")
 		void allReflectedInputFieldsExist() {
 			final var fieldNames = new String[] { "sdlGamepadToControllerStateMap", "selectedSdlGamepad", "initialized",
-					"lastPollNanoTime" };
+					"lastPollNanoTime", "hotSwappingButtonId", "lastHotSwapPollNanoTime" };
 
 			for (final var fieldName : fieldNames) {
 				try {
