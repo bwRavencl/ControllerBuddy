@@ -1947,7 +1947,7 @@ public final class MainFrame extends JFrame {
 		}
 
 		final var length = password.length();
-		return !password.isBlank() && length >= 6 && length <= 24;
+		return !password.isBlank() && length >= PASSWORD_MIN_LENGTH && length <= PASSWORD_MAX_LENGTH;
 	}
 
 	/// Logs an SDL error and returns the error details string.
