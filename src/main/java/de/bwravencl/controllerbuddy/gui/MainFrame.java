@@ -701,14 +701,14 @@ public final class MainFrame extends JFrame {
 
 	/// The currently active run mode, or `null` when stopped.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private @Nullable volatile RunMode runMode;
+	private volatile @Nullable RunMode runMode;
 
 	/// Whether an on-screen keyboard mode switch has been scheduled.
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 
 	/// The controller currently selected for input, or `null` if none.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private @Nullable volatile Controller selectedController;
+	private volatile @Nullable Controller selectedController;
 
 	/// SDL tray entry handle for the show/hide window action.
 	private volatile long showTrayEntry;
