@@ -2287,8 +2287,7 @@ public final class MainFrame extends JFrame {
 			headElement.appendChild(darkColorSchemeStyleElement);
 
 			final var styleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
-			styleElement.setTextContent(".svg-div{aspect-ratio:2.5}");
-			styleElement.setTextContent(".description-cell{padding-right:1rem !important}");
+			styleElement.setTextContent(".svg-div{aspect-ratio:2.5}.description-cell{padding-right:1rem !important}");
 			headElement.appendChild(styleElement);
 
 			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
