@@ -1272,7 +1272,7 @@ public final class EditActionsDialog extends JDialog {
 			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			add(iconLabel);
 
-			add(Box.createHorizontalStrut(5));
+			add(Box.createHorizontalStrut(ICON_LABEL_SPACING));
 
 			this.titleLabel = titleLabel != null ? titleLabel : new JLabel();
 			this.titleLabel.setText(title);
