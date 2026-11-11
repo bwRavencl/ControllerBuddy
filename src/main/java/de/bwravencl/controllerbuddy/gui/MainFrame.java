@@ -445,8 +445,8 @@ public final class MainFrame extends JFrame {
 	/// USB VID/PID string identifying the vJoy virtual device.
 	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
 
-	/// XML namespace URI for XLink attributes used in SVG documents.
-	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
+	/// XML namespace URI of the XHTML elements of the exported visualization.
+	private static final String XHTML_NAMESPACE_URI = "http://www.w3.org/1999/xhtml";
 
 	/// Default left-aligned flow layout used for panels with standard gaps.
 	private static final FlowLayout defaultFlowLayout = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
@@ -2293,58 +2293,57 @@ public final class MainFrame extends JFrame {
 			final var domImplementation = documentBuilder.getDOMImplementation();
 			final var htmlDocumentType = domImplementation.createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN",
 					"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
-			final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html", htmlDocumentType);
+			final var htmlDocument = domImplementation.createDocument(XHTML_NAMESPACE_URI, "html", htmlDocumentType);
 
 			final var documentElement = htmlDocument.getDocumentElement();
-			documentElement.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
 			documentElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			documentElement.setAttribute("xsi:schemaLocation",
 					"http://www.w3.org/1999/xhtml http://www.w3.org/2001/xml.xsd");
 			documentElement.setAttribute("style", "font-size:calc(1vw)");
 
-			final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
+			final var headElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "head");
 			documentElement.appendChild(headElement);
 
-			final var colorSchemeMetaElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "meta");
+			final var colorSchemeMetaElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "meta");
 			colorSchemeMetaElement.setAttribute("name", "color-scheme");
 			colorSchemeMetaElement.setAttribute("content", "light dark");
 			headElement.appendChild(colorSchemeMetaElement);
 
-			final var darkColorSchemeStyleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
+			final var darkColorSchemeStyleElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "style");
 			darkColorSchemeStyleElement
 					.setTextContent("@media(prefers-color-scheme:dark){body{background-color:#969696}}");
 			headElement.appendChild(darkColorSchemeStyleElement);
 
-			final var styleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
+			final var styleElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "style");
 			styleElement.setTextContent(".svg-div{aspect-ratio:2.5}.description-cell{padding-right:1rem !important}");
 			headElement.appendChild(styleElement);
 
-			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
+			final var titleElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "title");
 			final var title = currentFile != null ? currentFile.getName() : Main.strings.getString("UNTITLED");
 			titleElement.setTextContent(title);
 			headElement.appendChild(titleElement);
 
-			final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
+			final var bodyElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "body");
 			bodyElement.setAttribute("style", "font-family:sans-serif");
 			documentElement.appendChild(bodyElement);
 
-			final var headerDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+			final var headerDivElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "div");
 			headerDivElement.setAttribute("style", "text-align:center");
 			bodyElement.appendChild(headerDivElement);
 
-			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+			final var profileHeaderElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "div");
 			profileHeaderElement.setTextContent(title);
 			profileHeaderElement.setAttribute("style", "font-size:2.5rem;font-weight:bold;margin-bottom:1rem");
 			headerDivElement.appendChild(profileHeaderElement);
 
-			final var labelElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "label");
-			final var labelSpanElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "span");
+			final var labelElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "label");
+			final var labelSpanElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "span");
 			labelSpanElement.setTextContent(Main.strings.getString("MODE_LABEL") + ": ");
 			labelSpanElement.setAttribute("style", "font-size:1.2rem;font-weight:bold");
 			labelElement.appendChild(labelSpanElement);
 			headerDivElement.appendChild(labelElement);
 
-			final var selectElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "select");
+			final var selectElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "select");
 			selectElement.setAttribute("onchange",
 					"Array.from(document.getElementsByClassName('svg-div')).forEach(e=>e.style.display=(e.id===this.value?'block':'none'))");
 			selectElement.setAttribute("style", "font-size:1rem;vertical-align:text-bottom");
@@ -2353,7 +2352,7 @@ public final class MainFrame extends JFrame {
 			final var usedSymbols = new HashSet<String>();
 
 			input.getProfile().getModes().forEach(mode -> {
-				final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+				final var svgDivElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "div");
 				final var svgDivElementId = mode.getUuid().toString();
 
 				svgDivElement.setAttribute("id", svgDivElementId);
@@ -2365,13 +2364,13 @@ public final class MainFrame extends JFrame {
 				final var importedSvgNode = htmlDocument.importNode(svgDocument.getDocumentElement(), true);
 				svgDivElement.appendChild(importedSvgNode);
 
-				final var optionElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "option");
+				final var optionElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "option");
 				optionElement.setAttribute("value", svgDivElementId);
 				optionElement.setTextContent(mode.getDescription());
 				selectElement.appendChild(optionElement);
 			});
 
-			final var legendDiv = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+			final var legendDiv = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "div");
 			legendDiv.setAttribute("style",
 					"border-width:0.25rem;border-radius:0.75rem;border-style:solid;color:black;display:flex;flex-direction:column;font-size:1rem;gap:0.25rem;margin:2rem auto 0 auto;padding:0.5rem;width:max-content");
 
