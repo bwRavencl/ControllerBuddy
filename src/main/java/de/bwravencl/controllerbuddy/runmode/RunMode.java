@@ -172,7 +172,7 @@ public abstract class RunMode implements Runnable {
 		mainFrame.getMainLoop().yield();
 	}
 
-	/// Requests the run mode to stop by setting the run flag to false. Subclasses
+	/// Requests the run mode to stop by setting the run flag to `false`. Subclasses
 	/// may override to perform additional cleanup such as closing sockets.
 	public void requestStop() {
 		run = false;

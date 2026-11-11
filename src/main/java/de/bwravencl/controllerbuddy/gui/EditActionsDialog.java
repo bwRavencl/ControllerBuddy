@@ -1063,7 +1063,7 @@ public final class EditActionsDialog extends JDialog {
 	/// 2. `propertyTitle` is `null` or the component's property title matches
 	/// `propertyTitle`.
 	///
-	/// If both parameters are null, all [IUpdatableEditorComponent]s are updated.
+	/// If both parameters are `null`, all [IUpdatableEditorComponent]s are updated.
 	///
 	/// Delegates to [#updateEditorComponentsRecursively] to handle arbitrarily deep
 	/// component hierarchies.
@@ -1084,7 +1084,7 @@ public final class EditActionsDialog extends JDialog {
 	/// 2. `propertyTitle` is `null` or the component's property title matches
 	/// `propertyTitle`.
 	///
-	/// If both parameters are null, all [IUpdatableEditorComponent]s are updated.
+	/// If both parameters are `null`, all [IUpdatableEditorComponent]s are updated.
 	///
 	/// A component implementing [IUpdatableEditorComponent] that is also a
 	/// [Container] will be both updated and descended into.

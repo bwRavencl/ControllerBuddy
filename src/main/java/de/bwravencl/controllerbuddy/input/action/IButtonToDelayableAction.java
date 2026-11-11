@@ -86,7 +86,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 	///
 	/// @param input the input instance
 	/// @param component the button component index
-	/// @param value the current button state (true if pressed)
+	/// @param value the current button state (`true` if pressed)
 	/// @return the effective button state after delay processing
 	default boolean handleDelay(final Input input, final int component, final boolean value) {
 		if (!isDelayed()) {

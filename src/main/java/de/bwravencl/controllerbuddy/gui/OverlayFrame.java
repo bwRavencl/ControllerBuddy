@@ -660,7 +660,7 @@ class OverlayFrame extends JFrame {
 
 		/// Returns the connection on JBR's display, creating it on first use.
 		///
-		/// A failure is logged once, after which null is returned without retrying.
+		/// A failure is logged once, after which `null` is returned without retrying.
 		///
 		/// @return the connection, or `null` if it could not be created
 		private static @Nullable Connection getInstance() {

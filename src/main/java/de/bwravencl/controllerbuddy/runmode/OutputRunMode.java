@@ -279,8 +279,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// (mutated in place)
 	/// @param newUpSet the set to populate with newly released elements
 	/// @param newDownSet the set to populate with newly pressed elements
-	/// @param keepStillDown if true, elements still held down are added to
-	/// newDownSet
+	/// @param keepStillDown if `true`, elements still held down are added to
+	/// `newDownSet`
 	/// @param <T> the element type
 	static <T> void updateOutputSets(final Set<T> sourceSet, final Set<T> oldDownSet, final Set<T> newUpSet,
 			final Set<T> newDownSet, final boolean keepStillDown) {
@@ -827,9 +827,9 @@ public abstract class OutputRunMode extends RunMode {
 	/// Reads input from the controller or network and updates internal state.
 	///
 	/// Subclasses override this method to poll the controller or receive network
-	/// data. The base implementation calls [#process] and returns true.
+	/// data. The base implementation calls [#process] and returns `true`.
 	///
-	/// @return true if input was successfully read, false otherwise
+	/// @return `true` if input was successfully read, `false` otherwise
 	/// @throws IOException if an I/O error occurs during input reading
 	boolean readInput() throws IOException {
 		process();
