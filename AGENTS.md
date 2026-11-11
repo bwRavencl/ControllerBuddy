@@ -107,7 +107,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Documentation comments: follow the rules below for all Javadoc comments.
   - **Language** use American English, not British English.
   - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.
-  - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a Javadoc comment. The only exceptions are methods that override a superclass or interface method, `serialVersionUID` fields and `Logger` fields named `LOGGER`, which must not be documented.
+  - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a Javadoc comment. The only exceptions are methods that override a superclass or interface method, `serialVersionUID` fields and `Logger` fields named `logger`, which must not be documented.
   - **Summary line:** starts with a third-person verb (e.g., "Returns", "Sets", "Creates"). Use "Returns the/whether..." for getters and "Sets the/whether..." for setters.
   - **Structure:** Javadoc comments for classes, interfaces, records, and enums must have both a short summary sentence and a separate extended description providing additional detail. Separate the summary from the extended description with a blank `///` line.
   - **Periods:** full sentences end with a period. Short label-style descriptions for enum constants or similar identifiers (e.g., `/// 'A' key`) may omit the period.
