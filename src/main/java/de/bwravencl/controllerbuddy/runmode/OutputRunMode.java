@@ -42,6 +42,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.spi.AbstractInterruptibleChannel;
 import java.nio.file.Files;
@@ -570,9 +571,17 @@ public abstract class OutputRunMode extends RunMode {
 	/// Handles a fatal [IOException] by setting the force-stop flag, logging the
 	/// error, and showing an error dialog to the user.
 	///
+	/// No dialog is shown for a [ClosedByInterruptException], as it only occurs
+	/// when the main loop is shutting down.
+	///
 	/// @param e the I/O exception that caused the failure
 	final void handleIOException(final IOException e) {
 		forceStop = true;
+
+		if (e instanceof ClosedByInterruptException) {
+			logger.log(Level.FINE, e.getMessage(), e);
+			return;
+		}
 
 		logger.log(Level.SEVERE, e.getMessage(), e);
 		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
