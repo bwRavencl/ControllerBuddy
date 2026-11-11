@@ -58,7 +58,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	/// Returns the zero-based ID of the target virtual button.
 	///
 	/// @return the button ID
-	public int getButtonId() {
+	public final int getButtonId() {
 		return buttonId;
 	}
 
