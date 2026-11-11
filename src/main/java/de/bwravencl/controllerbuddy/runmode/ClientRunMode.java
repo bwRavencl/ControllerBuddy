@@ -408,8 +408,8 @@ public final class ClientRunMode extends OutputRunMode {
 		super.requestStop();
 
 		if (clientSocket != null) {
-			clientSocket.close();
 			forceStop = true;
+			clientSocket.close();
 		}
 	}
 
