@@ -6271,10 +6271,11 @@ public final class MainFrame extends JFrame {
 
 			final var color = JColorChooser.showDialog(MainFrame.this,
 					Main.strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"), overlayAxis.getColor());
-			if (color != null) {
-				overlayAxis.setColor(color);
+			if (color == null) {
+				return;
 			}
 
+			overlayAxis.setColor(color);
 			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
