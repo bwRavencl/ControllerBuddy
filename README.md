@@ -238,20 +238,20 @@ flowchart LR
 
 | Parameter             | Arguments               | Description                                                                                                | Available for scripting |
 |-----------------------|-------------------------|------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| `‑autostart`          | local / client / server | starts the specified mode of operation after launch                                                        |           yes           |
-| `‑export`             | file destination        | exports a visualization of the current profile to the specified path                                       |           yes           |
-| `‑gamecontrollerdb`   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
-| `‑help`               |                         | prints the help and exits                                                                                  |           no            |
+| `-autostart`          | local / client / server | starts the specified mode of operation after launch                                                        |           yes           |
+| `-export`             | file destination        | exports a visualization of the current profile to the specified path                                       |           yes           |
+| `-gamecontrollerdb`   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
+| `-help`               |                         | prints the help and exits                                                                                  |           no            |
 | `-host`               | hostname / IP address   | sets the host address for outgoing network connections                                                     |           yes           |
 | `-password`           | password                | sets the password for all network connections                                                              |           yes           |
 | `-port`               | port number             | sets the server port for all network connections                                                           |           yes           |
-| `‑profile`            | file source             | loads the specified profile after launch                                                                   |           yes           |
-| `‑quit`               |                         | quits the application                                                                                      |           yes           |
-| `‑save`               | file destination        | saves the current profile to the specified path                                                            |           yes           |
-| `‑skipMessageDialogs` |                         | skips all message dialogs                                                                                  |           no            |
+| `-profile`            | file source             | loads the specified profile after launch                                                                   |           yes           |
+| `-quit`               |                         | quits the application                                                                                      |           yes           |
+| `-save`               | file destination        | saves the current profile to the specified path                                                            |           yes           |
+| `-skipMessageDialogs` |                         | skips all message dialogs                                                                                  |           no            |
 | `-timeout`            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
-| `‑tray`               |                         | launches the application to the system tray                                                                |           yes           |
-| `‑version`            |                         | prints the version information and exits                                                                   |           no            |
+| `-tray`               |                         | launches the application to the system tray                                                                |           yes           |
+| `-version`            |                         | prints the version information and exits                                                                   |           no            |
 
 If ControllerBuddy is already running, launching a **second instance** with any of the above parameters marked as *available for scripting* **will forward the specified action to the first instance** and then exit immediately.
 
