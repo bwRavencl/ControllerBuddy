@@ -142,11 +142,16 @@ public final class EditActionsDialog extends JDialog {
 	/// Classpath resource path for the help cursor GIF image.
 	private static final String HELP_GIF_RESOURCE_PATH = "/help.gif";
 
-	/// Action classes available for on-screen keyboard mode components.
+	/// Action classes available for button components in the on-screen keyboard
+	/// mode.
 	private static final List<Class<?>> ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 
 	/// Action classes available for trigger (half-axis) components.
 	private static final List<Class<?>> TRIGGER_ACTION_CLASSES;
+
+	/// Action classes without category restrictions, available for axis components
+	/// in the on-screen keyboard mode.
+	private static final List<Class<?>> UNRESTRICTED_ACTION_CLASSES;
 
 	/// Hot-spot point for the custom help cursor image.
 	private static final Point helpCursorHotSpot = new Point(0, 0);
@@ -165,6 +170,7 @@ public final class EditActionsDialog extends JDialog {
 		final var mutableButtonActionClasses = new ArrayList<Class<?>>();
 		final var mutableCycleActionClasses = new ArrayList<Class<?>>();
 		final var mutableOnScreenKeyboardActionClasses = new ArrayList<Class<?>>();
+		final var mutableUnrestrictedActionClasses = new ArrayList<Class<?>>();
 
 		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName())
 				.enableNonSystemModules().enableClassInfo().enableAnnotationInfo().scan(new AbstractExecutorService() {
@@ -231,6 +237,9 @@ public final class EditActionsDialog extends JDialog {
 				if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE) {
 					mutableOnScreenKeyboardActionClasses.add(actionClass);
 				}
+				if (category == ActionCategory.ALL) {
+					mutableUnrestrictedActionClasses.add(actionClass);
+				}
 			});
 		}
 
@@ -239,6 +248,7 @@ public final class EditActionsDialog extends JDialog {
 		BUTTON_ACTION_CLASSES = Collections.unmodifiableList(mutableButtonActionClasses);
 		CYCLE_ACTION_CLASSES = Collections.unmodifiableList(mutableCycleActionClasses);
 		ON_SCREEN_KEYBOARD_ACTION_CLASSES = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
+		UNRESTRICTED_ACTION_CLASSES = Collections.unmodifiableList(mutableUnrestrictedActionClasses);
 
 		try (final var inputStream = EditActionsDialog.class.getResourceAsStream(HELP_GIF_RESOURCE_PATH)) {
 			if (inputStream == null) {
@@ -617,11 +627,12 @@ public final class EditActionsDialog extends JDialog {
 	/// component or cycle, based on the editor mode and the selected mode and
 	/// component type.
 	///
-	/// Cycle editors return cycle-compatible classes. On-screen keyboard mode
-	/// returns the keyboard-specific class list. Trigger axes return
-	/// trigger-compatible classes. Axis components return axis-compatible classes.
-	/// Button components in the default mode return the full button class list;
-	/// other modes exclude [ButtonToModeAction].
+	/// Cycle editors return cycle-compatible classes. In the on-screen keyboard
+	/// mode, button components return the keyboard-specific class list, while axis
+	/// components return only the classes without category restrictions. Trigger
+	/// axes return trigger-compatible classes. Axis components return
+	/// axis-compatible classes. Button components in the default mode return the
+	/// full button class list; other modes exclude [ButtonToModeAction].
 	///
 	/// @return the list of allowed action classes for the current context
 	@SuppressWarnings("NullAway")
@@ -629,7 +640,8 @@ public final class EditActionsDialog extends JDialog {
 		if (isCycleEditor()) {
 			return CYCLE_ACTION_CLASSES;
 		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
-			return ON_SCREEN_KEYBOARD_ACTION_CLASSES;
+			return controllerComponent.type() == ControllerComponentType.AXIS ? UNRESTRICTED_ACTION_CLASSES
+					: ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 		} else if (controllerComponent.type() == ControllerComponentType.AXIS) {
 			final var componentIndex = controllerComponent.index();
 			if (componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
