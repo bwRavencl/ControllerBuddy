@@ -92,9 +92,26 @@ final class OutputRunModeTest {
 		}
 
 		@Test
-		@DisplayName("set() with the same value clears the changed flag")
-		void setWithSameValueClearsChanged() {
+		@DisplayName("set() with the initial value keeps the changed flag set after construction")
+		void setWithInitialValueKeepsChangedAfterConstruction() {
+			deviceValue.set(0);
+			Assertions.assertTrue(deviceValue.isChanged());
+		}
+
+		@Test
+		@DisplayName("set() with a value differing from the cached value keeps a pending change")
+		void setWithValueRevertedKeepsPendingChange() {
+			deviceValue.setUnchanged();
 			deviceValue.set(42);
+			deviceValue.set(0);
+			Assertions.assertTrue(deviceValue.isChanged());
+		}
+
+		@Test
+		@DisplayName("set() with the same value does not mark the value as changed")
+		void setWithSameValueDoesNotMarkChanged() {
+			deviceValue.set(42);
+			deviceValue.setUnchanged();
 			deviceValue.set(42);
 			Assertions.assertFalse(deviceValue.isChanged());
 		}

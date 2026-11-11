@@ -1240,13 +1240,12 @@ public abstract class OutputRunMode extends RunMode {
 		/// The last value written to the output device.
 		private int cachedValue;
 
-		/// Whether the value has changed since the last output cycle.
-		private boolean changed;
+		/// Whether the value has changed since the last output cycle. Initially `true`
+		/// so that the first write is always sent.
+		private boolean changed = true;
 
-		/// Constructs a [DeviceValue] and marks it as changed so the first write is
-		/// always sent.
+		/// Constructs a [DeviceValue].
 		private DeviceValue() {
-			changed = true;
 		}
 
 		/// Returns the cached device value.
@@ -1264,11 +1263,15 @@ public abstract class OutputRunMode extends RunMode {
 			return changed;
 		}
 
-		/// Sets the cached value and updates the changed flag.
+		/// Sets the cached value and marks it as changed if it differs from the
+		/// previously cached value.
+		///
+		/// A pending change is retained until [#setUnchanged] is called, even if the
+		/// value is subsequently set back to the previously cached value.
 		///
 		/// @param value the new value to store
 		void set(final int value) {
-			changed = cachedValue != value;
+			changed |= cachedValue != value;
 			cachedValue = value;
 		}
 
