@@ -3359,7 +3359,7 @@ public final class MainFrame extends JFrame {
 
 				final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty()) {
-					logger.warning("Encountered the unknown actions while loading profile:"
+					logger.warning("Encountered unknown actions while loading profile: "
 							+ String.join(", ", unknownActionClasses));
 
 					if (!skipMessageDialogs) {
