@@ -172,6 +172,19 @@ final class ProfileTypeAdapterFactoryTest {
 	}
 
 	@Nested
+	@DisplayName("create() - Profile adapter")
+	final class ProfileAdapterTests {
+
+		@Test
+		@DisplayName("returns null instead of throwing for an empty or blank document")
+		void returnsNullForEmptyDocument() {
+			final var gson = createGson();
+			Assertions.assertNull(gson.fromJson("", Profile.class));
+			Assertions.assertNull(gson.fromJson("   ", Profile.class));
+		}
+	}
+
+	@Nested
 	@DisplayName("create() - Profile version migration")
 	final class ProfileVersionMigrationTests {
 
