@@ -1939,9 +1939,9 @@ class OverlayFrame extends JFrame {
 							} finally {
 								Wayland.destroy(pool, Wayland.WL_SHM_POOL_DESTROY);
 							}
-						} catch (final RuntimeException e) {
+						} catch (final Throwable t) {
 							Linux.munmap(mapping, size);
-							throw e;
+							throw t;
 						}
 						memory = mapping;
 						Wayland.wl_proxy_add_listener(wlBuffer, listener, MemorySegment.NULL);
