@@ -162,7 +162,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 				final var x2 = x1 + 1;
 				final var y2 = calculateY(x2, plotWidth, plotHeight);
 
-				g.drawLine(x1 + insets.left, y1 + insets.bottom, x2 + insets.left, y2 + insets.bottom);
+				g.drawLine(x1 + insets.left, y1 + insets.top, x2 + insets.left, y2 + insets.top);
 			}
 		}
 	}
