@@ -124,8 +124,11 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 							final var version = profile.getVersion();
 							if (version != null) {
 								final var versionParts = VersionUtils.getVersionIntegerParts(version);
-								if (versionParts.length >= 2 && versionParts[0] <= 1) {
-									if (versionParts[1] < 4) {
+								if (versionParts.length >= 2) {
+									final var majorVersion = versionParts[0];
+									final var minorVersion = versionParts[1];
+
+									if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 4)) {
 										profile.setButtonToModeActionsMap(
 												profile.getButtonToModeActionsMap().entrySet().stream()
 														.collect(Collectors.toMap(
@@ -140,7 +143,7 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 																Entry::getValue))));
 									}
 
-									if (versionParts[1] < 9) {
+									if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 9)) {
 										final var jsonObject = jsonElement.getAsJsonObject();
 										if (jsonObject.has("keyRepeatInterval")) {
 											final var keyRepeatInterval = jsonObject.get("keyRepeatInterval")

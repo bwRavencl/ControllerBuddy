@@ -196,6 +196,18 @@ final class ProfileTypeAdapterFactoryTest {
 		}
 
 		@Test
+		@DisplayName("migrates GLFW button indices to SDL button indices for profiles with major version 0")
+		void migratesGlfwButtonIndicesForMajorVersionZeroProfile() {
+			final var gson = createGson();
+			// GLFW_GAMEPAD_BUTTON_LEFT_BUMPER = 4, maps to SDL_GAMEPAD_BUTTON_LEFT_SHOULDER
+			final var json = "{\"version\": \"0.26\", \"buttonToModeActionsMap\": {\"4\": []}, \"modes\": []}";
+			final var profile = gson.fromJson(json, Profile.class);
+			Assertions.assertTrue(
+					profile.getButtonToModeActionsMap().containsKey(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER));
+			Assertions.assertFalse(profile.getButtonToModeActionsMap().containsKey(4));
+		}
+
+		@Test
 		@DisplayName("migrates GLFW button indices to SDL button indices for profiles with version < 1.4")
 		void migratesGlfwButtonIndicesForOldVersionProfile() {
 			final var gson = createGson();
