@@ -4062,7 +4062,7 @@ final class InputPipelineTest {
 
 		@SuppressWarnings({ "RethrowReflectiveOperationExceptionAsLinkageError", "ReturnValueIgnored" })
 		@Test
-		@DisplayName("ControllerState inner class exists with expected fields")
+		@DisplayName("ControllerState class exists with expected fields")
 		void controllerStateClassExists() {
 			try {
 				final var controllerStateClass = Class.forName("de.bwravencl.controllerbuddy.input.ControllerState",
@@ -4071,7 +4071,7 @@ final class InputPipelineTest {
 				controllerStateClass.getDeclaredField("buttons");
 				controllerStateClass.getDeclaredField("sdlGamepad");
 			} catch (final ReflectiveOperationException e) {
-				throw new AssertionError("ControllerState inner class or its fields not found", e);
+				throw new AssertionError("ControllerState class or its fields not found", e);
 			}
 		}
 	}
