@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLInit;
 
-/// The SDL mainFrame-thread event loop and task scheduler.
+/// The SDL main-thread event loop and task scheduler.
 ///
 /// All SDL API calls must be executed on this loop's thread. Tasks can be
 /// submitted synchronously (blocking the caller) or asynchronously. The loop
@@ -64,11 +64,11 @@ public final class MainLoop {
 	/// is shutting down
 	private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
 		if (!thread.isAlive()) {
-			throw new IllegalStateException("MainFrame loop thread is not alive");
+			throw new IllegalStateException("Main loop thread is not alive");
 		}
 
 		if (shuttingDown) {
-			throw new IllegalStateException("MainFrame loop is shutting down");
+			throw new IllegalStateException("Main loop is shutting down");
 		}
 
 		synchronized (this) {
