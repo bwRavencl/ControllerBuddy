@@ -172,15 +172,9 @@ public final class Profile implements Cloneable {
 	/// @param input the input instance
 	/// @param mode the mode to remove
 	public void removeMode(final Input input, final Mode mode) {
-		buttonToModeActionsMap.entrySet().removeIf(entry -> {
-			for (final var action : entry.getValue()) {
-				if (action.getMode(input).equals(mode)) {
-					return true;
-				}
-			}
-
-			return false;
-		});
+		buttonToModeActionsMap.values()
+				.forEach(actions -> actions.removeIf(action -> action.getMode(input).equals(mode)));
+		buttonToModeActionsMap.values().removeIf(List::isEmpty);
 
 		modes.remove(mode);
 	}
