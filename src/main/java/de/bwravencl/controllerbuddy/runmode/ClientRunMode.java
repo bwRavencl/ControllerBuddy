@@ -67,6 +67,9 @@ public final class ClientRunMode extends OutputRunMode {
 	/// Number of retries when attempting to establish the initial connection.
 	private static final int NUM_CONNECTION_RETRIES = 10;
 
+	/// Maximum payload size in bytes of a UDP datagram sent over IPv4.
+	private static final int MAX_UDP_PAYLOAD_SIZE = 65_507;
+
 	/// Number of retries when waiting to receive a packet from the server.
 	private static final int NUM_RECEIVE_PACKET_RETRIES = 10;
 
@@ -87,8 +90,9 @@ public final class ClientRunMode extends OutputRunMode {
 	/// UDP port number used to communicate with the server.
 	private final int port;
 
-	/// Reusable byte buffer for incoming UDP packets.
-	private final byte[] receiveBuf = new byte[1024];
+	/// Reusable byte buffer for incoming UDP packets, large enough to hold any UDP
+	/// datagram so that update packets are never truncated.
+	private final byte[] receiveBuf = new byte[MAX_UDP_PAYLOAD_SIZE];
 
 	/// Random salt sent to the server during the handshake for key derivation.
 	private final byte[] salt = new byte[ServerRunMode.SALT_LENGTH];
