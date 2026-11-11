@@ -551,6 +551,7 @@ public final class Input {
 				final var controllerState = entry.getValue();
 
 				if (!controllerState.update()) {
+					SDLGamepad.SDL_CloseGamepad(sdlGamepad);
 					sdlGamepadToControllerStateMapIterator.remove();
 					updateHotSwappingButtonId();
 					continue;
