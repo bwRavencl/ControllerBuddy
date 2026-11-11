@@ -104,40 +104,45 @@ public final class UinputDevice implements Closeable {
 				throw new IOException("Could not open: " + DEVICE_PATH);
 			}
 
-			final var driverVersion = arena.allocate(ValueLayout.JAVA_INT);
-			ioctlChecked(fd, Linux.UI_GET_VERSION, driverVersion);
-			final var driverVersionValue = driverVersion.get(AddressLayout.JAVA_INT, 0L);
-			if (driverVersionValue < 5) {
-				throw new UnsupportedOperationException("Unsupported uinput version: " + driverVersionValue);
-			}
-
-			for (final var eventCode : deviceType.supportedEvents) {
-				final var type = eventCode.type;
-
-				ioctlChecked(fd, Linux.UI_SET_EVBIT, MemorySegment.ofAddress(type));
-
-				final var code = MemorySegment.ofAddress(eventCode.code);
-				switch (type) {
-				case EV_KEY -> ioctlChecked(fd, Linux.UI_SET_KEYBIT, code);
-				case EV_REL -> ioctlChecked(fd, Linux.UI_SET_RELBIT, code);
-				case EV_ABS -> ioctlChecked(fd, Linux.UI_SET_ABSBIT, code);
-				default -> throw new UnsupportedOperationException("Unsupported event type: " + type);
+			try {
+				final var driverVersion = arena.allocate(ValueLayout.JAVA_INT);
+				ioctlChecked(fd, Linux.UI_GET_VERSION, driverVersion);
+				final var driverVersionValue = driverVersion.get(AddressLayout.JAVA_INT, 0L);
+				if (driverVersionValue < 5) {
+					throw new UnsupportedOperationException("Unsupported uinput version: " + driverVersionValue);
 				}
+
+				for (final var eventCode : deviceType.supportedEvents) {
+					final var type = eventCode.type;
+
+					ioctlChecked(fd, Linux.UI_SET_EVBIT, MemorySegment.ofAddress(type));
+
+					final var code = MemorySegment.ofAddress(eventCode.code);
+					switch (type) {
+					case EV_KEY -> ioctlChecked(fd, Linux.UI_SET_KEYBIT, code);
+					case EV_REL -> ioctlChecked(fd, Linux.UI_SET_RELBIT, code);
+					case EV_ABS -> ioctlChecked(fd, Linux.UI_SET_ABSBIT, code);
+					default -> throw new UnsupportedOperationException("Unsupported event type: " + type);
+					}
+				}
+
+				final var uinputSetup = arena.allocate(uinput_setup.LAYOUT);
+				final var uinputSetupName = uinput_setup.getName(uinputSetup);
+				uinputSetupName.setString(0L, name);
+
+				final var inputId = uinput_setup.getInput_id(uinputSetup);
+				input_id.setBustype(inputId, BUS_USB);
+				input_id.setProduct(inputId, PRODUCT_CODE);
+				input_id.setVendor(inputId, VENDOR_CODE);
+
+				ioctlChecked(fd, Linux.UI_DEV_SETUP, uinputSetup);
+
+				ioctlChecked(fd, Linux.UI_DEV_CREATE, MemorySegment.NULL);
+			} catch (final IOException | RuntimeException e) {
+				Linux.close(fd);
+				throw e;
 			}
-
-			final var uinputSetup = arena.allocate(uinput_setup.LAYOUT);
-			final var uinputSetupName = uinput_setup.getName(uinputSetup);
-			uinputSetupName.setString(0L, name);
-
-			final var inputId = uinput_setup.getInput_id(uinputSetup);
-			input_id.setBustype(inputId, BUS_USB);
-			input_id.setProduct(inputId, PRODUCT_CODE);
-			input_id.setVendor(inputId, VENDOR_CODE);
-
-			ioctlChecked(fd, Linux.UI_DEV_SETUP, uinputSetup);
 		}
-
-		ioctlChecked(fd, Linux.UI_DEV_CREATE, MemorySegment.NULL);
 	}
 
 	/// Returns an open [UinputDevice] for the given device type, creating it if it
