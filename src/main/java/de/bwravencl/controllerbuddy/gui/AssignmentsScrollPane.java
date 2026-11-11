@@ -885,22 +885,22 @@ final class AssignmentsScrollPane extends JScrollPane {
 					}
 					case EAST -> {
 						final var text = "→";
-						final var textRect = getTextRectangle(text, g2d, (int) (x + getWidth() * 0.375), y, 0);
+						final var textRect = getTextRectangle(text, g2d, x + (int) (getWidth() * 0.375), y, 0);
 						paintText(g, textRect, text);
 					}
 					case NORTH -> {
 						final var text = "↑";
-						final var textRect = getTextRectangle(text, g2d, x, y - (int) (x + getHeight() * 0.375), 0);
+						final var textRect = getTextRectangle(text, g2d, x, y - (int) (getHeight() * 0.375), 0);
 						paintText(g, textRect, text);
 					}
 					case WEST -> {
 						final var text = "←";
-						final var textRect = getTextRectangle(text, g2d, x - (int) (x + getWidth() * 0.375), y, 0);
+						final var textRect = getTextRectangle(text, g2d, x - (int) (getWidth() * 0.375), y, 0);
 						paintText(g, textRect, text);
 					}
 					case SOUTH -> {
 						final var text = "↓";
-						final var textRect = getTextRectangle(text, g2d, x, y + (int) (x + getHeight() * 0.375), 0);
+						final var textRect = getTextRectangle(text, g2d, x, y + (int) (getHeight() * 0.375), 0);
 						paintText(g, textRect, text);
 					}
 					}
