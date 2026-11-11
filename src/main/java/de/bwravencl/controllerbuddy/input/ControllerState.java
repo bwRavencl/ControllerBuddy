@@ -37,7 +37,7 @@ public final class ControllerState {
 	/// Whether circular axis values should be remapped to square axes.
 	private final boolean mapCircularAxesToSquareAxes;
 
-	/// Normalized axis values for the left and right stick, before any
+	/// Normalized axis values for all SDL gamepad axes, before any
 	/// circular-to-square mapping is applied.
 	private final float[] rawAxes;
 
@@ -60,7 +60,7 @@ public final class ControllerState {
 		this.mapCircularAxesToSquareAxes = mapCircularAxesToSquareAxes;
 
 		if (mapCircularAxesToSquareAxes) {
-			rawAxes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY + 1];
+			rawAxes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_COUNT];
 		} else {
 			rawAxes = axes;
 		}
@@ -100,8 +100,8 @@ public final class ControllerState {
 		return buttons;
 	}
 
-	/// Returns the raw, normalized axis values for the left and right stick, before
-	/// any circular-to-square remapping is applied.
+	/// Returns the raw, normalized axis values for all SDL gamepad axes, before any
+	/// circular-to-square remapping is applied.
 	///
 	/// @return the array of raw axis values
 	public float[] getRawAxes() {
@@ -170,12 +170,6 @@ public final class ControllerState {
 				.normalize(SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY),
 						Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
 
-		System.arraycopy(axes, 0, rawAxes, 0, rawAxes.length);
-		if (mapCircularAxesToSquareAxes) {
-			mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY);
-			mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
-		}
-
 		axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = Input.normalize(
 				SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER), 0, Short.MAX_VALUE,
 				-1f, 1f);
@@ -183,6 +177,12 @@ public final class ControllerState {
 		axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER] = Input.normalize(
 				SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER), 0,
 				Short.MAX_VALUE, -1f, 1f);
+
+		System.arraycopy(axes, 0, rawAxes, 0, rawAxes.length);
+		if (mapCircularAxesToSquareAxes) {
+			mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY);
+			mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
+		}
 
 		buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
 				SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH);
