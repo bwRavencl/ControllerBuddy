@@ -698,6 +698,7 @@ public abstract class OutputRunMode extends RunMode {
 							MessageFormat.format(Main.strings.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),
 							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
+					return false;
 				}
 				minAxisValue = min.get(ValueLayout.JAVA_INT, 0L);
 
@@ -708,6 +709,7 @@ public abstract class OutputRunMode extends RunMode {
 							MessageFormat.format(Main.strings.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),
 							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
+					return false;
 				}
 				maxAxisValue = max.get(ValueLayout.JAVA_INT, 0L);
 			}
