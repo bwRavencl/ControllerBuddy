@@ -1089,7 +1089,7 @@ public final class EditActionsDialog extends JDialog {
 		for (final var component : container.getComponents()) {
 			if (component instanceof final IUpdatableEditorComponent updatableEditorComponent
 					&& (editorBuilderClass == null
-							|| updatableEditorComponent.getEditorBuilderClass().isAssignableFrom(editorBuilderClass))
+							|| editorBuilderClass.isAssignableFrom(updatableEditorComponent.getEditorBuilderClass()))
 					&& (propertyTitle == null || updatableEditorComponent.getPropertyTitle().equals(propertyTitle))) {
 				updatableEditorComponent.onUpdate();
 			}
