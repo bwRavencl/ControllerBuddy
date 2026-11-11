@@ -5844,8 +5844,7 @@ public final class MainFrame extends JFrame {
 			putValue(NAME,
 					"<html><span style='text-decoration:underline'>" + Main.strings.getString("DONATE_ACTION_NAME")
 							+ "</span> <span style='color:#d10000'>❤</span></html>");
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.strings.getString("DONATE_ACTION_DESCRIPTION"),
-					Constants.APPLICATION_NAME));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("DONATE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
