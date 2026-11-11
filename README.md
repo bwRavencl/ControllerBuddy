@@ -247,7 +247,7 @@ flowchart LR
 | `-port`               | port number             | sets the server port for all network connections                                                           |           yes           |
 | `‑profile`            | file source             | loads the specified profile after launch                                                                   |           yes           |
 | `‑quit`               |                         | quits the application                                                                                      |           yes           |
-| `‑save`               | file destination        | save the current profile to the specified path                                                             |           yes           |
+| `‑save`               | file destination        | saves the current profile to the specified path                                                            |           yes           |
 | `‑skipMessageDialogs` |                         | skips all message dialogs                                                                                  |           no            |
 | `-timeout`            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
 | `‑tray`               |                         | launches the application to the system tray                                                                |           yes           |
