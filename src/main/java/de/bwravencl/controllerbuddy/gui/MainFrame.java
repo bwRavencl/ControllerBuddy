@@ -1828,18 +1828,21 @@ public final class MainFrame extends JFrame {
 	/// `KeyEvent.VK_UNDEFINED` if none is found
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
 			final Set<Integer> alreadyAssignedKeyCodes) {
-		var keyCode = KeyEvent.VK_UNDEFINED;
-
 		final var text = button.getText();
-		if (text != null && !text.isEmpty()) {
-			var index = 0;
-			do {
-				keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(index));
-				index++;
-			} while (keyCode != KeyEvent.VK_UNDEFINED && !alreadyAssignedKeyCodes.add(keyCode));
+		if (text != null) {
+			for (var index = 0; index < text.length(); index++) {
+				final var keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(index));
+				if (keyCode == KeyEvent.VK_UNDEFINED) {
+					break;
+				}
+
+				if (alreadyAssignedKeyCodes.add(keyCode)) {
+					return keyCode;
+				}
+			}
 		}
 
-		return keyCode;
+		return KeyEvent.VK_UNDEFINED;
 	}
 
 	/// Returns the hardcoded mnemonic key code for a known menu-item action.
