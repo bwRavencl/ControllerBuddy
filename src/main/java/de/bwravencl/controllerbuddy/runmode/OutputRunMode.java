@@ -1108,12 +1108,12 @@ public abstract class OutputRunMode extends RunMode {
 					doKeyboardInput(scancode, false);
 				}
 
-				for (final var scancode : offLockKeys) {
-					setLockKeyState(scancode, false);
+				for (final var lockKey : offLockKeys) {
+					setLockKeyState(lockKey, false);
 				}
 
-				for (final var scancode : onLockKeys) {
-					setLockKeyState(scancode, true);
+				for (final var lockKey : onLockKeys) {
+					setLockKeyState(lockKey, true);
 				}
 
 				for (final var scancode : newDownModifiers) {
