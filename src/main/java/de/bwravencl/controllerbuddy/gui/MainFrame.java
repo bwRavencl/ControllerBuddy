@@ -6027,8 +6027,9 @@ public final class MainFrame extends JFrame {
 		private void resetSelectedFile() {
 			var profileDirectoryPath = "";
 
-			if (currentFile != null && currentFile.getParentFile().isDirectory()) {
-				profileDirectoryPath = currentFile.getAbsolutePath();
+			final var currentDirectory = currentFile != null ? currentFile.getAbsoluteFile().getParentFile() : null;
+			if (currentDirectory != null && currentDirectory.isDirectory()) {
+				profileDirectoryPath = currentDirectory.getAbsolutePath();
 			} else {
 				final var controllerBuddyProfilesDir = System.getenv("CONTROLLER_BUDDY_PROFILES_DIR");
 
