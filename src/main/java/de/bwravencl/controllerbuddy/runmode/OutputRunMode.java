@@ -396,7 +396,7 @@ public abstract class OutputRunMode extends RunMode {
 					if (remainingNanos > 0L) {
 						try {
 							TimeUnit.NANOSECONDS.sleep(remainingNanos);
-						} catch (final InterruptedException _) {
+						} catch (InterruptedException _) {
 							Thread.currentThread().interrupt();
 						}
 					}
