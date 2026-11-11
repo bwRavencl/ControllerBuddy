@@ -30,9 +30,9 @@ import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [Color] instances.
 ///
-/// Supports deserializing from either a JSON number (interpreted as an RGBA
+/// Supports deserializing from either a JSON number (interpreted as an ARGB
 /// integer) or a JSON object with a `value` member. Serializes a [Color] as its
-/// RGB integer representation.
+/// ARGB integer representation, including the alpha component.
 public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 
 	@Override
