@@ -226,8 +226,8 @@ final class GuiUtilsTest {
 		private @Nullable Unsafe unsafe;
 
 		@Test
-		@DisplayName("computes position from normalised coordinates stored in preferences")
-		void computesPositionFromNormalisedCoordinates() {
+		@DisplayName("computes position from normalized coordinates stored in preferences")
+		void computesPositionFromNormalizedCoordinates() {
 			// title "Main" → key "main_location"
 			Mockito.when(mockFrame.getTitle()).thenReturn("Main");
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("0.5,0.5");

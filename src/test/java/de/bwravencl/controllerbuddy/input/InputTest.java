@@ -130,7 +130,7 @@ final class InputTest {
 	final class ConstructorTests {
 
 		@Test
-		@DisplayName("initialises all VirtualAxis entries to 0 when no axes map is provided")
+		@DisplayName("initializes all VirtualAxis entries to 0 when no axes map is provided")
 		void initializesAllAxesToZeroWhenAxesIsNull() {
 			final var axes = createInput().getAxes();
 
@@ -265,7 +265,7 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("throws IllegalStateException when called on an already-initialised Input")
+		@DisplayName("throws IllegalStateException when called on an already-initialized Input")
 		void throwsWhenCalledWhileAlreadyInitialized() throws Exception {
 			final var input = createInput();
 			final var initializedField = Input.class.getDeclaredField("initialized");

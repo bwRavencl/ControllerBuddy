@@ -78,8 +78,8 @@ final class ProfileTypeAdapterFactoryTest {
 		}
 
 		@Test
-		@DisplayName("throws JsonParseException for an unrecognised enum value")
-		void throwsForUnrecognisedValue() {
+		@DisplayName("throws JsonParseException for an unrecognized enum value")
+		void throwsForUnrecognizedValue() {
 			final var gson = createGson();
 			Assertions.assertThrows(JsonParseException.class, () -> gson.fromJson("\"BOGUS_VALUE\"", Activation.class));
 		}
