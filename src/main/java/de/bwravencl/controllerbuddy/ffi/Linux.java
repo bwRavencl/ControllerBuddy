@@ -524,15 +524,14 @@ public final class Linux {
 		private static final String FF_EFFECTS_MAX_NAME = "ff_effects_max";
 
 		/// Field name for the embedded `input_id` struct.
-		private static final String INPUT_ID_NAME = " input_id";
+		private static final String INPUT_ID_NAME = "input_id";
 
 		/// Field name for the device name array.
 		private static final String NAME_NAME = "name";
 
 		/// Memory layout of the Linux `uinput_setup` struct.
 		public static final GroupLayout LAYOUT = MemoryLayout.structLayout(input_id.LAYOUT.withName(INPUT_ID_NAME),
-				MemoryLayout.sequenceLayout(UINPUT_MAX_NAME_SIZE, ValueLayout.JAVA_BYTE).withName(NAME_NAME)
-						.withName(NAME_NAME),
+				MemoryLayout.sequenceLayout(UINPUT_MAX_NAME_SIZE, ValueLayout.JAVA_BYTE).withName(NAME_NAME),
 				ValueLayout.JAVA_INT.withName(FF_EFFECTS_MAX_NAME));
 
 		/// Prevents instantiation.
