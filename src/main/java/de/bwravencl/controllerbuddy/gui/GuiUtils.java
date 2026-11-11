@@ -506,14 +506,19 @@ public final class GuiUtils {
 	/// Sets the frame's location, clamping it so the frame stays fully within the
 	/// given display bounds.
 	///
+	/// If the frame is larger than the display bounds in a dimension, it is aligned
+	/// with the origin of the display bounds in that dimension.
+	///
 	/// @param frame the frame to position
 	/// @param location the desired location, modified in place to satisfy the
 	/// bounds constraint
 	/// @param totalDisplayBounds the bounding rectangle of all displays
 	static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
 			final Rectangle totalDisplayBounds) {
-		location.x = Math.clamp(location.x, totalDisplayBounds.x, totalDisplayBounds.width - frame.getWidth());
-		location.y = Math.clamp(location.y, totalDisplayBounds.y, totalDisplayBounds.height - frame.getHeight());
+		location.x = Math.clamp(location.x, totalDisplayBounds.x,
+				Math.max(totalDisplayBounds.x, totalDisplayBounds.width - frame.getWidth()));
+		location.y = Math.clamp(location.y, totalDisplayBounds.y,
+				Math.max(totalDisplayBounds.y, totalDisplayBounds.height - frame.getHeight()));
 		frame.setLocation(location);
 	}
 

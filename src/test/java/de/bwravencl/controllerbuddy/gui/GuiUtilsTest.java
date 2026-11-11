@@ -457,6 +457,18 @@ final class GuiUtilsTest {
 		}
 
 		@Test
+		@DisplayName("aligns a frame larger than the bounds with the bounds origin")
+		void alignsOversizedFrameWithBoundsOrigin() throws ReflectiveOperationException {
+			final var oversizedFrame = Mockito.mock(Frame.class);
+			Mockito.when(oversizedFrame.getWidth()).thenReturn(3000);
+			Mockito.when(oversizedFrame.getHeight()).thenReturn(2000);
+			final var location = new Point(500, 400);
+			invokeSetFrameLocationRespectingBounds(oversizedFrame, location, bounds);
+			Assertions.assertEquals(0, location.x);
+			Assertions.assertEquals(0, location.y);
+		}
+
+		@Test
 		@DisplayName("leaves a location that is already within bounds unchanged")
 		void leavesInBoundsLocationUnchanged() throws ReflectiveOperationException {
 			final var location = new Point(500, 400);
@@ -481,8 +493,8 @@ final class GuiUtilsTest {
 
 		@BeforeEach
 		void setUp() {
-			Mockito.when(mockFrame.getWidth()).thenReturn(200);
-			Mockito.when(mockFrame.getHeight()).thenReturn(100);
+			Mockito.lenient().when(mockFrame.getWidth()).thenReturn(200);
+			Mockito.lenient().when(mockFrame.getHeight()).thenReturn(100);
 		}
 	}
 
