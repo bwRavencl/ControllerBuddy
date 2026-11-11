@@ -75,12 +75,11 @@ final class SVGPanel extends JPanel {
 	private static final Point zoomCursorHotSpot = new Point(11, 11);
 
 	static {
-		final var inputStream = SVGPanel.class.getResourceAsStream(ZOOM_GIF_RESOURCE_PATH);
-		if (inputStream == null) {
-			throw new RuntimeException("Resource not found: " + ZOOM_GIF_RESOURCE_PATH);
-		}
+		try (final var inputStream = SVGPanel.class.getResourceAsStream(ZOOM_GIF_RESOURCE_PATH)) {
+			if (inputStream == null) {
+				throw new RuntimeException("Resource not found: " + ZOOM_GIF_RESOURCE_PATH);
+			}
 
-		try {
 			final var bufferedImage = ImageIO.read(inputStream);
 
 			ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, zoomCursorHotSpot, "zoom");

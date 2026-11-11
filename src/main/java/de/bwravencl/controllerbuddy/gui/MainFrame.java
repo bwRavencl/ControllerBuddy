@@ -1623,12 +1623,12 @@ public final class MainFrame extends JFrame {
 
 		String errorDetails;
 		try {
-			final var inputStream = ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME);
-			if (inputStream == null) {
-				throw new IllegalStateException("Could not open resource: " + GAME_CONTROLLER_DATABASE_FILENAME);
-			}
 			final var tempFilePath = Files.createTempFile(GAME_CONTROLLER_DATABASE_FILENAME, null);
-			try {
+			try (final var inputStream = ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME)) {
+				if (inputStream == null) {
+					throw new IllegalStateException("Could not open resource: " + GAME_CONTROLLER_DATABASE_FILENAME);
+				}
+
 				Files.copy(inputStream, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
 				errorDetails = updateGameControllerMappings(tempFilePath.toString(),
 						"internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
@@ -3132,12 +3132,11 @@ public final class MainFrame extends JFrame {
 		initDocumentBuilder();
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 
-		final var inputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
-		if (inputStream == null) {
-			throw new RuntimeException("Resource not found: " + CONTROLLER_SVG_FILENAME);
-		}
+		try (final var inputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME)) {
+			if (inputStream == null) {
+				throw new RuntimeException("Resource not found: " + CONTROLLER_SVG_FILENAME);
+			}
 
-		try {
 			templateSvgDocument = documentBuilder.parse(inputStream);
 		} catch (final IOException | SAXException e) {
 			throw new RuntimeException(e);

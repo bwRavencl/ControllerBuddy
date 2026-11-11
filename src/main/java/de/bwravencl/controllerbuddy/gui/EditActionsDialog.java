@@ -240,12 +240,11 @@ public final class EditActionsDialog extends JDialog {
 		CYCLE_ACTION_CLASSES = Collections.unmodifiableList(mutableCycleActionClasses);
 		ON_SCREEN_KEYBOARD_ACTION_CLASSES = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
 
-		final var inputStream = EditActionsDialog.class.getResourceAsStream(HELP_GIF_RESOURCE_PATH);
-		if (inputStream == null) {
-			throw new RuntimeException("Resource not found: " + HELP_GIF_RESOURCE_PATH);
-		}
+		try (final var inputStream = EditActionsDialog.class.getResourceAsStream(HELP_GIF_RESOURCE_PATH)) {
+			if (inputStream == null) {
+				throw new RuntimeException("Resource not found: " + HELP_GIF_RESOURCE_PATH);
+			}
 
-		try {
 			final var bufferedImage = ImageIO.read(inputStream);
 
 			HELP_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, helpCursorHotSpot, "help");
