@@ -1254,7 +1254,7 @@ public final class EditActionsDialog extends JDialog {
 		/// The label displaying the title text.
 		private final JLabel titleLabel;
 
-		/// Constructs a [IconLabel] with the specified icon, title, and optional title
+		/// Constructs an [IconLabel] with the specified icon, title, and optional title
 		/// label.
 		///
 		/// If `titleLabel` is `null`, a new [JLabel] is created. The panel uses a

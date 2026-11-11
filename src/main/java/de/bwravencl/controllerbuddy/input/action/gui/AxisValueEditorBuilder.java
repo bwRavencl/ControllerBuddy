@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// maximum bound methods.
 public class AxisValueEditorBuilder extends NumberEditorBuilder<Float> {
 
-	/// Constructs a [AxisValueEditorBuilder] for the specified action property.
+	/// Constructs an [AxisValueEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose axis value property is being edited

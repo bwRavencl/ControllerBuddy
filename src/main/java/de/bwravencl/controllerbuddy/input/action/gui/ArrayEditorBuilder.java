@@ -87,7 +87,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = 1938012378184518954L;
 
-		/// Constructs an [JComboBoxSetPropertyAction] with the target action and its
+		/// Constructs a [JComboBoxSetPropertyAction] with the target action and its
 		/// property setter method.
 		///
 		/// @param action the action whose property is updated on selection

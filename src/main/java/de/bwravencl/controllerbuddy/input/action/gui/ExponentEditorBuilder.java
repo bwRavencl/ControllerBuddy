@@ -40,7 +40,7 @@ import javax.swing.UIManager;
 /// response curves on axis input.
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
-	/// Constructs a [ExponentEditorBuilder] for the specified action property.
+	/// Constructs an [ExponentEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose exponent property is being edited
