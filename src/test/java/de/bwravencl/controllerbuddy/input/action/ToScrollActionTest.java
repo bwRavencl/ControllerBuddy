@@ -62,6 +62,14 @@ final class ToScrollActionTest {
 		}
 
 		@Test
+		@DisplayName("adds scroll clicks to already pending scroll clicks")
+		void addsToPendingScrollClicks() {
+			Mockito.when(mockInput.getScrollClicks()).thenReturn(2);
+			action.scroll(mockInput, 3f);
+			Mockito.verify(mockInput).setScrollClicks(5);
+		}
+
+		@Test
 		@DisplayName("inverts scroll direction when invert is true")
 		void invertsDirection() {
 			action.setInvert(true);
