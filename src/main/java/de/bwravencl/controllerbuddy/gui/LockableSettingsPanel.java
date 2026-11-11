@@ -289,7 +289,7 @@ final class LockableSettingsPanel extends JPanel {
 
 		contentLayer = new JLayer<>(layerContainer, layerUI);
 
-		resizeSettleTimer = new Timer(RESIZE_SETTLE_DELAY_MS, (final var _) -> {
+		resizeSettleTimer = new Timer(RESIZE_SETTLE_DELAY_MS, _ -> {
 			resizing = false;
 			if (!isEnabled()) {
 				repaint();

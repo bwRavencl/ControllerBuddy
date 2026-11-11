@@ -56,7 +56,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -538,7 +537,7 @@ public abstract class OutputRunMode extends RunMode {
 				.flatMap(action -> action instanceof final ButtonToCycleAction buttonToCycleAction
 						? buttonToCycleAction.getActions().stream()
 						: Stream.of(action))
-				.mapMultiToInt((final Object action, final IntConsumer downstream) -> {
+				.mapMultiToInt((action, downstream) -> {
 					if (action instanceof final ToButtonAction<?> toButtonAction) {
 						downstream.accept(toButtonAction.getButtonId());
 					}

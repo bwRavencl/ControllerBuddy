@@ -337,7 +337,7 @@ class OverlayFrame extends JFrame {
 			}
 
 			newOverlay.surfacePanel.setBorder(getRootPane().getBorder());
-			rootBorderMirror = (final var event) -> newOverlay.surfacePanel.setBorder((Border) event.getNewValue());
+			rootBorderMirror = event -> newOverlay.surfacePanel.setBorder((Border) event.getNewValue());
 			getRootPane().addPropertyChangeListener("border", rootBorderMirror);
 
 			super.setBounds(newOverlay.bounds.x, newOverlay.bounds.y, newOverlay.bounds.width,
@@ -1744,7 +1744,7 @@ class OverlayFrame extends JFrame {
 					return;
 				}
 
-				buffers.removeIf((final var buffer) -> {
+				buffers.removeIf(buffer -> {
 					final var unusable = !buffer.busy && (buffer.width != width || buffer.height != height);
 					if (unusable) {
 						buffer.destroy();
