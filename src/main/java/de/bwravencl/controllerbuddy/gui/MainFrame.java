@@ -3371,6 +3371,10 @@ public final class MainFrame extends JFrame {
 
 			try {
 				final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
+				if (profile == null) {
+					throw new JsonParseException("Profile file is empty");
+				}
+
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
 					logger.warning("Trying to load a profile without version information");
