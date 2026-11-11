@@ -1928,13 +1928,22 @@ class OverlayFrame extends JFrame {
 
 					final var fd = createMemfd(size);
 					try {
-						memory = map(fd, size);
-						final var pool = Wayland.create(shm, Wayland.WL_SHM_CREATE_POOL, Wayland.WL_SHM_POOL_INTERFACE,
-								Wayland.M_PII, MemorySegment.NULL, fd, (int) size);
-						wlBuffer = Wayland.create(pool, Wayland.WL_SHM_POOL_CREATE_BUFFER, Wayland.WL_BUFFER_INTERFACE,
-								Wayland.M_PIIIII, MemorySegment.NULL, 0, width, height, stride,
-								Wayland.WL_SHM_FORMAT_ARGB8888);
-						Wayland.destroy(pool, Wayland.WL_SHM_POOL_DESTROY);
+						final var mapping = map(fd, size);
+						try {
+							final var pool = Wayland.create(shm, Wayland.WL_SHM_CREATE_POOL,
+									Wayland.WL_SHM_POOL_INTERFACE, Wayland.M_PII, MemorySegment.NULL, fd, (int) size);
+							try {
+								wlBuffer = Wayland.create(pool, Wayland.WL_SHM_POOL_CREATE_BUFFER,
+										Wayland.WL_BUFFER_INTERFACE, Wayland.M_PIIIII, MemorySegment.NULL, 0, width,
+										height, stride, Wayland.WL_SHM_FORMAT_ARGB8888);
+							} finally {
+								Wayland.destroy(pool, Wayland.WL_SHM_POOL_DESTROY);
+							}
+						} catch (final RuntimeException e) {
+							Linux.munmap(mapping, size);
+							throw e;
+						}
+						memory = mapping;
 						Wayland.wl_proxy_add_listener(wlBuffer, listener, MemorySegment.NULL);
 					} finally {
 						Linux.close(fd);
