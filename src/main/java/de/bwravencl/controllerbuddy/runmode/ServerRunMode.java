@@ -376,9 +376,11 @@ public final class ServerRunMode extends RunMode {
 							input.reset();
 							input.deInit();
 
-							mainFrame.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
-							mainFrame.scheduleStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
+							EventQueue.invokeLater(() -> {
+								mainFrame.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
+								mainFrame.scheduleStatusBarText(
+										MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
+							});
 
 							serverState = ServerState.LISTENING;
 						}
