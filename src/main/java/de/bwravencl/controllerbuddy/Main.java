@@ -514,7 +514,7 @@ public final class Main {
 				GuiUtils.skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
 				final var mainLoop = new MainLoop();
-				Main.mainLoop = new MainLoop();
+				Main.mainLoop = mainLoop;
 
 				EventQueue.invokeLater(() -> {
 					Runtime.getRuntime().addShutdownHook(new Thread(() -> {
