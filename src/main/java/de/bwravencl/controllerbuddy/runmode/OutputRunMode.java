@@ -422,9 +422,13 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// Sends a keyboard key press or release event for the given scancode.
 	///
-	/// On Windows this uses `SendInput` with the scancode, flagging keys whose scan
-	/// code has an 0xE0 prefix as extended keys; on Linux it emits the
+	/// On Windows this uses `SendInput` with the scancode; on Linux it emits the
 	/// corresponding uinput event to the keyboard device.
+	///
+	/// On Windows, keys whose scan code has an 0xE0 prefix must be flagged as
+	/// extended keys. These are derived from the DirectInput key code: all keys
+	/// with the high bit set are extended, except Pause (0xE1 prefix) and the NEC
+	/// PC-98 numpad equals key (no 0xE0 prefix).
 	///
 	/// @param scancode the scancode of the key to press or release
 	/// @param down `true` to press the key, `false` to release it
@@ -438,11 +442,6 @@ public abstract class OutputRunMode extends RunMode {
 				final var keyCode = scancode.keyCode();
 				INPUT.KEYBDINPUT.setWScan(ki, (short) keyCode);
 				var flags = (down ? 0 : INPUT.KEYBDINPUT.KEYEVENTF_KEYUP) | INPUT.KEYBDINPUT.KEYEVENTF_SCANCODE;
-
-				// DirectInput key codes with the high bit set correspond to scan codes with an
-				// 0xE0 prefix, which must be sent as extended keys. The only exceptions are
-				// Pause, whose scan code uses an 0xE1 prefix, and the NEC PC-98 numpad equals
-				// key, which has no 0xE0 prefixed scan code.
 				final var name = scancode.name();
 				if ((keyCode & 0x80) != 0 && !Scancode.DIK_PAUSE.equals(name)
 						&& !Scancode.DIK_NUMPADEQUALS.equals(name)) {
