@@ -91,8 +91,8 @@ public abstract class EditorBuilder {
 
 	/// Called after a new value has been applied to the action property.
 	///
-	/// The default implementation is empty; subclasses may override to react to the
-	/// change.
+	/// The default implementation updates the layout of the assigned actions list;
+	/// subclasses may override to additionally react to the change.
 	void onNewValueSet() {
 		editActionsDialog.updateAssignedActionsListLayout();
 	}
