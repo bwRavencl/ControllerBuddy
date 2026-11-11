@@ -59,6 +59,7 @@ public record LockKey(String name, int virtualKeyCode, Event event, String sysfs
 	/// Map from AWT virtual key code to the corresponding lock key instance.
 	public static final Map<Integer, LockKey> VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP;
 
+	/// Display name for the Scroll Lock key.
 	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
 
 	/// Lock key instance for Scroll Lock.
