@@ -25,6 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
 import org.jspecify.annotations.Nullable;
@@ -43,6 +44,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 	private static final boolean DEFAULT_ON = true;
 
 	/// Delay in milliseconds before this action becomes active.
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether the lock key is switched to the on state by this action.
