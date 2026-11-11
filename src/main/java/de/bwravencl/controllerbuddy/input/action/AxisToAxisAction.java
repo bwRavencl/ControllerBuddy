@@ -96,18 +96,21 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		if (absValue <= deadZone) {
 			value = 0f;
 		} else {
+			final float inMin;
 			final float inMax;
 			if (exponent == 1f) {
+				inMin = deadZone;
 				inMax = 1f;
 			} else {
+				inMin = 0f;
 				inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 				value = Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent);
 			}
 
 			if (value >= 0f) {
-				value = Input.normalize(value, deadZone, inMax, 0f, maxValue);
+				value = Input.normalize(value, inMin, inMax, 0f, maxValue);
 			} else {
-				value = Input.normalize(value, -inMax, -deadZone, minValue, 0f);
+				value = Input.normalize(value, -inMax, -inMin, minValue, 0f);
 			}
 		}
 

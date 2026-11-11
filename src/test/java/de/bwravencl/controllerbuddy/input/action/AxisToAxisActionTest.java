@@ -78,6 +78,23 @@ final class AxisToAxisActionTest {
 		}
 
 		@Test
+		@DisplayName("exponent curve maps values just beyond the dead zone close to zero with the correct sign")
+		void exponentCurveStartsAtZeroBeyondDeadZone() {
+			action.setDeadZone(0.3f);
+			action.setExponent(0.5f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.31f, null);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -0.31f, null);
+
+			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
+			Mockito.verify(mockInput, Mockito.times(2)).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(),
+					Mockito.eq(false), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
+			// (0.01 * 100)^0.5 / (0.7 * 100)^0.5 = 1 / sqrt(70)
+			final var expected = (float) (1d / Math.sqrt(70d));
+			Assertions.assertEquals(expected, valueCaptor.getAllValues().get(0), 0.001f);
+			Assertions.assertEquals(-expected, valueCaptor.getAllValues().get(1), 0.001f);
+		}
+
+		@Test
 		@DisplayName("full negative input with defaults produces minValue (-1.0)")
 		void fullNegativeInputProducesMinValue() {
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -1f, null);
