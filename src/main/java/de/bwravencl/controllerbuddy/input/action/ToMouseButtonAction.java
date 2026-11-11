@@ -41,7 +41,7 @@ public abstract class ToMouseButtonAction<V extends Constable> extends Activatio
 	/// Current activatable state tracking whether the action may fire.
 	private transient @Nullable Activatable activatable;
 
-	/// Delay in milliseconds before repeated activation triggers.
+	/// Delay in milliseconds before this action becomes active.
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
