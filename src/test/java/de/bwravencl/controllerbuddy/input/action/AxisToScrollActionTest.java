@@ -96,6 +96,22 @@ final class AxisToScrollActionTest {
 		}
 
 		@Test
+		@DisplayName("scrolls the full number of clicks per second at maximum deflection")
+		void scrollsFullClicksAtMaximumDeflection() {
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -1f, null);
+			Mockito.verify(mockInput).setScrollClicks(action.getClicks());
+		}
+
+		@Test
+		@DisplayName("scrolls only a fraction of a click just beyond the dead zone")
+		void scrollsFractionJustBeyondDeadZone() {
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, -0.11f, null);
+			Mockito.verify(mockInput, Mockito.never()).setScrollClicks(Mockito.anyInt());
+		}
+
+		@Test
 		@DisplayName("scrolls when value exceeds dead zone")
 		void scrollsAboveDeadZone() {
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);

@@ -50,13 +50,14 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 	@Override
 	public void doAction(final Input input, final int component, final Float value,
 			final @Nullable ControllerState controllerState) {
-		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
-			final var rateMultiplier = input.getRateMultiplier();
+		final var absValue = Math.abs(value);
+
+		if (!input.isAxisSuspended(component) && absValue > deadZone) {
+			final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
 			final var d = -Input.normalize(
-					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
-					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
-					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
+					Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent), -inMax, inMax,
+					-clicks, clicks) * input.getRateMultiplier();
 
 			scroll(input, d);
 		} else {
