@@ -39,10 +39,8 @@ public final class VersionUtils {
 	///
 	/// @param otherVersion the version string to compare
 	/// @return `-1` if older, `0` if equal, `1` if newer, or empty if the version
-	/// is invalid
-	/// @throws IllegalArgumentException if the version string cannot be parsed
-	public static Optional<Integer> compareVersions(final @Nullable String otherVersion)
-			throws IllegalArgumentException {
+	/// is `null` or cannot be parsed
+	public static Optional<Integer> compareVersions(final @Nullable String otherVersion) {
 		if (otherVersion == null) {
 			return Optional.empty();
 		}
