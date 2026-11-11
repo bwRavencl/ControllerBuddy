@@ -111,7 +111,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -1871,20 +1870,6 @@ public final class MainFrame extends JFrame {
 		case final StopAction _ -> KeyEvent.VK_T;
 		default -> KeyEvent.VK_UNDEFINED;
 		};
-	}
-
-	/// Returns the URL of a classpath resource by its path.
-	///
-	/// @param resourcePath the path of the resource relative to the classpath
-	/// @return the [URL] of the resource
-	/// @throws RuntimeException if no resource is found at the given path
-	static URL getResourceLocation(final String resourcePath) {
-		final var resourceLocation = MainFrame.class.getResource(resourcePath);
-		if (resourceLocation == null) {
-			throw new RuntimeException("Resource not found: " + resourcePath);
-		}
-
-		return resourceLocation;
 	}
 
 	/// Inserts a button tray entry at the end of the given SDL tray menu and wires
@@ -4120,7 +4105,7 @@ public final class MainFrame extends JFrame {
 	/// Shows a modal dialog containing application name, version, build timestamp,
 	/// OS details, and copyright year.
 	private void showAboutDialog() {
-		final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS.get(2)));
+		final var imageIcon = new ImageIcon(Main.getResourceLocation(Main.ICON_RESOURCE_PATHS.get(2)));
 
 		final var buildDateTime = Instant.ofEpochMilli(Constants.BUILD_TIMESTAMP).atZone(ZoneId.systemDefault());
 
@@ -4161,7 +4146,7 @@ public final class MainFrame extends JFrame {
 			return;
 		}
 
-		final var imageLabel = new JLabel(new ImageIcon(getResourceLocation(TRAY_ICON_HINT_IMAGE_RESOURCE_PATH)));
+		final var imageLabel = new JLabel(new ImageIcon(Main.getResourceLocation(TRAY_ICON_HINT_IMAGE_RESOURCE_PATH)));
 		imageLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 25, 10),
 				BorderFactory.createLoweredBevelBorder()));
 
