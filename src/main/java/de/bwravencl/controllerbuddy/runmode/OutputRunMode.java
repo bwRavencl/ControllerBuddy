@@ -604,11 +604,13 @@ public abstract class OutputRunMode extends RunMode {
 				final var dllVersion = arena.allocate(Short.BYTES);
 				final var drvVersion = arena.allocate(Short.BYTES);
 				if (!VjoyInterface.DriverMatch(dllVersion, drvVersion)) {
-					logger.warning("vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
+					final var dllVersionValue = dllVersion.get(ValueLayout.JAVA_SHORT, 0L);
+					final var drvVersionValue = drvVersion.get(ValueLayout.JAVA_SHORT, 0L);
+					logger.warning("vJoy DLL version " + dllVersionValue + " does not match driver version "
+							+ drvVersionValue);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 							MessageFormat.format(Main.strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
-									dllVersion.get(ValueLayout.JAVA_SHORT, 0L),
-									drvVersion.get(ValueLayout.JAVA_SHORT, 0L)),
+									dllVersionValue, drvVersionValue),
 							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
 					return false;
 				}
