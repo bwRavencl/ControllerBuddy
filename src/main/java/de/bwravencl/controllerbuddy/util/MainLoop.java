@@ -262,19 +262,25 @@ public final class MainLoop {
 	/// terminate.
 	///
 	/// Disables SDL event polling, interrupts the loop thread, and spins until the
-	/// thread has fully stopped.
+	/// thread has fully stopped. An interrupt of the calling thread does not abort
+	/// the wait and is restored on return.
 	public void shutdown() {
 		pollSdlEvents = false;
 
 		thread.interrupt();
 
+		var interrupted = false;
 		while (thread.isAlive()) {
 			try {
 				// noinspection BusyWait
 				Thread.sleep(10L);
 			} catch (InterruptedException _) {
-				Thread.currentThread().interrupt();
+				interrupted = true;
 			}
+		}
+
+		if (interrupted) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -291,14 +297,22 @@ public final class MainLoop {
 
 	/// Blocks the calling thread until all queued tasks and the currently executing
 	/// task have completed.
+	///
+	/// An interrupt of the calling thread does not abort the wait and is restored
+	/// on return.
 	public void waitForTask() {
+		var interrupted = false;
 		while (currentTaskQueueEntry != null || !taskQueue.isEmpty()) {
 			try {
 				// noinspection BusyWait
 				Thread.sleep(10L);
 			} catch (InterruptedException _) {
-				Thread.currentThread().interrupt();
+				interrupted = true;
 			}
+		}
+
+		if (interrupted) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
