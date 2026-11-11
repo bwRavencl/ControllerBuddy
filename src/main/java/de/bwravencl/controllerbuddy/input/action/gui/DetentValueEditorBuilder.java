@@ -75,8 +75,6 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 				Objects.requireNonNull(spinner, "Field spinner must not be null");
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 
-				spinner.setEnabled(selected);
-
 				final Float value;
 				if (selected) {
 					value = roundFloat((Float) spinner.getValue());
