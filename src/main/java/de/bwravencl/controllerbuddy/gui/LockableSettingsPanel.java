@@ -65,7 +65,7 @@ import org.jspecify.annotations.Nullable;
 final class LockableSettingsPanel extends JPanel {
 
 	/// Alpha channel value of the stop-execution hint background.
-	public static final int HINT_BACKGROUND_ALPHA = 164;
+	private static final int HINT_BACKGROUND_ALPHA = 164;
 
 	/// Font size, in points, used for the stop-execution hint text.
 	private static final float HINT_FONT_SIZE = 16f;
