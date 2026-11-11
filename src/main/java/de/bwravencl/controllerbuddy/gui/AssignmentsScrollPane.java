@@ -740,7 +740,6 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// The cached hit and paint shape for this button.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-
 		private @Nullable Shape shape;
 
 		/// Whether this button can display a swap indicator when sticks are swapped.
