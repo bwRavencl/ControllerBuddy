@@ -108,15 +108,19 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 
 	/// Fires the sub-action at the current cycle index and advances the index.
 	///
-	/// After invoking the sub-action, resets the `wasUp` state if it is a
-	/// [ButtonToLockKeyAction], then increments the index, and wraps it back to
-	/// zero after the last sub-action.
+	/// Does nothing if the cycle has no sub-actions. After invoking the sub-action,
+	/// resets the `wasUp` state if it is a [ButtonToLockKeyAction], then increments
+	/// the index, and wraps it back to zero after the last sub-action.
 	///
 	/// @param input the input instance
 	/// @param component the button component index
 	/// @param controllerState the current gamepad state
 	private void doActionAndAdvanceIndex(final Input input, final int component,
 			final @Nullable ControllerState controllerState) {
+		if (actions.isEmpty()) {
+			return;
+		}
+
 		final var action = actions.get(index);
 
 		action.doAction(input, component, true, controllerState);

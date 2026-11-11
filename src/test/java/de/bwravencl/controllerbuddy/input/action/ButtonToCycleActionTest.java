@@ -93,6 +93,14 @@ final class ButtonToCycleActionTest {
 		}
 
 		@Test
+		@DisplayName("does nothing on press transition when there are no actions")
+		void doesNothingWithoutActions() {
+			cycleAction.setActions(new ArrayList<>());
+			Assertions.assertDoesNotThrow(
+					() -> cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null));
+		}
+
+		@Test
 		@DisplayName("executes the current action on press transition and advances the index")
 		void executesOnPressTransition() {
 			cycleAction.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, true, null);
