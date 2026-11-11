@@ -33,9 +33,8 @@ import javax.swing.JPanel;
 /// a nested [EditActionsDialog] for editing the actions within a
 /// [ButtonToCycleAction].
 ///
-/// The button label shows the current number of sub-actions. Clicking it opens
-/// the nested dialog, allowing the user to add, remove, and reorder the
-/// sub-actions of a cycle action.
+/// Clicking the button opens the nested dialog, allowing the user to add and
+/// remove the sub-actions of a cycle action.
 public final class ActionsEditorBuilder extends EditorBuilder {
 
 	/// Constructs an [ActionsEditorBuilder] for the specified action property.
