@@ -92,8 +92,9 @@ public final class UinputDevice implements Closeable {
 	/// @param deviceType the type of virtual device to create
 	/// @throws IOException if the uinput device cannot be opened or created
 	private UinputDevice(final DeviceType deviceType) throws IOException {
-		if (deviceType.name.getBytes(StandardCharsets.UTF_8).length > Linux.UINPUT_MAX_NAME_SIZE) {
-			throw new IllegalArgumentException("Parameter name has more than " + Linux.UINPUT_MAX_NAME_SIZE + " bytes");
+		if (deviceType.name.getBytes(StandardCharsets.UTF_8).length >= Linux.UINPUT_MAX_NAME_SIZE) {
+			throw new IllegalArgumentException(
+					"Parameter name must have less than " + Linux.UINPUT_MAX_NAME_SIZE + " bytes");
 		}
 
 		name = deviceType.name;
