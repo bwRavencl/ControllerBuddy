@@ -43,13 +43,12 @@ public interface IAction<V extends Constable> extends Cloneable {
 		return getLabel(action.getClass());
 	}
 
-	/// Returns the localized label for the given action class, based on its
-	/// [Action] annotation. The label is prefixed with the action's UTF-8 icon
-	/// character.
+	/// Returns the localized label for the given action class, based on the title
+	/// of its [Action] annotation.
 	///
 	/// @param actionClass the action class to retrieve the label for
-	/// @return the localized label string, prefixed with the action's icon
-	/// @throws RuntimeException if the class is missing, the [Action] annotation
+	/// @return the localized label string
+	/// @throws RuntimeException if the class is missing the [Action] annotation
 	static String getLabel(final Class<?> actionClass) {
 		final var annotation = actionClass.getAnnotation(Action.class);
 		if (annotation == null) {
