@@ -160,11 +160,11 @@ public final class EditActionsDialog extends JDialog {
 	private static final long serialVersionUID = 5007388251349678609L;
 
 	static {
-		final List<Class<?>> mutableAxisActionClasses = new ArrayList<>();
-		final List<Class<?>> mutableTriggerActionClasses = new ArrayList<>();
-		final List<Class<?>> mutableButtonActionClasses = new ArrayList<>();
-		final List<Class<?>> mutableCycleActionClasses = new ArrayList<>();
-		final List<Class<?>> mutableOnScreenKeyboardActionClasses = new ArrayList<>();
+		final var mutableAxisActionClasses = new ArrayList<Class<?>>();
+		final var mutableTriggerActionClasses = new ArrayList<Class<?>>();
+		final var mutableButtonActionClasses = new ArrayList<Class<?>>();
+		final var mutableCycleActionClasses = new ArrayList<Class<?>>();
+		final var mutableOnScreenKeyboardActionClasses = new ArrayList<Class<?>>();
 
 		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName())
 				.enableNonSystemModules().enableClassInfo().enableAnnotationInfo().scan(new AbstractExecutorService() {
