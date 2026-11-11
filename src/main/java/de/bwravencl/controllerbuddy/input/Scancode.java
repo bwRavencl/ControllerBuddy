@@ -343,14 +343,19 @@ public record Scancode(String name, int keyCode, Event event) {
 	/// Map from key names to their corresponding scancode instances.
 	public static final Map<String, Scancode> NAME_TO_SCAN_CODE_MAP;
 
+	/// Caps Lock key
 	private static final String DIK_CAPITAL = "CapsLock";
 
+	/// Next track media key
 	private static final String DIK_NEXTTRACK = "Next";
 
+	/// Num Lock key
 	private static final String DIK_NUMLOCK = "NumLock";
 
+	/// Additional key between left Shift and 'Z' on 102-key keyboards
 	private static final String DIK_OEM_102 = "OEM_102";
 
+	/// Scroll Lock key
 	private static final String DIK_SCROLL = "ScrollLock";
 
 	private static final Scancode[] KEY_CODES = { new Scancode(DIK_ESCAPE, 0x1, Event.KEY_ESC),
