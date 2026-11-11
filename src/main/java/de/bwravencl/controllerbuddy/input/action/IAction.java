@@ -72,7 +72,8 @@ public interface IAction<V extends Constable> extends Cloneable {
 	/// @param component the index of the input component triggering this action
 	/// @param value the current value of the input component
 	/// @param controllerState the entire current gamepad state
-	void doAction(final Input input, int component, V value, final @Nullable ControllerState controllerState);
+	void doAction(final Input input, final int component, final V value,
+			final @Nullable ControllerState controllerState);
 
 	/// Returns a human-readable description of this action for display in the UI.
 	///
