@@ -246,7 +246,7 @@ public final class ClientRunMode extends OutputRunMode {
 								MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
 										NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 					}
-				} while (!success && retry > 0 && run);
+				} while (!success && retry > 0 && run && !Thread.currentThread().isInterrupted());
 
 				if (success) {
 					clientState = ClientState.CONNECTED;
@@ -254,7 +254,7 @@ public final class ClientRunMode extends OutputRunMode {
 					EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
 							MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
-					if (retry != -1 && run) {
+					if (retry != -1 && run && !Thread.currentThread().isInterrupted()) {
 						logger.info("Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
 						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
 								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
@@ -444,7 +444,7 @@ public final class ClientRunMode extends OutputRunMode {
 
 				clientSocket.setSoTimeout(timeout);
 
-				while (run) {
+				while (run && !Thread.currentThread().isInterrupted()) {
 					if (readInput()) {
 						writeOutput();
 					}

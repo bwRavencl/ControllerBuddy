@@ -188,7 +188,7 @@ public final class ServerRunMode extends RunMode {
 			EventQueue.invokeLater(() -> mainFrame
 					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
-			for (;;) {
+			while (!Thread.currentThread().isInterrupted()) {
 				process();
 
 				switch (serverState) {
@@ -209,6 +209,10 @@ public final class ServerRunMode extends RunMode {
 							break;
 						} catch (SocketTimeoutException _) {
 							// expected when waiting for a client
+						}
+
+						if ( Thread.currentThread().isInterrupted()) {
+							return;
 						}
 
 						process();
