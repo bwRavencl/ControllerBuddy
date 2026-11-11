@@ -254,7 +254,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		initListSelection(modifierList, keystroke.getModifierCodes());
 		initListSelection(keyList, keystroke.getKeyCodes());
 
-		updateUpdateKeystrokeVisualization();
+		updateKeystrokeVisualization();
 	}
 
 	/// Selects the list items that correspond to the given scancodes and scrolls to
@@ -282,7 +282,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// Clears the visualization panel and repopulates it with labels for the
 	/// currently selected modifier and key scancodes, separated by a "+" label when
 	/// both modifiers and keys are selected.
-	private void updateUpdateKeystrokeVisualization() {
+	private void updateKeystrokeVisualization() {
 		visualizationPanel.removeAll();
 
 		final var selectedModifiersList = modifierList != null ? modifierList.getSelectedValuesList() : List.of();
@@ -684,7 +684,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				setterMethod.invoke(action, keystroke);
 
-				updateUpdateKeystrokeVisualization();
+				updateKeystrokeVisualization();
 				onNewValueSet();
 			} catch (final ReflectiveOperationException e1) {
 				logger.log(Level.SEVERE, e1.getMessage(), e1);
