@@ -946,12 +946,12 @@ public abstract class OutputRunMode extends RunMode {
 			Objects.requireNonNull(brightnessByteBuffer, "Field brightnessByteBuffer must not be null");
 		}
 
-		var writeSucessful = true;
+		var writeSuccessful = true;
 
 		try {
 			if (axisX.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisX.get(), vJoyDevice, VjoyInterface.HID_USAGE_X);
+					writeSuccessful &= VjoyInterface.SetAxis(axisX.get(), vJoyDevice, VjoyInterface.HID_USAGE_X);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_X, axisX.get(), true);
 				} else {
@@ -963,7 +963,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisY.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisY.get(), vJoyDevice, VjoyInterface.HID_USAGE_Y);
+					writeSuccessful &= VjoyInterface.SetAxis(axisY.get(), vJoyDevice, VjoyInterface.HID_USAGE_Y);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_Y, axisY.get(), true);
 				} else {
@@ -975,7 +975,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisZ.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisZ.get(), vJoyDevice, VjoyInterface.HID_USAGE_Z);
+					writeSuccessful &= VjoyInterface.SetAxis(axisZ.get(), vJoyDevice, VjoyInterface.HID_USAGE_Z);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_Z, axisZ.get(), true);
 				} else {
@@ -987,7 +987,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRX.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisRX.get(), vJoyDevice, VjoyInterface.HID_USAGE_RX);
+					writeSuccessful &= VjoyInterface.SetAxis(axisRX.get(), vJoyDevice, VjoyInterface.HID_USAGE_RX);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_RX, axisRX.get(), true);
 				} else {
@@ -999,7 +999,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRY.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisRY.get(), vJoyDevice, VjoyInterface.HID_USAGE_RY);
+					writeSuccessful &= VjoyInterface.SetAxis(axisRY.get(), vJoyDevice, VjoyInterface.HID_USAGE_RY);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_RY, axisRY.get(), true);
 				} else {
@@ -1011,7 +1011,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRZ.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisRZ.get(), vJoyDevice, VjoyInterface.HID_USAGE_RZ);
+					writeSuccessful &= VjoyInterface.SetAxis(axisRZ.get(), vJoyDevice, VjoyInterface.HID_USAGE_RZ);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_RZ, axisRZ.get(), true);
 				} else {
@@ -1023,7 +1023,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisS0.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisS0.get(), vJoyDevice, VjoyInterface.HID_USAGE_SL0);
+					writeSuccessful &= VjoyInterface.SetAxis(axisS0.get(), vJoyDevice, VjoyInterface.HID_USAGE_SL0);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_THROTTLE, axisS0.get(), true);
 				} else {
@@ -1035,7 +1035,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisS1.isChanged()) {
 				if (Main.IS_WINDOWS) {
-					writeSucessful &= VjoyInterface.SetAxis(axisS1.get(), vJoyDevice, VjoyInterface.HID_USAGE_SL1);
+					writeSuccessful &= VjoyInterface.SetAxis(axisS1.get(), vJoyDevice, VjoyInterface.HID_USAGE_SL1);
 				} else if (Main.IS_LINUX) {
 					joystickUinputDevice.emit(Event.ABS_RUDDER, axisS1.get(), true);
 				} else {
@@ -1048,7 +1048,7 @@ public abstract class OutputRunMode extends RunMode {
 			for (var i = 0; i < buttons.length; i++) {
 				if (buttons[i].isChanged()) {
 					if (Main.IS_WINDOWS) {
-						writeSucessful &= VjoyInterface.SetBtn(buttons[i].get() != 0, vJoyDevice, (byte) (i + 1));
+						writeSuccessful &= VjoyInterface.SetBtn(buttons[i].get() != 0, vJoyDevice, (byte) (i + 1));
 					} else if (Main.IS_LINUX) {
 						joystickUinputDevice.emit(Event.joystickButtonEvents[i], buttons[i].get(), true);
 					} else {
@@ -1170,10 +1170,10 @@ public abstract class OutputRunMode extends RunMode {
 			}
 		} catch (final IOException e) {
 			logger.log(Level.WARNING, e.getMessage(), e);
-			writeSucessful = false;
+			writeSuccessful = false;
 		}
 
-		if (!writeSucessful) {
+		if (!writeSuccessful) {
 			final var confirmDialogTask = new FutureTask<>(() -> {
 				final String message;
 				if (Main.IS_WINDOWS) {
