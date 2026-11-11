@@ -342,7 +342,7 @@ class OverlayFrame extends JFrame {
 
 			super.setBounds(newOverlay.bounds.x, newOverlay.bounds.y, newOverlay.bounds.width,
 					newOverlay.bounds.height);
-		} catch (final RuntimeException e) {
+		} catch (final Exception e) {
 			logger.log(Level.WARNING, "Could not open overlay, showing a regular window", e);
 			closeOverlay();
 			super.setVisible(true);
