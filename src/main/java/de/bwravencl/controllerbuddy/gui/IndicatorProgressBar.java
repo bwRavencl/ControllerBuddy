@@ -205,7 +205,7 @@ final class IndicatorProgressBar extends JProgressBar {
 			case VERTICAL -> {
 				final var lineThickness = height / 10;
 				final var progressHeight = Math.round(percent * height);
-				final var y = height - calculateLineY(progressHeight, lineThickness);
+				final var y = calculateLineY(height - progressHeight, lineThickness);
 				final var h = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
 
 				g2d.fillRect(0, y, width, h);
