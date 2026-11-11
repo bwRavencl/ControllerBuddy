@@ -75,7 +75,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - **Never** use the em dash character (`—`). Use a hyphen (`-`) instead.
 - Mark all classes and fields as `final` unless mutability or inheritance is explicitly required.
 - In non-`final` classes, mark all `public` and `protected` methods as `final` unless they are explicitly designed to be overridden (e.g., `abstract` methods). Do not add `final` to `private` methods, as they cannot be overridden anyway.
-- Apply the `final` keyword to all method parameters, local variables, and catch-block variables without exception.
+- Apply the `final` keyword to all method parameters, local variables, and catch-block variables. The only exceptions are method parameters that are reassigned within the method body, which must not be marked `final`.
 - Use `var` for local variables.
 - Use `_` for unused local variables and patterns.
 - Use `this.` only for disambiguation (e.g., in constructors and setters), not for field reads.
