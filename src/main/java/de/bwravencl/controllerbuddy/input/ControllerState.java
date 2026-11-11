@@ -198,10 +198,6 @@ public final class ControllerState {
 				SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE);
 		buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
 				SDLGamepad.SDL_GAMEPAD_BUTTON_START);
-		buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-				SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
-		buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
-				SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK);
 
 		buttons[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK
 				: SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
