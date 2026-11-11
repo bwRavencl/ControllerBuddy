@@ -624,7 +624,7 @@ public final class Input {
 				final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
 						AXIS_MOVEMENT_MAX_DELTA_FACTOR);
 
-				final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
+				final var d = Integer.signum(delta) * Math.max(1, (int) (axisRange * deltaFactor * rateMultiplier));
 
 				var newValue = currentValue + d;
 				if (delta > 0) {
