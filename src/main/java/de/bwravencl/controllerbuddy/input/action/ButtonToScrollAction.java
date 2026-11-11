@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
 public final class ButtonToScrollAction extends ToScrollAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(icon = "⇕", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	@Override
