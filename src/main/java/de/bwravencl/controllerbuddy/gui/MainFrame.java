@@ -799,8 +799,8 @@ public final class MainFrame extends JFrame {
 
 					try {
 						Files.deleteIfExists(tempLockFilePath);
-					} catch (IOException _) {
-						logger.log(Level.WARNING, e.getMessage(), e);
+					} catch (final IOException e1) {
+						logger.log(Level.WARNING, e1.getMessage(), e1);
 					}
 				}
 
