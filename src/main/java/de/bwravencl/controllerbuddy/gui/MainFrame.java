@@ -5441,7 +5441,10 @@ public final class MainFrame extends JFrame {
 			String filename;
 			if (profileFile != null) {
 				filename = profileFile.getName();
-				filename = filename.substring(0, filename.lastIndexOf('.'));
+				final var extensionIndex = filename.lastIndexOf('.');
+				if (extensionIndex > 0) {
+					filename = filename.substring(0, extensionIndex);
+				}
 			} else {
 				filename = Main.strings.getString("UNTITLED");
 			}
