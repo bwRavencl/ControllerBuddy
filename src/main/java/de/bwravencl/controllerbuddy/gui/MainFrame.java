@@ -2634,11 +2634,12 @@ public final class MainFrame extends JFrame {
 		return Main.preferences.get(Main.PREFERENCES_PASSWORD, "");
 	}
 
-	/// Returns the configured network port.
+	/// Returns the configured network port, clamped to the allowed range.
 	///
 	/// @return the configured network port
 	public int getPort() {
-		return Main.preferences.getInt(Main.PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT);
+		return Math.clamp(Main.preferences.getInt(Main.PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT), MIN_PORT,
+				MAX_PORT);
 	}
 
 	/// Returns the secure random number generator.
@@ -2663,11 +2664,13 @@ public final class MainFrame extends JFrame {
 		return Theme.fromId(Main.preferences.getInt(Main.PREFERENCES_THEME, Theme.SYSTEM.id));
 	}
 
-	/// Returns the configured network timeout in milliseconds.
+	/// Returns the configured network timeout in milliseconds, clamped to the
+	/// allowed range.
 	///
 	/// @return the configured network timeout in milliseconds
 	public int getTimeout() {
-		return Main.preferences.getInt(Main.PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
+		return Math.clamp(Main.preferences.getInt(Main.PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT), MIN_TIMEOUT,
+				MAX_TIMEOUT);
 	}
 
 	/// Returns the configured touchpad cursor sensitivity multiplier.
