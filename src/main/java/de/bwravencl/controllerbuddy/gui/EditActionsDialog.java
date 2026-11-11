@@ -1033,7 +1033,7 @@ public final class EditActionsDialog extends JDialog {
 	/// component type, excluding [ButtonToModeAction] when not in the default mode,
 	/// and then updates the enabled state of the paste button.
 	private void updateAvailableActions() {
-		Objects.requireNonNull(pasteActionButton, "Field pasteButton must not be null");
+		Objects.requireNonNull(pasteActionButton, "Field pasteActionButton must not be null");
 
 		final var availableActions = getAllowedActionClasses().stream()
 				.filter(actionClass -> !ButtonToModeAction.class.equals(actionClass)
