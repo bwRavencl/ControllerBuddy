@@ -669,7 +669,7 @@ class OverlayFrame extends JFrame {
 					initialized = true;
 					try {
 						instance = new Connection(MemorySegment.ofAddress(getJbrDisplayPointer()));
-					} catch (final RuntimeException e) {
+					} catch (final Exception | LinkageError e) {
 						logger.log(Level.WARNING, "Could not connect to JBR's Wayland display", e);
 					}
 				}
