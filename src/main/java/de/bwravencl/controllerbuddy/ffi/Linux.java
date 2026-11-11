@@ -143,6 +143,10 @@ public final class Linux {
 	/// creation.
 	public static final int UI_DEV_SETUP = _IOW(UINPUT_IOCTL_BASE, 3, (int) uinput_setup.LAYOUT.byteSize());
 
+	/// Linux `UI_ABS_SETUP` ioctl command to configure the parameters of an
+	/// absolute axis of a uinput device before creation.
+	public static final int UI_ABS_SETUP = _IOW(UINPUT_IOCTL_BASE, 4, (int) uinput_abs_setup.LAYOUT.byteSize());
+
 	static {
 		final var linker = Linker.nativeLinker();
 		final var symbolLookup = linker.defaultLookup();
@@ -359,6 +363,66 @@ public final class Linux {
 		}
 	}
 
+	/// Represents the Linux `input_absinfo` structure describing the parameters of
+	/// an absolute axis.
+	///
+	/// Provides a [GroupLayout] constant and static setter methods for populating
+	/// the minimum and maximum fields of an `input_absinfo` memory segment.
+	public static final class input_absinfo {
+
+		/// Field name for the flat (dead zone) value.
+		private static final String FLAT_NAME = "flat";
+
+		/// Field name for the fuzz (noise filter) value.
+		private static final String FUZZ_NAME = "fuzz";
+
+		/// Field name for the maximum value.
+		private static final String MAXIMUM_NAME = "maximum";
+
+		/// Field name for the minimum value.
+		private static final String MINIMUM_NAME = "minimum";
+
+		/// Field name for the resolution.
+		private static final String RESOLUTION_NAME = "resolution";
+
+		/// Field name for the current value.
+		private static final String VALUE_NAME = "value";
+
+		/// Memory layout of the Linux `input_absinfo` struct.
+		public static final GroupLayout LAYOUT = MemoryLayout.structLayout(ValueLayout.JAVA_INT.withName(VALUE_NAME),
+				ValueLayout.JAVA_INT.withName(MINIMUM_NAME), ValueLayout.JAVA_INT.withName(MAXIMUM_NAME),
+				ValueLayout.JAVA_INT.withName(FUZZ_NAME), ValueLayout.JAVA_INT.withName(FLAT_NAME),
+				ValueLayout.JAVA_INT.withName(RESOLUTION_NAME));
+
+		/// VarHandle for accessing the `maximum` field.
+		private static final VarHandle MAXIMUM_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(MAXIMUM_NAME));
+
+		/// VarHandle for accessing the `minimum` field.
+		private static final VarHandle MINIMUM_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(MINIMUM_NAME));
+
+		/// Prevents instantiation.
+		private input_absinfo() {
+		}
+
+		/// Sets the maximum field in the given `input_absinfo` memory segment.
+		///
+		/// @param seg the memory segment representing the `input_absinfo` struct
+		/// @param maximum the maximum value to set
+		public static void setMaximum(final MemorySegment seg, final int maximum) {
+			MAXIMUM_VAR_HANDLE.set(seg, 0L, maximum);
+		}
+
+		/// Sets the minimum field in the given `input_absinfo` memory segment.
+		///
+		/// @param seg the memory segment representing the `input_absinfo` struct
+		/// @param minimum the minimum value to set
+		public static void setMinimum(final MemorySegment seg, final int minimum) {
+			MINIMUM_VAR_HANDLE.set(seg, 0L, minimum);
+		}
+	}
+
 	/// Represents the Linux `input_event` structure used for writing input events
 	/// to uinput devices.
 	///
@@ -509,6 +573,54 @@ public final class Linux {
 
 		/// Prevents instantiation.
 		private timeval() {
+		}
+	}
+
+	/// Represents the Linux `uinput_abs_setup` structure used to configure an
+	/// absolute axis of a uinput device.
+	///
+	/// Provides a [GroupLayout] constant, a static setter for the axis code and a
+	/// static accessor for retrieving the `input_absinfo` member slice from a
+	/// `uinput_abs_setup` memory segment.
+	public static final class uinput_abs_setup {
+
+		/// Field name for the embedded `input_absinfo` struct.
+		private static final String ABSINFO_NAME = "absinfo";
+
+		/// Field name for the axis code.
+		private static final String CODE_NAME = "code";
+
+		/// Memory layout of the Linux `uinput_abs_setup` struct.
+		public static final GroupLayout LAYOUT = MemoryLayout.structLayout(ValueLayout.JAVA_SHORT.withName(CODE_NAME),
+				MemoryLayout.paddingLayout(2), input_absinfo.LAYOUT.withName(ABSINFO_NAME));
+
+		/// Byte offset of the embedded `input_absinfo` struct.
+		private static final long ABSINFO_OFFSET = LAYOUT
+				.byteOffset(MemoryLayout.PathElement.groupElement(ABSINFO_NAME));
+
+		/// VarHandle for accessing the `code` field.
+		private static final VarHandle CODE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(CODE_NAME));
+
+		/// Prevents instantiation.
+		private uinput_abs_setup() {
+		}
+
+		/// Returns the `input_absinfo` member slice from the given `uinput_abs_setup`
+		/// memory segment.
+		///
+		/// @param seg the memory segment representing the `uinput_abs_setup` struct
+		/// @return the `input_absinfo` member slice
+		public static MemorySegment getAbsinfo(final MemorySegment seg) {
+			return seg.asSlice(ABSINFO_OFFSET, input_absinfo.LAYOUT);
+		}
+
+		/// Sets the axis code field in the given `uinput_abs_setup` memory segment.
+		///
+		/// @param seg the memory segment representing the `uinput_abs_setup` struct
+		/// @param code the axis code to set
+		public static void setCode(final MemorySegment seg, final short code) {
+			CODE_VAR_HANDLE.set(seg, 0L, code);
 		}
 	}
 

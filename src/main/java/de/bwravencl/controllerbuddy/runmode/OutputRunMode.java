@@ -729,8 +729,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			try {
 				joystickUinputDevice = UinputDevice.openUinputDevice(DeviceType.JOYSTICK);
-				minAxisValue = Short.MIN_VALUE;
-				maxAxisValue = Short.MAX_VALUE;
+				minAxisValue = UinputDevice.ABS_MIN_VALUE;
+				maxAxisValue = UinputDevice.ABS_MAX_VALUE;
 				mouseUinputDevice = UinputDevice.openUinputDevice(DeviceType.MOUSE);
 				keyboardUinputDevice = UinputDevice.openUinputDevice(DeviceType.KEYBOARD);
 

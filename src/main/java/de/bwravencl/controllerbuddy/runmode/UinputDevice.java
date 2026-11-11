@@ -19,8 +19,10 @@ package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.Linux;
+import de.bwravencl.controllerbuddy.ffi.Linux.input_absinfo;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_event;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_id;
+import de.bwravencl.controllerbuddy.ffi.Linux.uinput_abs_setup;
 import de.bwravencl.controllerbuddy.ffi.Linux.uinput_setup;
 import java.io.Closeable;
 import java.io.IOException;
@@ -48,6 +50,12 @@ import java.util.stream.Stream;
 /// close. Device instances are cached per [DeviceType] and shared across
 /// callers.
 public final class UinputDevice implements Closeable {
+
+	/// Maximum value of the absolute axes of the virtual joystick device.
+	static final int ABS_MAX_VALUE = Short.MAX_VALUE;
+
+	/// Minimum value of the absolute axes of the virtual joystick device.
+	static final int ABS_MIN_VALUE = Short.MIN_VALUE;
 
 	/// USB bus type identifier used when registering the virtual device.
 	private static final short BUS_USB = 0x3;
@@ -125,6 +133,21 @@ public final class UinputDevice implements Closeable {
 					case EV_ABS -> ioctlChecked(fd, Linux.UI_SET_ABSBIT, code);
 					default -> throw new UnsupportedOperationException("Unsupported event type: " + type);
 					}
+				}
+
+				for (final var eventCode : deviceType.supportedEvents) {
+					if (eventCode.type != EV_ABS) {
+						continue;
+					}
+
+					final var absSetup = arena.allocate(uinput_abs_setup.LAYOUT);
+					uinput_abs_setup.setCode(absSetup, eventCode.code);
+
+					final var absinfo = uinput_abs_setup.getAbsinfo(absSetup);
+					input_absinfo.setMinimum(absinfo, ABS_MIN_VALUE);
+					input_absinfo.setMaximum(absinfo, ABS_MAX_VALUE);
+
+					ioctlChecked(fd, Linux.UI_ABS_SETUP, absSetup);
 				}
 
 				final var uinputSetup = arena.allocate(uinput_setup.LAYOUT);
