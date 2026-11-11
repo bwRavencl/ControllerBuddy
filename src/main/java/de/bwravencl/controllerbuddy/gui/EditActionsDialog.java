@@ -580,7 +580,7 @@ public final class EditActionsDialog extends JDialog {
 
 		switch (action) {
 		case final ButtonToModeAction buttonToModeAction -> {
-			final var modes = input.getProfile().getModes();
+			final var modes = unsavedProfile.getModes();
 			final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode;
 			buttonToModeAction.setMode(defaultMode);
 		}
