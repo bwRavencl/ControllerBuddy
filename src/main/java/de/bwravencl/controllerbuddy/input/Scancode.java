@@ -358,6 +358,8 @@ public record Scancode(String name, int keyCode, Event event) {
 	/// Scroll Lock key
 	private static final String DIK_SCROLL = "ScrollLock";
 
+	/// All supported scancodes, each mapping a key name to its DirectInput key code
+	/// and Linux input event.
 	private static final Scancode[] KEY_CODES = { new Scancode(DIK_ESCAPE, 0x1, Event.KEY_ESC),
 			new Scancode(DIK_1, 0x2, Event.KEY_1), new Scancode(DIK_2, 0x3, Event.KEY_2),
 			new Scancode(DIK_3, 0x4, Event.KEY_3), new Scancode(DIK_4, 0x5, Event.KEY_4),
