@@ -6608,7 +6608,7 @@ public final class MainFrame extends JFrame {
 			editorPane.setCaretPosition(0);
 
 			GuiUtils.showMessageDialog(MainFrame.this, MainFrame.this, scrollPane, (String) getValue(NAME),
-					JOptionPane.DEFAULT_OPTION, true);
+					JOptionPane.PLAIN_MESSAGE, true);
 		}
 	}
 
