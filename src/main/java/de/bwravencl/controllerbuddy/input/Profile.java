@@ -185,30 +185,32 @@ public final class Profile implements Cloneable {
 	/// @param input the input instance
 	/// @param index the index of the mode to activate
 	void setActiveMode(final Input input, final int index) {
-		if (modes.size() > index) {
-			input.scheduleClearOnNextPoll();
-
-			final var newMode = modes.get(index);
-
-			if (input.getRunMode() != null) {
-				newMode.getAxisToActionsMap().keySet().forEach(axis -> {
-					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
-					if (currentAxisToActionsMap.containsKey(axis)) {
-						currentAxisToActionsMap.get(axis).forEach(action -> {
-							if (action instanceof final AxisToAxisAction axisToAxisAction
-									&& !(action instanceof AxisToRelativeAxisAction)) {
-								final var value = axis == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
-										|| axis == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null, null, null);
-							}
-						});
-					}
-				});
-			}
-
-			activeModeIndex = index;
-			input.getMain().setOverlayMode(newMode);
+		if (index < 0 || index >= modes.size()) {
+			return;
 		}
+
+		input.scheduleClearOnNextPoll();
+
+		final var newMode = modes.get(index);
+
+		if (input.getRunMode() != null) {
+			newMode.getAxisToActionsMap().keySet().forEach(axis -> {
+				final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
+				if (currentAxisToActionsMap.containsKey(axis)) {
+					currentAxisToActionsMap.get(axis).forEach(action -> {
+						if (action instanceof final AxisToAxisAction axisToAxisAction
+								&& !(action instanceof AxisToRelativeAxisAction)) {
+							final var value = axis == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
+									|| axis == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
+							input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null, null, null);
+						}
+					});
+				}
+			});
+		}
+
+		activeModeIndex = index;
+		input.getMain().setOverlayMode(newMode);
 	}
 
 	/// Sets the active mode to the specified mode instance.

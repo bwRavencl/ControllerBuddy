@@ -319,6 +319,16 @@ final class ProfileTest {
 	final class SetActiveModeByModeTests {
 
 		@Test
+		@DisplayName("does not change the active mode when the mode is not in the list")
+		void doesNotChangeModeWhenModeNotInList() {
+			final var profile = createProfile();
+
+			profile.setActiveMode(mockInput, new Mode(UUID.randomUUID(), null));
+
+			Assertions.assertSame(Profile.defaultMode, profile.getActiveMode());
+		}
+
+		@Test
 		@DisplayName("switches the active mode to the specified mode object when it is in the list")
 		void switchesToSpecifiedMode() {
 			final var profile = createProfile();
