@@ -29,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @NullMarked
 @ExtendWith(MockitoExtension.class)
-final class ClampingSpinnerNumberModelTests {
+final class ClampingSpinnerNumberModelTest {
 
 	@Mock
 	ChangeListener mockChangeListener;

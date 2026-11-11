@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @NullMarked
 @ExtendWith(MockitoExtension.class)
-final class FrameDragListenerTests {
+final class FrameDragListenerTest {
 
 	@Mock
 	JFrame mockFrame;
