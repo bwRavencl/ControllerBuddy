@@ -23,6 +23,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,6 +124,23 @@ final class OutputRunModeTest {
 			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
 
 			// buttonId=5 means requiredButtons=6; only 5 available
+			Assertions.assertFalse(invokeEnoughButtons(5));
+		}
+
+		@Test
+		@DisplayName("returns false when a cycle sub-action requires more buttons than available")
+		void returnsFalseWhenCycleSubActionRequiresMoreButtons() throws ReflectiveOperationException {
+			Assumptions.assumeFalse(Main.IS_MAC,
+					"Skipping: enoughButtons() throws UnsupportedOperationException on macOS");
+			final var subAction = new ButtonToButtonAction();
+			subAction.setButtonId(5);
+			final var cycleAction = new ButtonToCycleAction();
+			cycleAction.setActions(new ArrayList<>(List.of(subAction)));
+			final var mode = new Mode();
+			mode.getButtonToActionsMap().put(0, List.of(cycleAction));
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+
+			// sub-action buttonId=5 means requiredButtons=6; only 5 available
 			Assertions.assertFalse(invokeEnoughButtons(5));
 		}
 

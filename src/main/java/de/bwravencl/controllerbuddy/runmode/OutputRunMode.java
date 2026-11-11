@@ -30,6 +30,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Scancode;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.DeviceType;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
@@ -55,9 +56,11 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.DBusMemberName;
@@ -516,24 +519,22 @@ public abstract class OutputRunMode extends RunMode {
 	/// Returns whether the given number of buttons is enough for the current
 	/// profile.
 	///
-	/// Scans all actions in all modes for the highest button ID in use and compares
-	/// it against the provided count. If not enough buttons are available, an error
-	/// dialog is shown.
+	/// Scans all actions in all modes, including the sub-actions of cycle actions,
+	/// for the highest button ID in use and compares it against the provided count.
+	/// If not enough buttons are available, an error dialog is shown.
 	///
 	/// @param numButtons the number of buttons available on the virtual device
 	/// @return `true` if the device has enough buttons, `false` otherwise
 	private boolean enoughButtons(final int numButtons) {
-		var maxButtonId = -1;
-		for (final var mode : input.getProfile().getModes()) {
-			for (final var action : mode.getAllActions()) {
-				if (action instanceof final ToButtonAction<?> toButtonAction) {
-					final var buttonId = toButtonAction.getButtonId();
-					if (buttonId > maxButtonId) {
-						maxButtonId = buttonId;
+		final var maxButtonId = input.getProfile().getModes().stream().flatMap(mode -> mode.getAllActions().stream())
+				.flatMap(action -> action instanceof final ButtonToCycleAction buttonToCycleAction
+						? buttonToCycleAction.getActions().stream()
+						: Stream.of(action))
+				.mapMultiToInt((final Object action, final IntConsumer downstream) -> {
+					if (action instanceof final ToButtonAction<?> toButtonAction) {
+						downstream.accept(toButtonAction.getButtonId());
 					}
-				}
-			}
-		}
+				}).max().orElse(-1);
 		final var requiredButtons = maxButtonId + 1;
 
 		if (numButtons < requiredButtons) {
