@@ -64,7 +64,6 @@ import java.io.Serial;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -540,10 +539,7 @@ public final class EditActionsDialog extends JDialog {
 		updateAvailableActions();
 		updateAssignedActions();
 
-		final var hasModeAction = Arrays.stream(getAssignedActions()).anyMatch(ButtonToModeAction.class::isInstance);
-
-		assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
-				- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
+		assignedActionsList.setSelectedValue(action, true);
 	}
 
 	/// Hides the dialog and dispatches a window-closing event to trigger any
