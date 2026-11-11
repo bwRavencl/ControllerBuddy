@@ -242,6 +242,8 @@ public final class Input {
 					SDLGamepad.SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN, false)) {
 				SDLGamepad.SDL_SetGamepadPlayerIndex(selectedSdlGamepad, -1);
 			}
+
+			selectedSdlGamepad = 0L;
 		}
 
 		sdlGamepadToControllerStateMap.keySet().forEach(SDLGamepad::SDL_CloseGamepad);

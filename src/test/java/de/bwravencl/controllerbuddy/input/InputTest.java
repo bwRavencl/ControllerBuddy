@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lwjgl.sdl.SDLGamepad;
+import org.lwjgl.sdl.SDLProperties;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -173,6 +174,27 @@ final class InputTest {
 			try (final var sdlMock = Mockito.mockStatic(SDLGamepad.class)) {
 				input.deInit();
 				sdlMock.verifyNoInteractions();
+			}
+		}
+
+		@Test
+		@DisplayName("does not access the selected gamepad again on a subsequent call")
+		void doesNotAccessSelectedGamepadAgainOnSubsequentCall() throws ReflectiveOperationException {
+			final var input = createInput();
+			final var selectedSdlGamepadField = Input.class.getDeclaredField("selectedSdlGamepad");
+			selectedSdlGamepadField.setAccessible(true);
+			selectedSdlGamepadField.set(input, 42L);
+
+			try (final var sdlMock = Mockito.mockStatic(SDLGamepad.class);
+					final var sdlPropertiesMock = Mockito.mockStatic(SDLProperties.class)) {
+				input.deInit();
+				sdlMock.clearInvocations();
+				sdlPropertiesMock.clearInvocations();
+
+				input.deInit();
+
+				sdlMock.verifyNoInteractions();
+				sdlPropertiesMock.verifyNoInteractions();
 			}
 		}
 	}

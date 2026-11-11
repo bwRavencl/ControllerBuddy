@@ -388,8 +388,8 @@ public final class ServerRunMode extends RunMode {
 						}
 
 						if (! gotClientAlive) {
-							input.reset();
 							input.deInit();
+							input.reset();
 
 							EventQueue.invokeLater(() -> {
 								mainFrame.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
@@ -418,6 +418,7 @@ public final class ServerRunMode extends RunMode {
 		} catch (InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} finally {
+			input.deInit();
 			input.reset();
 
 			if (serverSocket != null) {

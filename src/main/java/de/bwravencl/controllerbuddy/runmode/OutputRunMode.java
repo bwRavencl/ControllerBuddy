@@ -320,8 +320,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// relinquishes the virtual device, and schedules any necessary follow-up
 	/// actions on the event dispatch thread.
 	final void deInit() {
-		input.reset();
 		input.deInit();
+		input.reset();
 
 		if (mainFrame.isPreventPowerSaveMode()) {
 			if (!SDLVideo.SDL_EnableScreenSaver()) {
