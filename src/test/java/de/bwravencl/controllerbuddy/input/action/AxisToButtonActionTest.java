@@ -84,6 +84,18 @@ final class AxisToButtonActionTest {
 		}
 
 		@Test
+		@DisplayName("does not activate before delay elapsed when the zone includes zero")
+		void doesNotActivateBeforeDelayElapsedWhenZoneIncludesZero() {
+			IAxisToDelayableAction.reset();
+			action.setMinAxisValue(-1f);
+			action.setMaxAxisValue(1f);
+			action.setDelay(10_000L);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.75f, null);
+			Assertions.assertFalse(buttons[0]);
+			IAxisToDelayableAction.reset();
+		}
+
+		@Test
 		@DisplayName("does not activate when axis is suspended")
 		void doesNotActivateWhenSuspended() {
 			Mockito.when(mockInput.isAxisSuspended(0)).thenReturn(true);

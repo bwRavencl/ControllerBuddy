@@ -97,7 +97,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 	/// @param input the input instance
 	/// @param component the axis component index
 	/// @param value the current axis value
-	/// @return the original value if the delay has elapsed, or `Float.MIN_VALUE` to
+	/// @return the original value if the delay has elapsed, or `Float.NaN` to
 	/// suppress
 	default Float handleDelay(final Input input, final int component, final Float value) {
 		if (!isDelayed()) {
@@ -161,7 +161,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 			ACTION_TO_DOWN_SINCE_MAP.remove(this);
 		}
 
-		return Float.MIN_VALUE;
+		return Float.NaN;
 	}
 
 	/// Sets the upper bound of the axis range that triggers this action.
