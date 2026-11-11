@@ -424,9 +424,9 @@ public final class ServerRunMode extends RunMode {
 				mainFrame.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
 				mainFrame.stopAll(false, false, true);
 			});
-		}
 
-		logStop();
+			logStop();
+		}
 	}
 
 	/// Encrypts the contents of the given output stream with AES-GCM and sends the
