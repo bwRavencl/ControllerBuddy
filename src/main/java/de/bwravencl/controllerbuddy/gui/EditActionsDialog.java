@@ -1416,7 +1416,7 @@ public final class EditActionsDialog extends JDialog {
 	private final class CutActionAction extends CopyActionAction {
 
 		@Serial
-		private static final long serialVersionUID = -6630683334825900710L;
+		private static final long serialVersionUID = 759999717825131407L;
 
 		/// Constructs a [CutActionAction] and initializes its name and description.
 		private CutActionAction() {
@@ -1491,7 +1491,7 @@ public final class EditActionsDialog extends JDialog {
 	private final class PasteActionAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = -6630683334825900710L;
+		private static final long serialVersionUID = 811721794790341586L;
 
 		/// Constructs a [PasteActionAction] and initializes its name and description.
 		private PasteActionAction() {

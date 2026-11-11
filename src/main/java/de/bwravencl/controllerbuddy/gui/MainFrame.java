@@ -5256,7 +5256,7 @@ public final class MainFrame extends JFrame {
 			modeComboBox = GuiUtils.addModePanel(visualizationPanel, modes, new AbstractAction() {
 
 				@Serial
-				private static final long serialVersionUID = -9107064465015662054L;
+				private static final long serialVersionUID = 9006721311674423744L;
 
 				@SuppressWarnings("unchecked")
 				@Override
@@ -6015,7 +6015,7 @@ public final class MainFrame extends JFrame {
 	private final class ProfileFileChooser extends AbstractProfileFileChooser {
 
 		@Serial
-		private static final long serialVersionUID = -4669170626378955605L;
+		private static final long serialVersionUID = 5334617634060215768L;
 
 		/// Constructs a [ProfileFileChooser] with the profile file filter applied.
 		///
@@ -6168,7 +6168,7 @@ public final class MainFrame extends JFrame {
 	private final class SaveAsAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = -8469921697479550983L;
+		private static final long serialVersionUID = 3778312410463100544L;
 
 		/// Constructs a [SaveAsAction] and initializes its name and description.
 		private SaveAsAction() {
@@ -6253,7 +6253,7 @@ public final class MainFrame extends JFrame {
 	private final class SelectIndicatorColorAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = 3316770144012465987L;
+		private static final long serialVersionUID = -4536330647271392737L;
 
 		/// The virtual axis whose indicator color is changed by this action.
 		private final VirtualAxis virtualAxis;
@@ -6297,7 +6297,7 @@ public final class MainFrame extends JFrame {
 	private final class SelectLedColorAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = 3316770144012465987L;
+		private static final long serialVersionUID = -8820885021323456414L;
 
 		/// Constructs a [SelectLedColorAction] and initializes its name and
 		/// description.
@@ -6538,7 +6538,7 @@ public final class MainFrame extends JFrame {
 	private final class ShowIndicatorAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = 3316770144012465987L;
+		private static final long serialVersionUID = -95713389137926654L;
 
 		/// The virtual axis whose indicator visibility is toggled by this action.
 		private final VirtualAxis virtualAxis;
@@ -6625,7 +6625,7 @@ public final class MainFrame extends JFrame {
 	private final class ShowWebsiteAction extends AbstractAction {
 
 		@Serial
-		private static final long serialVersionUID = -9029607010261185834L;
+		private static final long serialVersionUID = 4569075386645652823L;
 
 		/// Constructs a [ShowWebsiteAction] and initializes its name and description.
 		private ShowWebsiteAction() {
