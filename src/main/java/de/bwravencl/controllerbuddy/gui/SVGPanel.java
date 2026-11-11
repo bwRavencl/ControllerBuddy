@@ -221,9 +221,10 @@ final class SVGPanel extends JPanel {
 	/// @param mouseX the x-coordinate of the zoom focus point in component space
 	/// @param mouseY the y-coordinate of the zoom focus point in component space
 	private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
+		final var previousZoomFactor = zoomFactor;
 		zoomFactor = Math.clamp(zoomFactor * zoomRatio, 1f, MAX_ZOOM_FACTOR);
 
-		if (zoomFactor >= MAX_ZOOM_FACTOR) {
+		if (zoomFactor == previousZoomFactor) {
 			return;
 		}
 
