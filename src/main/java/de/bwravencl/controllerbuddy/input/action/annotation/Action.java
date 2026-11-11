@@ -72,7 +72,7 @@ public @interface Action {
 		BUTTON,
 		/// Button and cycle actions
 		BUTTON_AND_CYCLES,
-		/// On-screen keyboard node
+		/// On-screen keyboard mode actions
 		ON_SCREEN_KEYBOARD_MODE
 	}
 }
