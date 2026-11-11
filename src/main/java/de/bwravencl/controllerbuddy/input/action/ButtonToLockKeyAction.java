@@ -39,13 +39,13 @@ import org.jspecify.annotations.Nullable;
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
-	/// Default on state the lock key is toggled to.
+	/// Default on state the lock key is switched to.
 	private static final boolean DEFAULT_ON = true;
 
 	/// Delay in milliseconds before this action becomes active.
 	private long delay = DEFAULT_DELAY;
 
-	/// Whether the lock key is toggled to the on state by this action.
+	/// Whether the lock key is switched to the on state by this action.
 	@ActionProperty(icon = "⏻", title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = DEFAULT_ON;
 
@@ -101,9 +101,9 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		resetWasUp();
 	}
 
-	/// Returns whether the lock key is initially set to the on state.
+	/// Returns whether the lock key is switched to the on state by this action.
 	///
-	/// @return `true` if the lock key starts in the on state
+	/// @return `true` if the lock key is switched on, `false` if it is switched off
 	public boolean isOn() {
 		return on;
 	}
@@ -126,9 +126,9 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		virtualKeyCode = lockKey;
 	}
 
-	/// Sets whether the lock key should start in the on state.
+	/// Sets whether the lock key is switched to the on state by this action.
 	///
-	/// @param on `true` to start in the on state
+	/// @param on `true` to switch the lock key on, `false` to switch it off
 	public void setOn(final boolean on) {
 		this.on = on;
 	}
