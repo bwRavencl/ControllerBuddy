@@ -2137,6 +2137,30 @@ public final class MainFrame extends JFrame {
 		return 0;
 	}
 
+	/// Starts a network run mode on autostart if the stored connection settings are
+	/// valid.
+	///
+	/// Performs the same validation as the connect dialog. If the stored host (when
+	/// required) or password is invalid, an error dialog is shown instead.
+	///
+	/// @param withHost `true` if the run mode requires a host address
+	/// @param startRunMode the action that starts the run mode
+	private void autostartIfConnectionSettingsValid(final boolean withHost, final Runnable startRunMode) {
+		final String errorMessage;
+		if (withHost && !isValidHost(getHost())) {
+			errorMessage = Main.strings.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT");
+		} else if (!isValidPassword(getPassword())) {
+			errorMessage = MessageFormat.format(Main.strings.getString("INVALID_PASSWORD_ERROR_DIALOG_TEXT"),
+					PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
+		} else {
+			startRunMode.run();
+			return;
+		}
+
+		GuiUtils.showMessageDialog(this, this, errorMessage, Main.strings.getString("ERROR_DIALOG_TITLE"),
+				JOptionPane.ERROR_MESSAGE, true);
+	}
+
 	/// Calculates the display width of the current mode label for the given mode,
 	/// capped at the maximum overlay mode label width.
 	///
@@ -2852,9 +2876,9 @@ public final class MainFrame extends JFrame {
 					startLocal();
 				} else if ((Main.IS_WINDOWS || Main.IS_LINUX)
 						&& Main.OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
-					startClient();
+					autostartIfConnectionSettingsValid(true, this::startClient);
 				} else if (Main.OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
-					startServer();
+					autostartIfConnectionSettingsValid(false, this::startServer);
 				} else {
 					GuiUtils.showMessageDialog(this, this,
 							MessageFormat.format(
