@@ -277,18 +277,18 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 If you want to build ControllerBuddy from source, this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
-| Task                                   | Command                     |
-|----------------------------------------|-----------------------------|
-| Generate `Constants.java` source file  | `gradlew generateConstants` |
-| Run all checks                         | `gradlew check`             |
-| Apply formatting                       | `gradlew spotlessApply`     |
-| Run ControllerBuddy                    | `gradlew run`               |
-| Run all tests                          | `gradlew test`              |
-| Generate test coverage report          | `gradlew jacocoTestReport`  |
-| Install a jpackage image               | `gradlew installDist`       |
-| Create a ZIP-compressed jpackage image | `gradlew distZip`           |
-| Create a TGZ-compressed jpackage image | `gradlew distTar`           |
-| Delete build and gen directories       | `gradlew clean`             |
+| Task                                       | Command                     |
+|--------------------------------------------|-----------------------------|
+| Generate `Constants.java` source file      | `gradlew generateConstants` |
+| Run all checks                             | `gradlew check`             |
+| Apply formatting                           | `gradlew spotlessApply`     |
+| Run ControllerBuddy                        | `gradlew run`               |
+| Run all tests                              | `gradlew test`              |
+| Generate test coverage report              | `gradlew jacocoTestReport`  |
+| Install a jpackage image                   | `gradlew installDist`       |
+| Create a ZIP-compressed jpackage image     | `gradlew distZip`           |
+| Create a TGZ-compressed jpackage image     | `gradlew distTar`           |
+| Delete build directory and generated files | `gradlew clean`             |
 
 ## ⚖️ License
 
