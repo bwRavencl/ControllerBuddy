@@ -65,7 +65,7 @@ final class SVGPanel extends JPanel {
 	/// Exponent controlling how fast the view re-centers when zooming out.
 	private static final double ZOOM_OUT_RETURN_TO_CENTER_EXPONENT = 2.0;
 
-	/// Base zoom factor per unit of scroll input
+	/// Base zoom factor per unit of scroll input.
 	private static final float ZOOM_SCROLL_BASE = 1.05f;
 
 	@Serial

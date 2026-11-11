@@ -64,7 +64,7 @@ import org.jspecify.annotations.Nullable;
 /// parent.
 final class LockableSettingsPanel extends JPanel {
 
-	/// Alpha channel value of the stop-execution hint background
+	/// Alpha channel value of the stop-execution hint background.
 	public static final int HINT_BACKGROUND_ALPHA = 164;
 
 	/// Font size, in points, used for the stop-execution hint text.
@@ -80,7 +80,7 @@ final class LockableSettingsPanel extends JPanel {
 	/// Shared stroke used to draw the stop-execution hint's outline.
 	private static final BasicStroke HINT_STROKE = new BasicStroke(HINT_STROKE_WIDTH);
 
-	/// Stop-execution hint text
+	/// Stop-execution hint text.
 	private static final String HINT_TEXT = Main.strings.getString("STOP_EXECUTION_HINT");
 
 	/// Convolution operator performing the horizontal pass of the separable box

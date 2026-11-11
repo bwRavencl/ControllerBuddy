@@ -242,7 +242,7 @@ public final class Main {
 	/// Resource bundle containing localized UI strings.
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 
-	/// Number of retries when attempting to read the single-instance lock file
+	/// Number of retries when attempting to read the single-instance lock file.
 	private static final int NUM_LOCK_FILE_READ_RETRIES = 3;
 
 	/// CLI option name for printing the help text.
