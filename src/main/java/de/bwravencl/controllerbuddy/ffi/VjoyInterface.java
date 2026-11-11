@@ -121,7 +121,7 @@ public final class VjoyInterface {
 	private static boolean initialized = false;
 
 	/// Method handle for the `vJoyEnabled` native function.
-	private static MethodHandle vJoyEnabled = UNINITIALIZED_METHOD_HANDLE;
+	private static MethodHandle vJoyEnabledMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Prevents instantiation.
 	private VjoyInterface() {
@@ -353,7 +353,7 @@ public final class VjoyInterface {
 								ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_BYTE),
 						Option.critical(false));
 
-		vJoyEnabled = linker.downcallHandle(symbolLookup.find("vJoyEnabled").orElseThrow(),
+		vJoyEnabledMethodHandle = linker.downcallHandle(symbolLookup.find("vJoyEnabled").orElseThrow(),
 				FunctionDescriptor.of(ValueLayout.JAVA_INT));
 
 		initialized = true;
@@ -371,7 +371,7 @@ public final class VjoyInterface {
 	/// @return `true` if the vJoy driver is enabled
 	public static boolean vJoyEnabled() {
 		try {
-			return (int) vJoyEnabled.invoke() != 0;
+			return (int) vJoyEnabledMethodHandle.invoke() != 0;
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
