@@ -224,7 +224,7 @@ final class SVGPanel extends JPanel {
 		final var previousZoomFactor = zoomFactor;
 		zoomFactor = Math.clamp(zoomFactor * zoomRatio, 1f, MAX_ZOOM_FACTOR);
 
-		if (zoomFactor == previousZoomFactor) {
+		if (Float.compare(zoomFactor, previousZoomFactor) == 0) {
 			return;
 		}
 
