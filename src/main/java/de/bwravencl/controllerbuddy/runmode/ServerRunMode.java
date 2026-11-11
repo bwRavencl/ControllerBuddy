@@ -227,11 +227,22 @@ public final class ServerRunMode extends RunMode {
 
 						if (messageType == MessageType.CLIENT_HELLO.getId()) {
 							final var salt = dataInputStream.readNBytes(SALT_LENGTH);
+							final var clientMinAxisValue = dataInputStream.readInt();
+							final var clientMaxAxisValue = dataInputStream.readInt();
+							final var clientNumButtons = dataInputStream.readInt();
+
+							if (clientMinAxisValue >= clientMaxAxisValue || clientNumButtons < 0) {
+								logger.warning("Ignoring " + MessageType.CLIENT_HELLO + " with invalid axis range ["
+										+ clientMinAxisValue + ", " + clientMaxAxisValue + "] or number of buttons "
+										+ clientNumButtons + " from " + clientAddress);
+								break;
+							}
+
 							key = deriveKey(mainFrame, salt);
 
-							minAxisValue = dataInputStream.readInt();
-							maxAxisValue = dataInputStream.readInt();
-							setNumButtons(dataInputStream.readInt());
+							minAxisValue = clientMinAxisValue;
+							maxAxisValue = clientMaxAxisValue;
+							setNumButtons(clientNumButtons);
 
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
