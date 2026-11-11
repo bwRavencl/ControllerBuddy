@@ -1082,7 +1082,7 @@ public final class MainFrame extends JFrame {
 		maxPollingRatePanel.add(maxPollingRateSpinner);
 
 		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(physicalAxesPanel, constraints);
+		inputSettingsPanel.add(physicalAxesPanel);
 
 		final var leftPhysicalAxesPanel = new JPanel();
 		leftPhysicalAxesPanel.setLayout(new BoxLayout(leftPhysicalAxesPanel, BoxLayout.Y_AXIS));
@@ -1121,7 +1121,7 @@ public final class MainFrame extends JFrame {
 				rightPhysicalAxesPanel.getPreferredSize().height - physicalAxesPanelLabel.getPreferredSize().height));
 
 		final var hapticFeedbackPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
+		inputSettingsPanel.add(hapticFeedbackPanel);
 
 		final var hapticFeedbackLabel = new JLabel(Main.strings.getString("HAPTIC_FEEDBACK_LABEL"));
 		hapticFeedbackLabel.setPreferredSize(longSettingsLabelDimension);
@@ -1136,7 +1136,7 @@ public final class MainFrame extends JFrame {
 		hapticFeedbackPanel.add(hapticFeedbackCheckBox);
 
 		final var hotSwapPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(hotSwapPanel, constraints);
+		inputSettingsPanel.add(hotSwapPanel);
 
 		final var hotSwappingLabel = new JLabel(Main.strings.getString("HOT_SWAPPING_LABEL"));
 		hotSwappingLabel.setPreferredSize(longSettingsLabelDimension);
@@ -1152,7 +1152,7 @@ public final class MainFrame extends JFrame {
 		hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
 
 		final var noControllerDialogsPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(noControllerDialogsPanel, constraints);
+		inputSettingsPanel.add(noControllerDialogsPanel);
 
 		final var noControllerDialogsLabel = new JLabel(Main.strings.getString("SKIP_CONTROLLER_DIALOGS_LABEL"));
 		noControllerDialogsLabel.setPreferredSize(longSettingsLabelDimension);
@@ -1168,7 +1168,7 @@ public final class MainFrame extends JFrame {
 		noControllerDialogsPanel.add(noControllerDialogsCheckBox);
 
 		final var autoRestartOutputPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(autoRestartOutputPanel, constraints);
+		inputSettingsPanel.add(autoRestartOutputPanel);
 
 		final var autoRestartOutputLabel = new JLabel(Main.strings.getString("AUTO_RESTART_OUTPUT_LABEL"));
 		autoRestartOutputLabel.setPreferredSize(longSettingsLabelDimension);
@@ -1184,7 +1184,7 @@ public final class MainFrame extends JFrame {
 
 		if (Main.IS_WINDOWS) {
 			final var xinputPanel = new JPanel(defaultFlowLayout);
-			inputSettingsPanel.add(xinputPanel, constraints);
+			inputSettingsPanel.add(xinputPanel);
 
 			final var leftXInputPanel = new JPanel();
 			leftXInputPanel.setLayout(new BoxLayout(leftXInputPanel, BoxLayout.Y_AXIS));
@@ -1363,7 +1363,7 @@ public final class MainFrame extends JFrame {
 
 		if (!Main.IS_MAC) {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(defaultFlowLayout);
-			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel, constraints);
+			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel);
 
 			final var preventPowerSaveModeLabel = new JLabel(Main.strings.getString("POWER_SAVE_MODE_LABEL"));
 			preventPowerSaveModeLabel.setPreferredSize(longSettingsLabelDimension);
@@ -4948,7 +4948,7 @@ public final class MainFrame extends JFrame {
 		profileSettingsInnerPanel.add(inputSettingsPanel, constraints);
 
 		final var keyRepeatRatePanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(keyRepeatRatePanel, constraints);
+		inputSettingsPanel.add(keyRepeatRatePanel);
 
 		final var keyRepeatIntervalLabel = new JLabel(Main.strings.getString("KEY_REPEAT_RATE_LABEL"));
 		keyRepeatIntervalLabel.setPreferredSize(longSettingsLabelDimension);
@@ -4972,7 +4972,7 @@ public final class MainFrame extends JFrame {
 		profileSettingsInnerPanel.add(appearanceSettingsPanel, constraints);
 
 		final var overlaySettingsPanel = new JPanel(defaultFlowLayout);
-		appearanceSettingsPanel.add(overlaySettingsPanel, constraints);
+		appearanceSettingsPanel.add(overlaySettingsPanel);
 
 		final var overlayLabel = new JLabel(Main.strings.getString("OVERLAY_LABEL"));
 		overlayLabel.setPreferredSize(longSettingsLabelDimension);
