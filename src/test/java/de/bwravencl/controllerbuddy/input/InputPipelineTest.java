@@ -3082,13 +3082,13 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 			pollWithState(axes, noButtons());
-			Assertions.assertFalse(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(), "Delay tracking started");
+			Assertions.assertFalse(IAxisToDelayableAction.actionToDownSinceMap.isEmpty(), "Delay tracking started");
 
 			// Switch to Mode 1 -> onModeActivated clears tracking
 			final var toggleButtons = noButtons();
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 			pollWithState(axes, toggleButtons);
-			Assertions.assertTrue(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
+			Assertions.assertTrue(IAxisToDelayableAction.actionToDownSinceMap.isEmpty(),
 					"Delay tracking cleared by onModeActivated");
 		}
 
@@ -3117,15 +3117,14 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			pollWithState(noAxes(), buttons);
-			Assertions.assertFalse(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
-					"Delay tracking started");
+			Assertions.assertFalse(IButtonToDelayableAction.actionToDownSinceMap.isEmpty(), "Delay tracking started");
 
 			// Switch to Mode 1 -> onModeActivated clears tracking
 			final var toggleButtons = noButtons();
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			pollWithState(noAxes(), toggleButtons);
-			Assertions.assertTrue(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
+			Assertions.assertTrue(IButtonToDelayableAction.actionToDownSinceMap.isEmpty(),
 					"Delay tracking cleared by onModeActivated");
 		}
 

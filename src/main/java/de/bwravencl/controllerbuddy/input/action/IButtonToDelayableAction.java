@@ -34,10 +34,10 @@ import java.util.Map;
 public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 
 	/// Maps each delayable action to the timestamp when it was first activated.
-	Map<IButtonToDelayableAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
+	Map<IButtonToDelayableAction, Long> actionToDownSinceMap = new HashMap<>();
 
 	/// Maps actions to whether their activation must be denied by a delayed action.
-	Map<IAction<?>, Boolean> ACTION_TO_MUST_DENY_ACTIVATION_MAP = new HashMap<>();
+	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	/// Returns whether the given action uses [Activation#ON_RELEASE] activation.
 	///
@@ -53,7 +53,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 	/// @param activeMode the currently active mode
 	/// @param newMode the mode being activated
 	static void onModeActivated(final Mode activeMode, final Mode newMode) {
-		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> {
+		actionToDownSinceMap.keySet().removeIf(action -> {
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalButtonId = activeMode.getButtonToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
@@ -71,13 +71,13 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 	///
 	/// @param activeMode the mode being deactivated
 	static void onModeDeactivated(final Mode activeMode) {
-		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
+		actionToDownSinceMap.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
 	}
 
 	/// Clears all tracked delay state and denied activation state.
 	static void reset() {
-		ACTION_TO_DOWN_SINCE_MAP.clear();
-		ACTION_TO_MUST_DENY_ACTIVATION_MAP.clear();
+		actionToDownSinceMap.clear();
+		actionToMustDenyActivationMap.clear();
 	}
 
 	/// Processes the delay logic for button input. If no delay is configured, the
@@ -96,7 +96,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 		final var currentTime = System.currentTimeMillis();
 
 		if (value) {
-			final var previousValue = ACTION_TO_DOWN_SINCE_MAP.putIfAbsent(this, currentTime);
+			final var previousValue = actionToDownSinceMap.putIfAbsent(this, currentTime);
 			if (previousValue != null && currentTime - previousValue >= getDelay()) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getButtonToActionsMap().get(component);
@@ -107,7 +107,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 								continue;
 							}
 
-							var isUndelayedOnReleaseAction = ACTION_TO_MUST_DENY_ACTIVATION_MAP.get(action);
+							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
@@ -137,7 +137,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 								}
 								}
 
-								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);
+								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
 							}
 
 							if (isUndelayedOnReleaseAction) {
@@ -152,7 +152,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 				return true;
 			}
 		} else {
-			ACTION_TO_DOWN_SINCE_MAP.remove(this);
+			actionToDownSinceMap.remove(this);
 		}
 
 		return false;

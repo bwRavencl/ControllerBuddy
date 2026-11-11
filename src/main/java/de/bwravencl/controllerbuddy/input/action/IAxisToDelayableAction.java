@@ -35,10 +35,10 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 
 	/// Maps each axis delayable action to the timestamp when it was first
 	/// activated.
-	Map<IAxisToDelayableAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
+	Map<IAxisToDelayableAction, Long> actionToDownSinceMap = new HashMap<>();
 
 	/// Maps actions to whether their activation must be denied by a delayed action.
-	Map<IAction<?>, Boolean> ACTION_TO_MUST_DENY_ACTIVATION_MAP = new HashMap<>();
+	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	/// Returns whether the given action uses [Activation#ON_RELEASE] activation.
 	///
@@ -54,7 +54,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 	/// @param activeMode the currently active mode
 	/// @param newMode the mode being activated
 	static void onModeActivated(final Mode activeMode, final Mode newMode) {
-		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> {
+		actionToDownSinceMap.keySet().removeIf(action -> {
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalAxisId = activeMode.getAxisToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
@@ -71,13 +71,13 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 	///
 	/// @param activeMode the mode being deactivated
 	static void onModeDeactivated(final Mode activeMode) {
-		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
+		actionToDownSinceMap.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
 	}
 
 	/// Clears all tracked delay state and denied activation state.
 	static void reset() {
-		ACTION_TO_DOWN_SINCE_MAP.clear();
-		ACTION_TO_MUST_DENY_ACTIVATION_MAP.clear();
+		actionToDownSinceMap.clear();
+		actionToMustDenyActivationMap.clear();
 	}
 
 	/// Returns the upper bound of the axis range that triggers this action.
@@ -107,7 +107,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 		final var currentTime = System.currentTimeMillis();
 
 		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
-			final var downSince = ACTION_TO_DOWN_SINCE_MAP.putIfAbsent(this, currentTime);
+			final var downSince = actionToDownSinceMap.putIfAbsent(this, currentTime);
 			if (downSince != null && currentTime - downSince >= getDelay()) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getAxisToActionsMap().get(component);
@@ -118,7 +118,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 								continue;
 							}
 
-							var isUndelayedOnReleaseAction = ACTION_TO_MUST_DENY_ACTIVATION_MAP.get(action);
+							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
@@ -143,7 +143,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 								}
 								}
 
-								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);
+								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
 							}
 
 							if (isUndelayedOnReleaseAction) {
@@ -158,7 +158,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 				return value;
 			}
 		} else {
-			ACTION_TO_DOWN_SINCE_MAP.remove(this);
+			actionToDownSinceMap.remove(this);
 		}
 
 		return Float.NaN;

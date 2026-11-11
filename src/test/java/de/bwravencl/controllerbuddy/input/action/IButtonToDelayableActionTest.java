@@ -59,8 +59,8 @@ final class IButtonToDelayableActionTest {
 
 		@BeforeEach
 		void clearStaticState() {
-			IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.clear();
-			IButtonToDelayableAction.ACTION_TO_MUST_DENY_ACTIVATION_MAP.clear();
+			IButtonToDelayableAction.actionToDownSinceMap.clear();
+			IButtonToDelayableAction.actionToMustDenyActivationMap.clear();
 		}
 
 		@Test
@@ -80,7 +80,7 @@ final class IButtonToDelayableActionTest {
 			final var action = new ButtonToButtonAction();
 			action.setDelay(1000L);
 			Assertions.assertFalse(action.handleDelay(mockInput, 0, true));
-			Assertions.assertTrue(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.containsKey(action));
+			Assertions.assertTrue(IButtonToDelayableAction.actionToDownSinceMap.containsKey(action));
 		}
 
 		@Test
@@ -89,10 +89,10 @@ final class IButtonToDelayableActionTest {
 			final var action = new ButtonToButtonAction();
 			action.setDelay(1000L);
 			action.handleDelay(mockInput, 0, true);
-			Assertions.assertTrue(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.containsKey(action));
+			Assertions.assertTrue(IButtonToDelayableAction.actionToDownSinceMap.containsKey(action));
 
 			Assertions.assertFalse(action.handleDelay(mockInput, 0, false));
-			Assertions.assertFalse(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.containsKey(action));
+			Assertions.assertFalse(IButtonToDelayableAction.actionToDownSinceMap.containsKey(action));
 		}
 
 		@Test
