@@ -689,7 +689,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			try (final var arena = Arena.ofConfined()) {
-				final var min = arena.allocate(Integer.SIZE);
+				final var min = arena.allocate(Integer.BYTES);
 				if (!VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, min)) {
 					logger.warning("Could not determine minimum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
@@ -699,7 +699,7 @@ public abstract class OutputRunMode extends RunMode {
 				}
 				minAxisValue = min.get(ValueLayout.JAVA_INT, 0L);
 
-				final var max = arena.allocate(Integer.SIZE);
+				final var max = arena.allocate(Integer.BYTES);
 				if (!VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, max)) {
 					logger.warning("Could not determine maximum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
