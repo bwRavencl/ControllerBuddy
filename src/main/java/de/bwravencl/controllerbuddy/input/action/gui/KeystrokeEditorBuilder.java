@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -674,7 +673,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			try {
-				final Set<Scancode> scancodes = new HashSet<>();
+				final var scancodes = new HashSet<Scancode>();
 
 				// noinspection SuspiciousMethodCalls
 				((JList<?>) e.getSource()).getSelectedValuesList()
