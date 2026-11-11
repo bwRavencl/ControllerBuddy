@@ -252,6 +252,7 @@ public final class MainLoop {
 	///
 	/// This method must be called from within the [MainFrame] constructor after the
 	/// [MainLoop] has already been constructed.
+	///
 	/// @param mainFrame the [MainFrame] instance
 	public void setMain(final MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
