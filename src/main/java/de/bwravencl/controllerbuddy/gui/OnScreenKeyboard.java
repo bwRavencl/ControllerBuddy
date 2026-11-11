@@ -486,7 +486,7 @@ public final class OnScreenKeyboard extends OverlayFrame {
 
 		final var maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		final var defaultLocation = new Point();
-		defaultLocation.x = (int) maximumWindowBounds.getMaxX() / 2 - getWidth() / 2;
+		defaultLocation.x = (int) maximumWindowBounds.getCenterX() - getWidth() / 2;
 		defaultLocation.y = (int) maximumWindowBounds.getMaxY() - getHeight();
 
 		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(mainFrame);
