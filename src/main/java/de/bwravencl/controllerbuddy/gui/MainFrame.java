@@ -5772,7 +5772,7 @@ public final class MainFrame extends JFrame {
 			portLabel.setPreferredSize(shortSettingsLabelDimension);
 			portPanel.add(portLabel);
 
-			portSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPort(), 1024, 65_535, 1, null));
+			portSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPort(), 1024, 65_534, 1, null));
 			final var portSpinnerEditor = new NumberEditor(portSpinner, "#");
 			((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			portSpinner.setEditor(portSpinnerEditor);
