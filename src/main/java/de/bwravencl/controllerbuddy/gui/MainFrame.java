@@ -821,18 +821,20 @@ public final class MainFrame extends JFrame {
 						if (Main.SINGLE_INSTANCE_INIT.equals(line)) {
 							final var receivedArgs = new ArrayList<String>();
 
-							while (true) {
-								try {
-									line = bufferedReader.readLine();
-									if (Main.SINGLE_INSTANCE_EOF.equals(line)) {
-										break;
-									}
-									receivedArgs.add(line);
-								} catch (final IOException e) {
-									logger.log(Level.SEVERE, e.getMessage(), e);
+							for (;;) {
+								line = bufferedReader.readLine();
+								if (line == null || Main.SINGLE_INSTANCE_EOF.equals(line)) {
+									break;
 								}
+								receivedArgs.add(line);
 							}
-							arguments = receivedArgs.toArray(String[]::new);
+
+							if (line != null) {
+								arguments = receivedArgs.toArray(String[]::new);
+							} else {
+								logger.warning("Single instance socket was closed before receiving "
+										+ Main.SINGLE_INSTANCE_EOF);
+							}
 						} else {
 							logger.warning("Received unexpected line on single instance socket: " + line);
 						}
