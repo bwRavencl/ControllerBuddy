@@ -263,9 +263,15 @@ public final class MainLoop {
 	///
 	/// Disables SDL event polling, interrupts the loop thread, and spins until the
 	/// thread has fully stopped. An interrupt of the calling thread does not abort
-	/// the wait and is restored on return.
+	/// the wait and is restored on return. If called on the loop thread itself,
+	/// only SDL event polling is disabled, as the loop cannot wait for its own
+	/// termination.
 	public void shutdown() {
 		pollSdlEvents = false;
+
+		if (Thread.currentThread() == thread) {
+			return;
+		}
 
 		thread.interrupt();
 

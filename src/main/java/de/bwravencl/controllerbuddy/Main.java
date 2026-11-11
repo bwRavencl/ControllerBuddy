@@ -439,7 +439,7 @@ public final class Main {
 						if (i < NUM_LOCK_FILE_READ_RETRIES - 1) {
 							try {
 								Thread.sleep(100);
-							} catch (final InterruptedException e) {
+							} catch (InterruptedException _) {
 								Thread.currentThread().interrupt();
 								break;
 							}

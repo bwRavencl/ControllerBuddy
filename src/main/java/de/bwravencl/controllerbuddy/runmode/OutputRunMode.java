@@ -944,8 +944,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// virtual output device.
 	///
 	/// Only values that have changed since the last write operation are sent;
-	/// unchanged values are skipped. On Windows, a warning is shown if any vJoy
-	/// write operation fails.
+	/// unchanged values are skipped. If a write operation fails, the user is asked
+	/// whether the output should be restarted and the run loop is stopped.
 	@SuppressWarnings("NullAway")
 	final void writeOutput() {
 		if (Main.IS_LINUX) {
@@ -1214,12 +1214,13 @@ public abstract class OutputRunMode extends RunMode {
 					forceStop = true;
 				}
 			} catch (InterruptedException _) {
-				// handled below
+				forceStop = true;
+				Thread.currentThread().interrupt();
 			} catch (final ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 
-			Thread.currentThread().interrupt();
+			run = false;
 		}
 	}
 
