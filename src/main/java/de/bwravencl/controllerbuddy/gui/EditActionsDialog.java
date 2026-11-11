@@ -1261,11 +1261,7 @@ public final class EditActionsDialog extends JDialog {
 		/// @param title the title text to display
 		/// @param titleLabel an existing label to reuse for the title, or `null` to
 		/// create a new one
-		private IconLabel(final String icon, final String title, @Nullable JLabel titleLabel) {
-			if (titleLabel == null) {
-				titleLabel = new JLabel();
-			}
-
+		private IconLabel(final String icon, final String title, final @Nullable JLabel titleLabel) {
 			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 			setOpaque(true);
 
@@ -1278,7 +1274,7 @@ public final class EditActionsDialog extends JDialog {
 
 			add(Box.createHorizontalStrut(5));
 
-			this.titleLabel = titleLabel;
+			this.titleLabel = titleLabel != null ? titleLabel : new JLabel();
 			this.titleLabel.setText(title);
 			add(this.titleLabel);
 		}
