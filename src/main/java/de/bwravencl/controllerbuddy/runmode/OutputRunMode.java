@@ -535,21 +535,7 @@ public abstract class OutputRunMode extends RunMode {
 		final var requiredButtons = getRequiredNumButtons();
 
 		if (numButtons < requiredButtons) {
-			if (Main.IS_WINDOWS) {
-				logger.warning("vJoy device has not enough buttons");
-				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
-						MessageFormat.format(Main.strings.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"), vJoyDevice,
-								numButtons, requiredButtons),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
-			} else if (Main.IS_LINUX) {
-				logger.warning("uinput device has not enough buttons");
-				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
-						MessageFormat.format(Main.strings.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
-								requiredButtons),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
-			} else {
-				throw buildNotImplementedException();
-			}
+			showTooFewButtonsDialog(numButtons, requiredButtons);
 
 			return false;
 		}
@@ -935,6 +921,29 @@ public abstract class OutputRunMode extends RunMode {
 			for (var i = 0; i < buttons.length; i++) {
 				buttons[i] = new DeviceValue();
 			}
+		}
+	}
+
+	/// Logs and shows an error dialog stating that the virtual device has fewer
+	/// buttons than required.
+	///
+	/// @param numButtons the number of buttons available on the virtual device
+	/// @param requiredButtons the number of buttons required by the profile
+	final void showTooFewButtonsDialog(final int numButtons, final int requiredButtons) {
+		if (Main.IS_WINDOWS) {
+			logger.warning("vJoy device has not enough buttons");
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
+					MessageFormat.format(Main.strings.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"), vJoyDevice,
+							numButtons, requiredButtons),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
+		} else if (Main.IS_LINUX) {
+			logger.warning("uinput device has not enough buttons");
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
+					MessageFormat.format(Main.strings.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
+							requiredButtons),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
+		} else {
+			throw buildNotImplementedException();
 		}
 	}
 

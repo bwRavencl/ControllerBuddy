@@ -75,7 +75,7 @@ public final class ServerRunMode extends RunMode {
 	static final int IV_LENGTH = 12;
 
 	/// Protocol version byte included in handshake packets.
-	static final byte PROTOCOL_VERSION = 4;
+	static final byte PROTOCOL_VERSION = 5;
 
 	/// Length in bytes of the password-based key derivation salt.
 	static final int SALT_LENGTH = 100;
@@ -168,7 +168,7 @@ public final class ServerRunMode extends RunMode {
 	public void run() {
 		logStart();
 
-		final var clientPort = port + 1;
+		var clientPort = 0;
 		var serverState = ServerState.LISTENING;
 		DatagramPacket receivePacket;
 		var counter = 0L;
@@ -218,6 +218,7 @@ public final class ServerRunMode extends RunMode {
 						process();
 					}
 					clientAddress = receivePacket.getAddress();
+					clientPort = receivePacket.getPort();
 					if (clientAddress == null) {
 						clientAddress = serverSocket.getInetAddress();
 					}
@@ -242,20 +243,24 @@ public final class ServerRunMode extends RunMode {
 								break;
 							}
 
+							key = deriveKey(mainFrame, salt);
+
 							final var requiredNumButtons = getRequiredNumButtons();
 							if (clientNumButtons < requiredNumButtons) {
-								final var clientHostAddress = clientAddress.getHostAddress();
-								logger.warning("Client " + clientHostAddress + " has only " + clientNumButtons
+								logger.warning("Rejecting " + MessageType.CLIENT_HELLO + " from " + clientAddress
+										+ ": client has only " + clientNumButtons
 										+ " buttons, but the current profile requires at least " + requiredNumButtons);
-								EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
-										MessageFormat.format(
-												Main.strings.getString("TOO_FEW_CLIENT_BUTTONS_DIALOG_TEXT"),
-												clientHostAddress, clientNumButtons, requiredNumButtons),
-										Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
-								return;
-							}
 
-							key = deriveKey(mainFrame, salt);
+								try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+										final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+									dataOutputStream.writeInt(MessageType.TOO_FEW_BUTTONS.getId());
+									dataOutputStream.writeInt(requiredNumButtons);
+
+									sendEncrypted(byteArrayOutputStream, clientPort);
+								}
+
+								break;
+							}
 
 							minAxisValue = clientMinAxisValue;
 							maxAxisValue = clientMaxAxisValue;
@@ -276,8 +281,10 @@ public final class ServerRunMode extends RunMode {
 								return;
 							}
 							final var clientHostName = clientAddress.getCanonicalHostName();
-							EventQueue.invokeLater(() -> mainFrame.setStatusBarText(MessageFormat.format(
-									Main.strings.getString("STATUS_CONNECTED_TO"), clientHostName, clientPort)));
+							final var connectedClientPort = clientPort;
+							EventQueue.invokeLater(() -> mainFrame.setStatusBarText(
+									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), clientHostName,
+											connectedClientPort)));
 						}
 					}
 				}
@@ -384,7 +391,8 @@ public final class ServerRunMode extends RunMode {
 							try {
 								serverSocket.receive(receivePacket);
 
-								if (clientAddress != null && clientAddress.equals(receivePacket.getAddress())) {
+								if (clientAddress != null && clientAddress.equals(receivePacket.getAddress())
+										&& clientPort == receivePacket.getPort()) {
 									try (final var byteArrayInputStream = new ByteArrayInputStream(
 											receivePacket.getData());
 											final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
@@ -500,7 +508,11 @@ public final class ServerRunMode extends RunMode {
 
 		/// Keep-alive reply sent by the client in response to
 		/// [MessageType#REQUEST_ALIVE]
-		CLIENT_ALIVE(4);
+		CLIENT_ALIVE(4),
+
+		/// Handshake rejection sent by the server when the virtual device of the client
+		/// has fewer buttons than the profile requires
+		TOO_FEW_BUTTONS(5);
 
 		/// Map from numeric ID to [MessageType] constant for fast lookup.
 		private static final Map<Integer, MessageType> ID_TO_MESSAGE_TYPE_MAP = Arrays.stream(values())

@@ -337,7 +337,7 @@ public final class MainFrame extends JFrame {
 	private static final int LOWER_BUTTONS_VGAP = 5;
 
 	/// Maximum allowed network port.
-	private static final int MAX_PORT = 65_534;
+	private static final int MAX_PORT = 65_535;
 
 	/// Maximum allowed network timeout in milliseconds.
 	private static final int MAX_TIMEOUT = 60_000;

@@ -228,6 +228,10 @@ public final class ClientRunMode extends OutputRunMode {
 								} else {
 									success = true;
 								}
+							} else if (messageType == MessageType.TOO_FEW_BUTTONS.getId()) {
+								final var requiredNumButtons = dataInputStream.readInt();
+								showTooFewButtonsDialog(numButtons, requiredNumButtons);
+								retry = -1;
 							} else {
 								retry--;
 								final var finalRetry = retry;
@@ -419,7 +423,7 @@ public final class ClientRunMode extends OutputRunMode {
 
 		try {
 			if (init()) {
-				clientSocket = new DatagramSocket(port + 1);
+				clientSocket = new DatagramSocket();
 
 				IOException ioException = null;
 				for (final var hostAddress : InetAddress.getAllByName(host)) {

@@ -24,16 +24,25 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.util.MainLoop;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,6 +113,8 @@ final class ServerRunModeTest {
 	@DisplayName("client hello handling")
 	final class HelloHandlingTests {
 
+		private static final int REQUIRED_NUM_BUTTONS = 41;
+
 		private static final long TIMEOUT_MILLIS = 10_000L;
 
 		@Mock
@@ -115,13 +126,13 @@ final class ServerRunModeTest {
 		@Mock
 		Profile mockProfile;
 
+		private int port;
+
 		private boolean previousSkipMessageDialogs;
 
-		private static int findFreePort() throws IOException {
-			try (final var socket = new DatagramSocket(0)) {
-				return socket.getLocalPort();
-			}
-		}
+		private @Nullable Thread serverThread;
+
+		private @Nullable ServerRunMode serverRunMode;
 
 		private static byte[] createHello(final int numButtons) throws IOException {
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -137,13 +148,30 @@ final class ServerRunModeTest {
 			}
 		}
 
-		private void runServerAndSendHello(final int numButtons) throws Exception {
-			final var port = findFreePort();
-			Mockito.when(mockMainFrame.getPort()).thenReturn(port);
+		private static int findFreePort() throws IOException {
+			try (final var socket = new DatagramSocket(0)) {
+				return socket.getLocalPort();
+			}
+		}
 
-			final var serverRunMode = new ServerRunMode(mockMainFrame);
-			final var serverThread = new Thread(serverRunMode);
-			serverThread.start();
+		private byte[] decrypt(final DatagramPacket packet) throws GeneralSecurityException {
+			final var packetByteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+			final var iv = new byte[ServerRunMode.IV_LENGTH];
+			packetByteBuffer.get(iv);
+
+			final var cipher = Cipher.getInstance(ServerRunMode.CIPHER_TRANSFORMATION);
+			cipher.init(Cipher.DECRYPT_MODE,
+					ServerRunMode.deriveKey(mockMainFrame, new byte[ServerRunMode.SALT_LENGTH]),
+					new GCMParameterSpec(ServerRunMode.TAG_LENGTH, iv));
+
+			final var encryptedBytes = new byte[packetByteBuffer.remaining()];
+			packetByteBuffer.get(encryptedBytes);
+
+			return cipher.doFinal(encryptedBytes);
+		}
+
+		private void sendHelloUntilServerStops(final int numButtons) throws Exception {
+			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
 
 			final var hello = createHello(numButtons);
 			try (final var clientSocket = new DatagramSocket()) {
@@ -152,56 +180,91 @@ final class ServerRunModeTest {
 					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
 					serverThread.join(200L);
 				}
-			} finally {
-				serverRunMode.requestStop();
-				serverThread.interrupt();
-				serverThread.join(TIMEOUT_MILLIS);
 			}
-
-			Assertions.assertFalse(serverThread.isAlive());
 		}
 
 		@BeforeEach
-		void setUp() {
+		void setUp() throws IOException {
 			previousSkipMessageDialogs = GuiUtils.skipMessageDialogs;
 			GuiUtils.skipMessageDialogs = true;
 
 			final var action = new ButtonToButtonAction();
-			action.setButtonId(40);
+			action.setButtonId(REQUIRED_NUM_BUTTONS - 1);
 			final var mode = new Mode();
 			mode.getButtonToActionsMap().put(0, List.of(action));
+
+			port = findFreePort();
 
 			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
 			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
 			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getPort()).thenReturn(port);
 			Mockito.when(mockMainFrame.getTimeout()).thenReturn(ServerRunMode.DEFAULT_TIMEOUT);
 			Mockito.when(mockMainFrame.getRandom()).thenReturn(new Random(0L));
 			Mockito.when(mockMainFrame.getMainLoop()).thenReturn(mockMainLoop);
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
 			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
 			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+
+			final var serverRunMode = new ServerRunMode(mockMainFrame);
+			this.serverRunMode = serverRunMode;
+			final var serverThread = new Thread(serverRunMode);
+			this.serverThread = serverThread;
+			serverThread.start();
 		}
 
 		@Test
 		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
 		void proceedsWhenClientHasEnoughButtons() throws Exception {
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
-
-			runServerAndSendHello(41);
+			sendHelloUntilServerStops(REQUIRED_NUM_BUTTONS);
 
 			Mockito.verify(mockInput).init();
 		}
 
 		@Test
-		@DisplayName("stops without initializing the input when the client has fewer buttons than the profile requires")
-		void stopsWhenClientHasTooFewButtons() throws Exception {
-			runServerAndSendHello(40);
+		@DisplayName("rejects the client and keeps listening when the client has fewer buttons than the profile requires")
+		void rejectsClientWithTooFewButtons() throws Exception {
+			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
 
+			final var hello = createHello(REQUIRED_NUM_BUTTONS - 1);
+			final var receiveBuf = new byte[1024];
+			final var replyPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+			try (final var clientSocket = new DatagramSocket()) {
+				clientSocket.setSoTimeout(200);
+				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
+				var replied = false;
+				while (!replied && System.currentTimeMillis() < deadline) {
+					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
+					try {
+						clientSocket.receive(replyPacket);
+						replied = true;
+					} catch (SocketTimeoutException _) {
+						// the server might not be listening yet
+					}
+				}
+				Assertions.assertTrue(replied);
+			}
+
+			try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(replyPacket)))) {
+				Assertions.assertEquals(ServerRunMode.MessageType.TOO_FEW_BUTTONS.getId(), dataInputStream.readInt());
+				Assertions.assertEquals(REQUIRED_NUM_BUTTONS, dataInputStream.readInt());
+			}
+
+			Assertions.assertTrue(serverThread.isAlive());
 			Mockito.verify(mockInput, Mockito.never()).init();
 			Mockito.verify(mockInput, Mockito.never()).initButtons();
 		}
 
 		@AfterEach
-		void tearDown() {
+		void tearDown() throws InterruptedException {
+			Objects.requireNonNull(serverRunMode, "Field serverRunMode must not be null");
+			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
+
+			serverRunMode.requestStop();
+			serverThread.interrupt();
+			serverThread.join(TIMEOUT_MILLIS);
+			Assertions.assertFalse(serverThread.isAlive());
+
 			GuiUtils.skipMessageDialogs = previousSkipMessageDialogs;
 		}
 	}
