@@ -104,7 +104,7 @@ final class IndicatorProgressBar extends JProgressBar {
 
 			inverted = overlayAxis.isInverted();
 		}
-		default -> throw new IllegalArgumentException("Unsupported orientation: " + orientation);
+		default -> throw new IllegalArgumentException("Unsupported orientation: " + overlayAxisOrientation);
 		}
 
 		setPreferredSize(new Dimension(Math.round(width * overlayScaling), Math.round(height * overlayScaling)));
