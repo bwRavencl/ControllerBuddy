@@ -3142,8 +3142,8 @@ public final class MainFrame extends JFrame {
 
 		final var maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		final var defaultLocation = new Point();
-		defaultLocation.x = 0;
-		defaultLocation.y = maximumWindowBounds.height - overlayFrame.getHeight();
+		defaultLocation.x = maximumWindowBounds.x;
+		defaultLocation.y = (int) maximumWindowBounds.getMaxY() - overlayFrame.getHeight();
 
 		prevTotalDisplayBounds = GuiUtils.getTotalDisplayBounds();
 
