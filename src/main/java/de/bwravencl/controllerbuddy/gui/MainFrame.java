@@ -3864,7 +3864,7 @@ public final class MainFrame extends JFrame {
 	/// @throws NotSerializableException always
 	@Serial
 	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
-		throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		throw new NotSerializableException(MainFrame.class.getName());
 	}
 
 	/// Repaints the on-screen keyboard and, on Windows, the overlay frame if they
@@ -5292,7 +5292,7 @@ public final class MainFrame extends JFrame {
 	/// @throws NotSerializableException always
 	@Serial
 	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
-		throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		throw new NotSerializableException(MainFrame.class.getName());
 	}
 
 	/// Internal enumeration of the available run mode types.
