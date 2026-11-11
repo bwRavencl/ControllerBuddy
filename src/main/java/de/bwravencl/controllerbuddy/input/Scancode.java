@@ -337,7 +337,7 @@ public record Scancode(String name, int keyCode, Event event) {
 	/// 'Z' key
 	public static final String DIK_Z = "Z";
 
-	/// Map from AWT key codes to their corresponding scancode instances.
+	/// Map from DirectInput key codes to their corresponding scancode instances.
 	public static final Map<Integer, Scancode> KEY_CODE_TO_SCAN_CODE_MAP;
 
 	/// Map from key names to their corresponding scancode instances.
