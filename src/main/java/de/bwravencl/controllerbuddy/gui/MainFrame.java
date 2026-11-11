@@ -3847,9 +3847,9 @@ public final class MainFrame extends JFrame {
 			UinputDevice.shutdown();
 		}
 
-		if (trayMenu != 0L && mainLoop.isAvailable()) {
+		if (tray != 0L && mainLoop.isAvailable()) {
 			try {
-				mainLoop.runSync(() -> SDLTray.SDL_DestroyTray(trayMenu));
+				mainLoop.runSync(() -> SDLTray.SDL_DestroyTray(tray));
 			} catch (IllegalStateException _) {
 				// ignore main loop is no longer able to process tasks
 			}
