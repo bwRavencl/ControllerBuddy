@@ -2914,7 +2914,7 @@ public final class MainFrame extends JFrame {
 	/// it is safe to proceed (no unsaved changes, or the user chose to save or
 	/// discard), or `false` if the user canceled.
 	///
-	/// @return `true` if the caller may proceed, `false` if the user cancelled
+	/// @return `true` if the caller may proceed, `false` if the user canceled
 	private boolean handleUnsavedChanges() {
 		if (!unsavedChanges) {
 			return true;
