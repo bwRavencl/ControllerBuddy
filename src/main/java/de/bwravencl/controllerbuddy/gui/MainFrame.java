@@ -270,6 +270,12 @@ public final class MainFrame extends JFrame {
 	/// Minimum allowed length for network passwords.
 	public static final int PASSWORD_MIN_LENGTH = 6;
 
+	/// File extension used for profile files.
+	private static final String PROFILE_FILE_EXTENSION = "json";
+
+	/// File suffix string derived from the profile file extension.
+	public static final String PROFILE_FILE_SUFFIX = fileSuffix(PROFILE_FILE_EXTENSION);
+
 	/// Unicode symbol used to indicate swapped axes.
 	public static final String SWAPPED_SYMBOL = "⇆";
 
@@ -352,12 +358,6 @@ public final class MainFrame extends JFrame {
 
 	/// Maximum width in pixels of the overlay settings description label.
 	private static final int OVERLAY_SETTINGS_DESCRIPTION_LABEL_MAX_WIDTH = 300;
-
-	/// File extension used for profile files.
-	private static final String PROFILE_FILE_EXTENSION = "json";
-
-	/// File suffix string derived from the profile file extension.
-	private static final String PROFILE_FILE_SUFFIX = fileSuffix(PROFILE_FILE_EXTENSION);
 
 	/// Height in pixels shared by all settings label dimensions.
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;

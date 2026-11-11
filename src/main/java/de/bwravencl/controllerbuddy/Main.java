@@ -391,7 +391,8 @@ public final class Main {
 
 				if (mainFrame != null && mainFrame.isUnsavedChanges()) {
 					try {
-						final var filename = mainFrame.getCurrentFile().map(File::getName).orElse("unnamed_profile");
+						final var filename = mainFrame.getCurrentFile().map(File::getName)
+								.orElse("unnamed_profile" + MainFrame.PROFILE_FILE_SUFFIX);
 						final var file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
 
 						if (!file.exists()) {
