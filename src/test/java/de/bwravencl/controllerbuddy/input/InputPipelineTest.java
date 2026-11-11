@@ -4037,6 +4037,24 @@ final class InputPipelineTest {
 
 			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 		}
+
+		@Test
+		@DisplayName("select on-screen keyboard key moves selector again when the button is pressed again right after a release")
+		void selectOnScreenKeyboardKeyMovesAgainAfterQuickRepress() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToSelectOnScreenKeyboardKeyAction(Direction.RIGHT))));
+			setProfile(profile);
+
+			final var pressedButtons = noButtons();
+			pressedButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithState(noAxes(), pressedButtons);
+			pollWithState(noAxes(), noButtons());
+			pollWithState(noAxes(), pressedButtons);
+
+			Mockito.verify(mockOnScreenKeyboard, Mockito.times(2)).moveSelector(Direction.RIGHT);
+		}
 	}
 
 	@Nested

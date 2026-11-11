@@ -91,7 +91,8 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 				lastPressTime = currentTime;
 			}
 		} else {
-			initialPressTime = 0;
+			initialPressTime = 0L;
+			lastPressTime = 0L;
 		}
 	}
 
