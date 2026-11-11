@@ -5560,7 +5560,7 @@ public final class MainFrame extends JFrame {
 		}
 
 		@Override
-		protected JDialog createDialog(final Component parent) throws HeadlessException {
+		protected final JDialog createDialog(final Component parent) throws HeadlessException {
 			final var dialog = super.createDialog(parent);
 			GuiUtils.setWindowIcon(dialog);
 
