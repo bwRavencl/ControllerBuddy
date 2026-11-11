@@ -274,7 +274,15 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 
 ## 🛠️ Building
 
-If you want to build ControllerBuddy from source, this section might be helpful to get you started.  
+If you want to build ControllerBuddy from source, this section might be helpful to get you started.
+
+> [!IMPORTANT]
+> The [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project is included as a Git submodule, which must be checked out before building:
+>
+> ```sh
+> git submodule update --init
+> ```
+
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
 | Task                                       | Command                     |
