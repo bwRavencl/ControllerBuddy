@@ -104,6 +104,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
   - Test classes are not covered by that module-level marking, so annotate every test class with `@NullMarked` individually.
   - Use `@Nullable` explicitly on any parameter, field, or return type that may hold `null`.
   - Place `@Nullable` immediately before the type name, after modifiers like `final` (e.g., `private final @Nullable String name;`).
+- Do not add comments to code in `src/main`. In rare cases where a non-obvious implementation detail justifies an explanation, add it to the Javadoc comment of the enclosing member in abbreviated form instead. The only exceptions are IDE inspection suppressions (`// noinspection ...`) and a short comment in an otherwise empty `catch` block stating why the exception is ignored (e.g., `// handled below`).
 - Documentation comments: follow the rules below for all Javadoc comments.
   - **Language** use American English, not British English.
   - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.
