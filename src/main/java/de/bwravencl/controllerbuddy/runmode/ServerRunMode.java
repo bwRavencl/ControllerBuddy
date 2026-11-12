@@ -89,7 +89,7 @@ public final class ServerRunMode extends RunMode {
 	/// Number of keep-alive request retries before considering the client lost.
 	private static final int NUM_REQUEST_ALIVE_RETRIES = 10;
 
-	/// Interval in milliseconds between consecutive keep-alive requests.
+	/// Number of poll cycles between consecutive keep-alive requests.
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	/// Number of poll cycles after which the current input state is sent again even
