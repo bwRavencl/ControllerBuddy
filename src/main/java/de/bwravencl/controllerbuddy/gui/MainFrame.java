@@ -204,6 +204,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.PlainDocument;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -2015,126 +2016,6 @@ public final class MainFrame extends JFrame {
 				Main.strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE, false);
 	}
 
-	/// Adds a `tspan` SVG element to the given parent node whose text content is
-	/// built from the descriptions of the supplied actions.
-	///
-	/// For any action that is a [ButtonToModeAction], the mode symbol is appended
-	/// to its description and recorded in `usedSymbols`. Duplicate descriptions are
-	/// removed before joining them with ", ".
-	///
-	/// @param actions the list of actions whose descriptions form the text content
-	/// @param parentNode the SVG node to which the new `tspan` element is appended
-	/// @param usedSymbols the set that collects mode symbols encountered during
-	/// processing
-	/// @return the signed pixel width contribution of the new `tspan` element,
-	/// relative to its text anchor
-	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode,
-			final Set<String> usedSymbols) {
-		Objects.requireNonNull(input, "Field input must not be null");
-
-		return addTSpanElement(actions.stream().map(action -> {
-			var description = action.getDescription(input);
-
-			if (action instanceof final ButtonToModeAction buttonToModeAction) {
-				final var symbol = buttonToModeAction.getSymbol();
-				description = description + " " + symbol;
-				usedSymbols.add(symbol);
-			}
-
-			return description;
-		}).distinct().collect(Collectors.joining(", ")), parentNode);
-	}
-
-	/// Adds a `tspan` SVG element with the given text content to the parent node
-	/// and returns the signed pixel width contribution of the element.
-	///
-	/// The font family and size are resolved by walking up the ancestor chain and
-	/// reading the `font-family` and `font-size` SVG attributes. Only `pt` font
-	/// size units are supported. The return value is positive when the text anchor
-	/// is `start`, negative when it is `end`, and zero otherwise.
-	///
-	/// @param textContent the text string to place inside the new `tspan` element
-	/// @param parentNode the SVG node to which the new `tspan` element is appended
-	/// @return the signed pixel width contribution of the new element, relative to
-	/// its text anchor
-	/// @throws UnsupportedOperationException if a non-`pt` font size unit is
-	/// encountered
-	/// @throws IllegalArgumentException if the font size value cannot be parsed as
-	/// a number
-	private int addTSpanElement(final String textContent, final Node parentNode) {
-		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS("http://www.w3.org/2000/svg",
-				"tspan");
-
-		prefixTSpanElement.setTextContent(textContent);
-		parentNode.appendChild(prefixTSpanElement);
-
-		String fontFamily = null;
-		String fontSizeString = null;
-		for (var node = parentNode; node != null; node = node.getParentNode()) {
-			if (!(node instanceof final Element element)) {
-				continue;
-			}
-			if (fontFamily == null) {
-				final var fontFamilyAttributeValue = element.getAttribute("font-family");
-				if (!fontFamilyAttributeValue.isBlank()) {
-					fontFamily = fontFamilyAttributeValue.trim();
-				}
-			}
-			if (fontSizeString == null) {
-				final var fontSizeAttributeValue = element.getAttribute("font-size");
-				if (!fontSizeAttributeValue.isBlank()) {
-					fontSizeString = fontSizeAttributeValue.trim();
-				}
-			}
-			if (fontFamily != null && fontSizeString != null) {
-				break;
-			}
-		}
-
-		if (fontFamily == null) {
-			fontFamily = "serif";
-		}
-
-		var fontSizePt = 12;
-		if (fontSizeString != null && !fontSizeString.isBlank()) {
-			fontSizeString = fontSizeString.toLowerCase(Locale.ROOT);
-
-			if (!fontSizeString.endsWith("pt")) {
-				throw new UnsupportedOperationException("Only pt font size units are supported");
-			}
-
-			final var numberPart = fontSizeString.substring(0, fontSizeString.length() - 2);
-
-			try {
-				fontSizePt = Math.round(Float.parseFloat(numberPart));
-			} catch (final NumberFormatException e) {
-				throw new IllegalArgumentException("Invalid font size number format in: " + numberPart, e);
-			}
-		}
-
-		final var font = new Font(fontFamily, Font.PLAIN, fontSizePt);
-		final var fontMetrics = getFontMetrics(font);
-
-		final var extensionWidth = fontMetrics.stringWidth(textContent);
-		for (var node = parentNode; node != null; node = node.getParentNode()) {
-			if (!(node instanceof final Element element)) {
-				continue;
-			}
-			final var textAnchor = element.getAttribute("text-anchor");
-			if (textAnchor.isBlank()) {
-				continue;
-			}
-
-			return switch (textAnchor.toLowerCase(Locale.ROOT)) {
-			case "start" -> extensionWidth;
-			case "end" -> -extensionWidth;
-			default -> 0;
-			};
-		}
-
-		return 0;
-	}
-
 	/// Starts a network run mode on autostart if the stored connection settings are
 	/// valid.
 	///
@@ -2157,6 +2038,34 @@ public final class MainFrame extends JFrame {
 
 		GuiUtils.showMessageDialog(this, this, errorMessage, Main.strings.getString("ERROR_DIALOG_TITLE"),
 				JOptionPane.ERROR_MESSAGE, true);
+	}
+
+	/// Builds the text of an action group in a visualization label from the
+	/// descriptions of the given actions.
+	///
+	/// For any action that is a [ButtonToModeAction], the mode symbol is appended
+	/// to its description and recorded in `usedSymbols`. Duplicate descriptions are
+	/// removed before joining them with ", ".
+	///
+	/// @param actions the actions of the group
+	/// @param usedSymbols the set that collects mode symbols encountered during
+	/// processing
+	/// @return the joined descriptions of the actions
+	private String buildVisualizationActionGroupText(final List<? extends IAction<?>> actions,
+			final Set<String> usedSymbols) {
+		Objects.requireNonNull(input, "Field input must not be null");
+
+		return actions.stream().map(action -> {
+			var description = action.getDescription(input);
+
+			if (action instanceof final ButtonToModeAction buttonToModeAction) {
+				final var symbol = buttonToModeAction.getSymbol();
+				description = description + " " + symbol;
+				usedSymbols.add(symbol);
+			}
+
+			return description;
+		}).distinct().collect(Collectors.joining(", "));
 	}
 
 	/// Calculates the display width of the current mode label for the given mode,
@@ -3164,6 +3073,10 @@ public final class MainFrame extends JFrame {
 	///
 	/// Parses the bundled controller SVG resource and caches both the document and
 	/// its viewBox rectangle. Does nothing if already initialized.
+	///
+	/// The `xml:space` attribute of the resource's root element only keeps the file
+	/// minified when it is formatted. It is removed, so that whitespace is only
+	/// preserved within the label texts.
 	private void initTemplateSvgDocument() {
 		if (templateSvgDocument != null) {
 			return;
@@ -3183,9 +3096,12 @@ public final class MainFrame extends JFrame {
 			throw new RuntimeException(e);
 		}
 
+		final var documentElement = svgDocument.getDocumentElement();
+		documentElement.removeAttributeNS(XMLConstants.XML_NS_URI, "space");
+
 		templateSvgDocument = svgDocument;
 
-		final var viewBox = svgDocument.getDocumentElement().getAttribute("viewBox");
+		final var viewBox = documentElement.getAttribute("viewBox");
 		final var viewBoxParts = viewBox.split(" ", -1);
 		if (viewBoxParts.length != 4) {
 			throw new RuntimeException("Invalid viewBox attribute: " + viewBox);
@@ -5007,9 +4923,17 @@ public final class MainFrame extends JFrame {
 	///
 	/// Partitions the actions into up to three labeled groups based on their
 	/// activation timing (on-press, while-pressed, on-release) or delay status,
-	/// then writes the combined label into the SVG text element. Applies dark-theme
-	/// colors when requested and records every symbol string added to the
-	/// `usedSymbols` set so callers can build a legend.
+	/// then writes the combined label into the `tspan` element of the SVG text
+	/// element. Applies dark-theme colors when requested and records every symbol
+	/// string added to the `usedSymbols` set so callers can build a legend.
+	///
+	/// The whole label is kept in a single text node of the `tspan` element, which
+	/// is the only element whose whitespace is preserved. This way, whitespace
+	/// between elements cannot change how the label is rendered.
+	///
+	/// The width of the label is measured with the font resolved from the
+	/// `font-family` and `font-size` SVG attributes of the ancestor chain. Only
+	/// `pt` font size units are supported.
 	///
 	/// @param svgDocument the SVG document whose elements are updated
 	/// @param idPrefix the prefix used to locate the group, text, and path elements
@@ -5020,7 +4944,12 @@ public final class MainFrame extends JFrame {
 	/// @param swapped `true` to append the swapped indicator symbol
 	/// @param usedSymbols set that is populated with every symbol string added to
 	/// the SVG text
-	/// @return the total extension width contributed by the rendered text
+	/// @return the signed pixel width of the label, relative to its text anchor:
+	/// positive for `start`, negative for `end`, and zero otherwise
+	/// @throws UnsupportedOperationException if a non-`pt` font size unit is
+	/// encountered
+	/// @throws IllegalArgumentException if the group, text, or path element cannot
+	/// be found or the font size value cannot be parsed as a number
 	@SuppressWarnings("NullAway")
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
 			final @Nullable List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
@@ -5108,34 +5037,102 @@ public final class MainFrame extends JFrame {
 				.orElseThrow(() -> new IllegalArgumentException(
 						"text element with id '" + idPrefix + "Text' not found in SVG document"));
 
-		final var tSpanNode = textElement.getFirstChild();
-		tSpanNode.setTextContent(null);
-
-		var extensionWidth = 0;
+		final var labelText = new StringBuilder();
 
 		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
+			labelText.append(groupAPrefix).append(" ");
 			usedSymbols.add(groupAPrefix);
 		}
 
-		extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
+		labelText.append(buildVisualizationActionGroupText(actionGroupA, usedSymbols));
 
 		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
+			labelText.append(" ").append(groupBPrefix).append(" ");
 			usedSymbols.add(groupBPrefix);
 		}
 
-		extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
+		labelText.append(buildVisualizationActionGroupText(actionGroupB, usedSymbols));
 
 		if (!actionGroupC.isEmpty()) {
-			extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
-			extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
+			labelText.append(" ").append(groupCPrefix).append(" ").append(buildVisualizationActionGroupText(actionGroupC, usedSymbols));
 			usedSymbols.add(groupCPrefix);
 		}
 
 		if (swapped) {
-			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
+			labelText.append(" ").append(SWAPPED_SYMBOL);
 			usedSymbols.add(SWAPPED_SYMBOL);
+		}
+
+		final var text = labelText.toString();
+		final var tSpanElement = (Element) textElement.getFirstChild();
+		tSpanElement.setAttributeNS(XMLConstants.XML_NS_URI, "xml:space", "preserve");
+		tSpanElement.setTextContent(text);
+
+		String fontFamily = null;
+		String fontSizeString = null;
+		for (Node node = tSpanElement; node != null; node = node.getParentNode()) {
+			if (!(node instanceof final Element element)) {
+				continue;
+			}
+			if (fontFamily == null) {
+				final var fontFamilyAttributeValue = element.getAttribute("font-family");
+				if (!fontFamilyAttributeValue.isBlank()) {
+					fontFamily = fontFamilyAttributeValue.trim();
+				}
+			}
+			if (fontSizeString == null) {
+				final var fontSizeAttributeValue = element.getAttribute("font-size");
+				if (!fontSizeAttributeValue.isBlank()) {
+					fontSizeString = fontSizeAttributeValue.trim();
+				}
+			}
+			if (fontFamily != null && fontSizeString != null) {
+				break;
+			}
+		}
+
+		if (fontFamily == null) {
+			fontFamily = "serif";
+		}
+
+		var fontSizePt = 12;
+		if (fontSizeString != null && !fontSizeString.isBlank()) {
+			fontSizeString = fontSizeString.toLowerCase(Locale.ROOT);
+
+			if (!fontSizeString.endsWith("pt")) {
+				throw new UnsupportedOperationException("Only pt font size units are supported");
+			}
+
+			final var numberPart = fontSizeString.substring(0, fontSizeString.length() - 2);
+
+			try {
+				fontSizePt = Math.round(Float.parseFloat(numberPart));
+			} catch (final NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid font size number format in: " + numberPart, e);
+			}
+		}
+
+		final var font = new Font(fontFamily, Font.PLAIN, fontSizePt);
+		final var fontMetrics = getFontMetrics(font);
+
+		final var textWidth = fontMetrics.stringWidth(text);
+
+		var extensionWidth = 0;
+		for (Node node = tSpanElement; node != null; node = node.getParentNode()) {
+			if (!(node instanceof final Element element)) {
+				continue;
+			}
+			final var textAnchor = element.getAttribute("text-anchor");
+			if (textAnchor.isBlank()) {
+				continue;
+			}
+
+			extensionWidth = switch (textAnchor.toLowerCase(Locale.ROOT)) {
+			case "start" -> textWidth;
+			case "end" -> -textWidth;
+			default -> 0;
+			};
+			break;
 		}
 
 		if (darkTheme) {
