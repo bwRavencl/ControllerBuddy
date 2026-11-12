@@ -300,11 +300,19 @@ public final class GuiUtils {
 		return textField;
 	}
 
-	/// Computes the bounding rectangle that encompasses all connected displays and
+	/// Computes the edges of the area covered by all connected displays and
 	/// optionally stores the result in the main application instance.
 	///
-	/// @param mainFrame the main frame instance
-	/// @return the total display bounds rectangle
+	/// The returned rectangle does not describe a size: its `x` and `y` fields hold
+	/// the left and top edges, while its `width` and `height` fields hold the right
+	/// and bottom edges of the area. Since the area always includes the origin, the
+	/// left and top edges are never positive. Frame locations are clamped and
+	/// persisted relative to these edges.
+	///
+	/// @param mainFrame the main frame instance to store the result in, or `null`
+	/// to not store it
+	/// @return a rectangle holding the left, top, right, and bottom edges of all
+	/// displays
 	static Rectangle getAndStoreTotalDisplayBounds(final @Nullable MainFrame mainFrame) {
 		final var totalDisplayBounds = new Rectangle();
 
@@ -380,9 +388,13 @@ public final class GuiUtils {
 				: xdgCurrentDesktop;
 	}
 
-	/// Computes the bounding rectangle that encompasses all connected displays.
+	/// Computes the edges of the area covered by all connected displays.
 	///
-	/// @return the total display bounds rectangle
+	/// See [#getAndStoreTotalDisplayBounds] for how the edges are stored in the
+	/// returned rectangle.
+	///
+	/// @return a rectangle holding the left, top, right, and bottom edges of all
+	/// displays
 	static Rectangle getTotalDisplayBounds() {
 		return getAndStoreTotalDisplayBounds(null);
 	}
