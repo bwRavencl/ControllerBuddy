@@ -807,7 +807,12 @@ object JavadocLineBreaks {
 val javaSources =
     fileTree("src") {
       include("**/*.java")
-      exclude("main/resources/**", "test/resources/**")
+      exclude(
+          "main/resources/**",
+          "test/resources/**",
+          file(moduleInfoFile).relativeTo(file("src")).invariantSeparatorsPath,
+          file(constantsFile).relativeTo(file("src")).invariantSeparatorsPath,
+      )
     }
 
 tasks.register<Javadoc>("checkJavadoc") {
