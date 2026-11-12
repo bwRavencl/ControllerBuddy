@@ -87,11 +87,30 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
+			updateAxesOnSetAxis();
 
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			Assertions.assertEquals(0f, action.remainingD, 0.001f);
+		}
+
+		@Test
+		@DisplayName("carries over the movement when it did not change the integer axis value")
+		void carriesOverMovementThatDidNotChangeAxisValue() {
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(0.001f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
+			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
+			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
+			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
+			Mockito.when(mockInput.getAxes()).thenReturn(axes);
+
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
+
+			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),
+					Mockito.any(), Mockito.any(), Mockito.any());
+			Assertions.assertTrue(action.remainingD >= 0.001f,
+					"remainingD (" + action.remainingD + ") should hold the movement that was not applied");
 		}
 
 		@Test
@@ -112,6 +131,22 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.any(), Mockito.any(), Mockito.any());
 			Assertions.assertTrue(valueCaptor.getValue() <= 1f);
+		}
+
+		@Test
+		@DisplayName("discards the movement when the axis has reached its maximum value")
+		void discardsMovementAtMaxValue() {
+			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
+			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
+			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
+			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
+			axes.put(VirtualAxis.X, 32_767);
+			Mockito.when(mockInput.getAxes()).thenReturn(axes);
+
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 1f, null);
+
+			Assertions.assertEquals(0f, action.remainingD);
 		}
 
 		@Test
@@ -161,6 +196,16 @@ final class AxisToRelativeAxisActionTest {
 			axes.put(VirtualAxis.X, 0);
 		}
 
+		private void updateAxesOnSetAxis() {
+			Mockito.doAnswer(invocation -> {
+				final VirtualAxis virtualAxis = invocation.getArgument(0);
+				final float value = invocation.getArgument(1);
+				axes.put(virtualAxis, Math.round(value * 32_767));
+				return null;
+			}).when(mockInput).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(), Mockito.any(),
+					Mockito.any(), Mockito.any());
+		}
+
 		@Test
 		@DisplayName("uses raw value when useRawValue is true")
 		void usesRawValue() {
@@ -172,6 +217,7 @@ final class AxisToRelativeAxisActionTest {
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
 			Mockito.when(mockInput.getAxes()).thenReturn(axes);
+			updateAxesOnSetAxis();
 
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0f, controllerState);
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), Mockito.anyFloat(), Mockito.eq(false),

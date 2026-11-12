@@ -54,7 +54,9 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	/// Default setting for whether to use the raw axis value.
 	private static final boolean DEFAULT_USE_RAW_VALUE = true;
 
-	/// Accumulated sub-unit movement remainder carried over between frames.
+	/// Accumulated movement not yet applied to the axis and carried over between
+	/// polls, including movement that was lost to rounding unless the axis is at
+	/// its limit.
 	transient float remainingD;
 
 	/// Optional snap-to value for the virtual axis; `null` disables detent.
@@ -108,13 +110,18 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 		final var runMode = input.getRunMode();
 		Objects.requireNonNull(runMode, "Variable runMode must not be null");
-		final var oldValue = Input.normalize(input.getAxes().getOrDefault(virtualAxis, 0), runMode.getMinAxisValue(),
-				runMode.getMaxAxisValue(), -1f, 1f);
+		final var oldIntValue = input.getAxes().getOrDefault(virtualAxis, 0);
+		final var oldValue = Input.normalize(oldIntValue, runMode.getMinAxisValue(), runMode.getMaxAxisValue(), -1f,
+				1f);
 
 		final var newValue = Math.clamp(oldValue + (invert ? -d : d), minValue, maxValue);
 		input.setAxis(virtualAxis, newValue, hapticFeedback, minValue, maxValue, detentValue);
 
-		remainingD = 0f;
+		if (newValue > minValue && newValue < maxValue && oldIntValue.equals(input.getAxes().get(virtualAxis))) {
+			remainingD = d;
+		} else {
+			remainingD = 0f;
+		}
 	}
 
 	/// Returns the optional detent (snap) value for the virtual axis.
