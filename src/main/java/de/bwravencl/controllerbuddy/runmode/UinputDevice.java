@@ -202,7 +202,12 @@ public final class UinputDevice implements Closeable {
 
 	@Override
 	public void close() throws IOException {
-		ioctlChecked(fd, Linux.UI_DEV_DESTROY, MemorySegment.NULL);
+		try {
+			ioctlChecked(fd, Linux.UI_DEV_DESTROY, MemorySegment.NULL);
+		} catch (final IOException e) {
+			Linux.close(fd);
+			throw e;
+		}
 
 		if (Linux.close(fd) == -1) {
 			throw new IOException("Could not close: " + DEVICE_PATH);
