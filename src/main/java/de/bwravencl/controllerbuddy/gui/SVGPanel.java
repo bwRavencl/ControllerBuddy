@@ -133,11 +133,9 @@ final class SVGPanel extends JPanel {
 					return;
 				}
 
-				final var maxOffsetX = (getZoomedWidth() - getWidth()) / 2f;
-				final var maxOffsetY = (getZoomedHeight() - getHeight()) / 2f;
-
-				offsetX = Math.clamp(offsetX + e.getX() - lastMouseLocation.x, -maxOffsetX, maxOffsetX);
-				offsetY = Math.clamp(offsetY + e.getY() - lastMouseLocation.y, -maxOffsetY, maxOffsetY);
+				offsetX += e.getX() - lastMouseLocation.x;
+				offsetY += e.getY() - lastMouseLocation.y;
+				clampOffsets();
 
 				lastMouseLocation = e.getPoint();
 
@@ -194,6 +192,16 @@ final class SVGPanel extends JPanel {
 		});
 	}
 
+	/// Clamps the panning offsets so that the visible area stays within the bounds
+	/// of the zoomed document.
+	private void clampOffsets() {
+		final var maxOffsetX = (getZoomedWidth() - getWidth()) / 2f;
+		final var maxOffsetY = (getZoomedHeight() - getHeight()) / 2f;
+
+		offsetX = Math.clamp(offsetX, -maxOffsetX, maxOffsetX);
+		offsetY = Math.clamp(offsetY, -maxOffsetY, maxOffsetY);
+	}
+
 	/// Returns the component height scaled by the current zoom factor.
 	///
 	/// @return the zoomed height in pixels
@@ -243,6 +251,8 @@ final class SVGPanel extends JPanel {
 				offsetX *= factor;
 				offsetY *= factor;
 			}
+
+			clampOffsets();
 		}
 
 		repaint();
