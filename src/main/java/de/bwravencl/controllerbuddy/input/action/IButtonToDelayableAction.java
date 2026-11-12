@@ -113,6 +113,11 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 								isUndelayedOnReleaseAction = false;
 
 								switch (action) {
+								case final ButtonToAxisResetAction buttonToAxisResetAction -> {
+									if (!buttonToAxisResetAction.isDelayed()) {
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToAxisResetAction);
+									}
+								}
 								case final ButtonToButtonAction buttonToButtonAction -> {
 									if (!buttonToButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToButtonAction);

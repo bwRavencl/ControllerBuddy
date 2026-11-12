@@ -145,5 +145,29 @@ final class IButtonToDelayableActionTest {
 
 			Assertions.assertEquals(Activatable.DENIED_BY_OTHER_ACTION, siblingAction.getActivatable());
 		}
+
+		@Test
+		@DisplayName("sets DENIED_BY_OTHER_ACTION on a sibling undelayed ON_RELEASE axis reset action after delay")
+		void setsDeniedOnSiblingOnReleaseAxisResetAction() throws InterruptedException {
+			final var delayedAction = new ButtonToButtonAction();
+			delayedAction.setDelay(1L);
+
+			final var siblingAction = new ButtonToAxisResetAction();
+			siblingAction.setActivation(Activation.ON_RELEASE);
+
+			final var mode = new Mode(UUID.randomUUID(), null);
+			final var actionList = new ArrayList<IAction<Boolean>>();
+			actionList.add(delayedAction);
+			actionList.add(siblingAction);
+			mode.getButtonToActionsMap().put(0, actionList);
+			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+
+			delayedAction.handleDelay(mockInput, 0, true);
+			Thread.sleep(10);
+			delayedAction.handleDelay(mockInput, 0, true);
+
+			Assertions.assertEquals(Activatable.DENIED_BY_OTHER_ACTION, siblingAction.getActivatable());
+		}
 	}
 }
