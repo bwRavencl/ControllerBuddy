@@ -6127,9 +6127,9 @@ public final class MainFrame extends JFrame {
 
 	/// Action that removes a specific mode from the current profile.
 	///
-	/// Delegates to [Profile#removeMode] which also cleans up any references to the
-	/// mode from other modes' fallback chains, then marks the profile as having
-	/// unsaved changes and refreshes both the modes panel and visualization panel.
+	/// Delegates to [Profile#removeMode], which also removes the mode switch
+	/// actions targeting the mode, then marks the profile as having unsaved changes
+	/// and refreshes the modes, overlay and visualization panels.
 	private final class RemoveModeAction extends AbstractAction {
 
 		@Serial
@@ -6158,6 +6158,7 @@ public final class MainFrame extends JFrame {
 
 			setUnsavedChanges(true);
 			updateModesPanel(false);
+			updateOverlayPanel();
 			updateVisualizationPanel();
 		}
 
