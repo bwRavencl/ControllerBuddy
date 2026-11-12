@@ -376,6 +376,8 @@ public final class ServerRunMode extends RunMode {
 						hasLastSent = true;
 					}
 
+					Arrays.fill(currentButtons, false);
+
 					if (pollCycle % REQUEST_ALIVE_INTERVAL == 0) {
 						var gotClientAlive = false;
 						for (var i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {

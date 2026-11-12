@@ -29,16 +29,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import org.jspecify.annotations.NullMarked;
@@ -62,56 +65,8 @@ final class ServerRunModeTest {
 	MainFrame mockMainFrame;
 
 	@Nested
-	@DisplayName("deriveKey()")
-	final class DeriveKeyTests {
-
-		@Test
-		@DisplayName("produces the same key for identical password and salt")
-		void producesDeterministicKey() {
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt);
-			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt);
-			Assertions.assertArrayEquals(key1.getEncoded(), key2.getEncoded());
-		}
-
-		@Test
-		@DisplayName("produces different keys for different passwords")
-		void producesDifferentKeysForDifferentPasswords() {
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("password-one");
-			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt);
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("password-two");
-			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt);
-			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
-		}
-
-		@Test
-		@DisplayName("produces different keys for different salts")
-		void producesDifferentKeysForDifferentSalts() {
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
-			final var salt1 = new byte[ServerRunMode.SALT_LENGTH];
-			final var salt2 = new byte[ServerRunMode.SALT_LENGTH];
-			salt2[0] = 1;
-			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt1);
-			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt2);
-			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
-		}
-
-		@Test
-		@DisplayName("returns a non-null AES key for valid inputs")
-		void returnsNonNullAesKey() {
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			final var key = ServerRunMode.deriveKey(mockMainFrame, salt);
-			Assertions.assertNotNull(key);
-			Assertions.assertEquals("AES", key.getAlgorithm());
-		}
-	}
-
-	@Nested
-	@DisplayName("client hello handling")
-	final class HelloHandlingTests {
+	@DisplayName("client connection")
+	final class ConnectionTests {
 
 		private static final int REQUIRED_NUM_BUTTONS = 41;
 
@@ -214,6 +169,59 @@ final class ServerRunModeTest {
 		}
 
 		@Test
+		@DisplayName("sends the release of a virtual button that was pressed during a single poll")
+		void sendsReleaseOfButtonPressedDuringSinglePoll() throws Exception {
+			final var buttons = new boolean[REQUIRED_NUM_BUTTONS];
+			final var pollCount = new AtomicInteger();
+			Mockito.when(mockInput.init()).thenReturn(true);
+			Mockito.when(mockInput.getButtons()).thenReturn(buttons);
+			Mockito.when(mockInput.poll()).thenAnswer(_ -> {
+				if (pollCount.getAndIncrement() == 0) {
+					buttons[REQUIRED_NUM_BUTTONS - 1] = true;
+				}
+				return true;
+			});
+
+			final var hello = createHello(REQUIRED_NUM_BUTTONS);
+			final var buttonStates = new ArrayList<Boolean>();
+			try (final var clientSocket = new DatagramSocket()) {
+				clientSocket.setSoTimeout(200);
+				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
+				var connected = false;
+				while (buttonStates.size() < 2 && System.currentTimeMillis() < deadline) {
+					if (!connected) {
+						clientSocket
+								.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
+					}
+
+					final var receiveBuf = new byte[65_507];
+					final var packet = new DatagramPacket(receiveBuf, receiveBuf.length);
+					try {
+						clientSocket.receive(packet);
+					} catch (SocketTimeoutException _) {
+						continue;
+					}
+
+					try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(packet)))) {
+						final var messageType = dataInputStream.readInt();
+						if (messageType == ServerRunMode.MessageType.SERVER_HELLO.getId()) {
+							connected = true;
+						} else if (messageType == ServerRunMode.MessageType.UPDATE.getId()) {
+							dataInputStream.readLong();
+							try (final var objectInputStream = new ObjectInputStream(dataInputStream)) {
+								objectInputStream.readObject();
+								buttonStates
+										.add(((boolean[]) objectInputStream.readObject())[REQUIRED_NUM_BUTTONS - 1]);
+							}
+						}
+					}
+				}
+			}
+
+			Assertions.assertEquals(List.of(true, false), buttonStates);
+		}
+
+		@Test
 		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
 		void proceedsWhenClientHasEnoughButtons() throws Exception {
 			sendHelloUntilServerStops(REQUIRED_NUM_BUTTONS);
@@ -266,6 +274,54 @@ final class ServerRunModeTest {
 			Assertions.assertFalse(serverThread.isAlive());
 
 			GuiUtils.skipMessageDialogs = previousSkipMessageDialogs;
+		}
+	}
+
+	@Nested
+	@DisplayName("deriveKey()")
+	final class DeriveKeyTests {
+
+		@Test
+		@DisplayName("produces the same key for identical password and salt")
+		void producesDeterministicKey() {
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt);
+			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt);
+			Assertions.assertArrayEquals(key1.getEncoded(), key2.getEncoded());
+		}
+
+		@Test
+		@DisplayName("produces different keys for different passwords")
+		void producesDifferentKeysForDifferentPasswords() {
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("password-one");
+			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt);
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("password-two");
+			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt);
+			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+		}
+
+		@Test
+		@DisplayName("produces different keys for different salts")
+		void producesDifferentKeysForDifferentSalts() {
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
+			final var salt1 = new byte[ServerRunMode.SALT_LENGTH];
+			final var salt2 = new byte[ServerRunMode.SALT_LENGTH];
+			salt2[0] = 1;
+			final var key1 = ServerRunMode.deriveKey(mockMainFrame, salt1);
+			final var key2 = ServerRunMode.deriveKey(mockMainFrame, salt2);
+			Assertions.assertFalse(Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+		}
+
+		@Test
+		@DisplayName("returns a non-null AES key for valid inputs")
+		void returnsNonNullAesKey() {
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			final var key = ServerRunMode.deriveKey(mockMainFrame, salt);
+			Assertions.assertNotNull(key);
+			Assertions.assertEquals("AES", key.getAlgorithm());
 		}
 	}
 
