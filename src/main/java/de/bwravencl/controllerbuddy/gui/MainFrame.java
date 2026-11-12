@@ -4852,8 +4852,8 @@ public final class MainFrame extends JFrame {
 
 		final var profile = input.getProfile();
 
-		final var keyRepeatRateSpinner = new JSpinner(
-				new ClampingSpinnerNumberModel(profile.getKeyRepeatRate(), 1L, 100L, 1L, event -> {
+		final var keyRepeatRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(profile.getKeyRepeatRate(),
+				Profile.MIN_KEY_REPEAT_RATE_HZ, Profile.MAX_KEY_REPEAT_RATE_HZ, 1L, event -> {
 					profile.setKeyRepeatRate(((SpinnerNumberModel) event.getSource()).getNumber().longValue());
 					setUnsavedChanges(true);
 				}));

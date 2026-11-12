@@ -39,6 +39,12 @@ import org.lwjgl.sdl.SDLGamepad;
 /// profile editor.
 public final class Profile implements Cloneable {
 
+	/// Maximum key repeat rate in hertz.
+	public static final long MAX_KEY_REPEAT_RATE_HZ = 100L;
+
+	/// Minimum key repeat rate in hertz.
+	public static final long MIN_KEY_REPEAT_RATE_HZ = 1L;
+
 	/// The default mode that is always present as the first mode in a profile.
 	public static final Mode defaultMode;
 

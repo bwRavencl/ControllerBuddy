@@ -29,6 +29,7 @@ import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.DeviceType;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
@@ -1148,7 +1149,9 @@ public abstract class OutputRunMode extends RunMode {
 				}
 
 				final var currentTimeNanos = System.nanoTime();
-				final var keyRepeatIntervalNanos = Input.NANOS_PER_SECOND / input.getProfile().getKeyRepeatRate();
+				final var keyRepeatIntervalNanos = Input.NANOS_PER_SECOND
+						/ Math.clamp(input.getProfile().getKeyRepeatRate(), Profile.MIN_KEY_REPEAT_RATE_HZ,
+								Profile.MAX_KEY_REPEAT_RATE_HZ);
 				if (currentTimeNanos - prevKeyInputTime > keyRepeatIntervalNanos) {
 					for (final var scancode : newDownNormalKeys) {
 						doKeyboardInput(scancode, true);
