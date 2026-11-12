@@ -670,7 +670,7 @@ tasks.register("checkGameControllerDBSubmodule") {
   description = "Checks that the SDL_GameControllerDB submodule is checked out"
 
   val gamecontrollerdbGitFile = file(gamecontrollerdbGitFile)
-  inputs.file(gamecontrollerdbGitFile)
+  inputs.files(gamecontrollerdbGitFile)
 
   doLast {
     if (!gamecontrollerdbGitFile.exists()) {
