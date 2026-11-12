@@ -555,6 +555,32 @@ final class InputTest {
 		}
 
 		@Test
+		@DisplayName("clears the keyboard and mouse output state queued by actions before the reset")
+		void clearsQueuedKeyboardAndMouseOutputState() {
+			input.getDownKeystrokes().add(new Keystroke());
+			input.getDownUpKeystrokes().add(new Keystroke());
+			input.getDownMouseButtons().add(1);
+			input.getDownUpMouseButtons().add(2);
+			input.getOnLockKeys().add(LockKey.CAPS_LOCK_LOCK_KEY);
+			input.getOffLockKeys().add(LockKey.NUM_LOCK_LOCK_KEY);
+			input.setCursorDeltaX(3);
+			input.setCursorDeltaY(4);
+			input.setScrollClicks(5);
+
+			input.reset();
+
+			Assertions.assertTrue(input.getDownKeystrokes().isEmpty());
+			Assertions.assertTrue(input.getDownUpKeystrokes().isEmpty());
+			Assertions.assertTrue(input.getDownMouseButtons().isEmpty());
+			Assertions.assertTrue(input.getDownUpMouseButtons().isEmpty());
+			Assertions.assertTrue(input.getOnLockKeys().isEmpty());
+			Assertions.assertTrue(input.getOffLockKeys().isEmpty());
+			Assertions.assertEquals(0, input.getCursorDeltaX());
+			Assertions.assertEquals(0, input.getCursorDeltaY());
+			Assertions.assertEquals(0, input.getScrollClicks());
+		}
+
+		@Test
 		@DisplayName("resets the buttons array that was allocated before the reset")
 		void resetsButtonsArray() throws Exception {
 			// Inject a non-null buttons array directly via reflection to avoid

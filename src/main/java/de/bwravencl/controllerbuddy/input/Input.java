@@ -755,6 +755,15 @@ public final class Input {
 		axisToSuspensionInfoMap.clear();
 		hotSwappingButtonDownInstanceIds.clear();
 		hotSwappingButtonId = HotSwappingButton.NONE.id;
+		downKeystrokes.clear();
+		downUpKeystrokes.clear();
+		downMouseButtons.clear();
+		downUpMouseButtons.clear();
+		onLockKeys.clear();
+		offLockKeys.clear();
+		cursorDeltaX = 0;
+		cursorDeltaY = 0;
+		scrollClicks = 0;
 
 		resetLastHotSwapPollNanoTime();
 
