@@ -119,21 +119,21 @@ final class OutputRunModeTest {
 		}
 
 		@Test
-		@DisplayName("set() with a value differing from the cached value keeps a pending change")
-		void setWithValueRevertedKeepsPendingChange() {
-			deviceValue.setUnchanged();
-			deviceValue.set(42);
-			deviceValue.set(0);
-			Assertions.assertTrue(deviceValue.isChanged());
-		}
-
-		@Test
 		@DisplayName("set() with the same value does not mark the value as changed")
 		void setWithSameValueDoesNotMarkChanged() {
 			deviceValue.set(42);
 			deviceValue.setUnchanged();
 			deviceValue.set(42);
 			Assertions.assertFalse(deviceValue.isChanged());
+		}
+
+		@Test
+		@DisplayName("set() with a value differing from the cached value keeps a pending change")
+		void setWithValueRevertedKeepsPendingChange() {
+			deviceValue.setUnchanged();
+			deviceValue.set(42);
+			deviceValue.set(0);
+			Assertions.assertTrue(deviceValue.isChanged());
 		}
 	}
 
@@ -150,21 +150,6 @@ final class OutputRunModeTest {
 		}
 
 		@Test
-		@DisplayName("returns false when numButtons is less than required")
-		void returnsFalseWhenNumButtonsInsufficient() throws ReflectiveOperationException {
-			Assumptions.assumeFalse(Main.IS_MAC,
-					"Skipping: enoughButtons() throws UnsupportedOperationException on macOS");
-			final var action = new ButtonToButtonAction();
-			action.setButtonId(5);
-			final var mode = new Mode();
-			mode.getButtonToActionsMap().put(0, List.of(action));
-			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
-
-			// buttonId=5 means requiredButtons=6; only 5 available
-			Assertions.assertFalse(invokeEnoughButtons(5));
-		}
-
-		@Test
 		@DisplayName("returns false when a cycle sub-action requires more buttons than available")
 		void returnsFalseWhenCycleSubActionRequiresMoreButtons() throws ReflectiveOperationException {
 			Assumptions.assumeFalse(Main.IS_MAC,
@@ -178,6 +163,21 @@ final class OutputRunModeTest {
 			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
 
 			// sub-action buttonId=5 means requiredButtons=6; only 5 available
+			Assertions.assertFalse(invokeEnoughButtons(5));
+		}
+
+		@Test
+		@DisplayName("returns false when numButtons is less than required")
+		void returnsFalseWhenNumButtonsInsufficient() throws ReflectiveOperationException {
+			Assumptions.assumeFalse(Main.IS_MAC,
+					"Skipping: enoughButtons() throws UnsupportedOperationException on macOS");
+			final var action = new ButtonToButtonAction();
+			action.setButtonId(5);
+			final var mode = new Mode();
+			mode.getButtonToActionsMap().put(0, List.of(action));
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+
+			// buttonId=5 means requiredButtons=6; only 5 available
 			Assertions.assertFalse(invokeEnoughButtons(5));
 		}
 

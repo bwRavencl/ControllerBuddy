@@ -87,9 +87,9 @@ final class ServerRunModeTest {
 
 		private boolean previousSkipMessageDialogs;
 
-		private @Nullable Thread serverThread;
-
 		private @Nullable ServerRunMode serverRunMode;
+
+		private @Nullable Thread serverThread;
 
 		private static byte[] createHello(final int numButtons) throws IOException {
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -125,6 +125,14 @@ final class ServerRunModeTest {
 			packetByteBuffer.get(encryptedBytes);
 
 			return cipher.doFinal(encryptedBytes);
+		}
+
+		@Test
+		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
+		void proceedsWhenClientHasEnoughButtons() throws Exception {
+			sendHelloUntilServerStops(REQUIRED_NUM_BUTTONS);
+
+			Mockito.verify(mockInput).init();
 		}
 
 		@SuppressWarnings("unchecked")
@@ -171,47 +179,38 @@ final class ServerRunModeTest {
 			return updates;
 		}
 
-		private void sendHelloUntilServerStops(final int numButtons) throws Exception {
+		@Test
+		@DisplayName("rejects the client and keeps listening when the client has fewer buttons than the profile requires")
+		void rejectsClientWithTooFewButtons() throws Exception {
 			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
 
-			final var hello = createHello(numButtons);
+			final var hello = createHello(REQUIRED_NUM_BUTTONS - 1);
+			final var receiveBuf = new byte[1024];
+			final var replyPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 			try (final var clientSocket = new DatagramSocket()) {
+				clientSocket.setSoTimeout(200);
 				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
-				while (serverThread.isAlive() && System.currentTimeMillis() < deadline) {
+				var replied = false;
+				while (!replied && System.currentTimeMillis() < deadline) {
 					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
-					serverThread.join(200L);
+					try {
+						clientSocket.receive(replyPacket);
+						replied = true;
+					} catch (SocketTimeoutException _) {
+						// the server might not be listening yet
+					}
 				}
+				Assertions.assertTrue(replied);
 			}
-		}
 
-		@BeforeEach
-		void setUp() throws IOException {
-			previousSkipMessageDialogs = GuiUtils.skipMessageDialogs;
-			GuiUtils.skipMessageDialogs = true;
+			try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(replyPacket)))) {
+				Assertions.assertEquals(ServerRunMode.MessageType.TOO_FEW_BUTTONS.getId(), dataInputStream.readInt());
+				Assertions.assertEquals(REQUIRED_NUM_BUTTONS, dataInputStream.readInt());
+			}
 
-			final var action = new ButtonToButtonAction();
-			action.setButtonId(REQUIRED_NUM_BUTTONS - 1);
-			final var mode = new Mode();
-			mode.getButtonToActionsMap().put(0, List.of(action));
-
-			port = findFreePort();
-
-			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
-			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
-			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
-			Mockito.when(mockMainFrame.getPort()).thenReturn(port);
-			Mockito.when(mockMainFrame.getTimeout()).thenReturn(ServerRunMode.DEFAULT_TIMEOUT);
-			Mockito.when(mockMainFrame.getRandom()).thenReturn(new Random(0L));
-			Mockito.when(mockMainFrame.getMainLoop()).thenReturn(mockMainLoop);
-			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
-			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
-			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
-
-			final var serverRunMode = new ServerRunMode(mockMainFrame);
-			this.serverRunMode = serverRunMode;
-			final var serverThread = new Thread(serverRunMode);
-			this.serverThread = serverThread;
-			serverThread.start();
+			Assertions.assertTrue(serverThread.isAlive());
+			Mockito.verify(mockInput, Mockito.never()).init();
+			Mockito.verify(mockInput, Mockito.never()).initButtons();
 		}
 
 		@Test
@@ -231,6 +230,19 @@ final class ServerRunModeTest {
 			final var updates = receiveUpdates(3);
 
 			Assertions.assertEquals(List.of(true, false, false), updates.stream().map(Update::buttonPressed).toList());
+		}
+
+		private void sendHelloUntilServerStops(final int numButtons) throws Exception {
+			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
+
+			final var hello = createHello(numButtons);
+			try (final var clientSocket = new DatagramSocket()) {
+				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
+				while (serverThread.isAlive() && System.currentTimeMillis() < deadline) {
+					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
+					serverThread.join(200L);
+				}
+			}
 		}
 
 		@Test
@@ -277,46 +289,34 @@ final class ServerRunModeTest {
 			Assertions.assertEquals(List.of(true, false), updates.stream().map(Update::buttonPressed).toList());
 		}
 
-		@Test
-		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
-		void proceedsWhenClientHasEnoughButtons() throws Exception {
-			sendHelloUntilServerStops(REQUIRED_NUM_BUTTONS);
+		@BeforeEach
+		void setUp() throws IOException {
+			previousSkipMessageDialogs = GuiUtils.skipMessageDialogs;
+			GuiUtils.skipMessageDialogs = true;
 
-			Mockito.verify(mockInput).init();
-		}
+			final var action = new ButtonToButtonAction();
+			action.setButtonId(REQUIRED_NUM_BUTTONS - 1);
+			final var mode = new Mode();
+			mode.getButtonToActionsMap().put(0, List.of(action));
 
-		@Test
-		@DisplayName("rejects the client and keeps listening when the client has fewer buttons than the profile requires")
-		void rejectsClientWithTooFewButtons() throws Exception {
-			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
+			port = findFreePort();
 
-			final var hello = createHello(REQUIRED_NUM_BUTTONS - 1);
-			final var receiveBuf = new byte[1024];
-			final var replyPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-			try (final var clientSocket = new DatagramSocket()) {
-				clientSocket.setSoTimeout(200);
-				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
-				var replied = false;
-				while (!replied && System.currentTimeMillis() < deadline) {
-					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
-					try {
-						clientSocket.receive(replyPacket);
-						replied = true;
-					} catch (SocketTimeoutException _) {
-						// the server might not be listening yet
-					}
-				}
-				Assertions.assertTrue(replied);
-			}
+			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
+			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getPort()).thenReturn(port);
+			Mockito.when(mockMainFrame.getTimeout()).thenReturn(ServerRunMode.DEFAULT_TIMEOUT);
+			Mockito.when(mockMainFrame.getRandom()).thenReturn(new Random(0L));
+			Mockito.when(mockMainFrame.getMainLoop()).thenReturn(mockMainLoop);
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
+			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
 
-			try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(replyPacket)))) {
-				Assertions.assertEquals(ServerRunMode.MessageType.TOO_FEW_BUTTONS.getId(), dataInputStream.readInt());
-				Assertions.assertEquals(REQUIRED_NUM_BUTTONS, dataInputStream.readInt());
-			}
-
-			Assertions.assertTrue(serverThread.isAlive());
-			Mockito.verify(mockInput, Mockito.never()).init();
-			Mockito.verify(mockInput, Mockito.never()).initButtons();
+			final var serverRunMode = new ServerRunMode(mockMainFrame);
+			this.serverRunMode = serverRunMode;
+			final var serverThread = new Thread(serverRunMode);
+			this.serverThread = serverThread;
+			serverThread.start();
 		}
 
 		@AfterEach

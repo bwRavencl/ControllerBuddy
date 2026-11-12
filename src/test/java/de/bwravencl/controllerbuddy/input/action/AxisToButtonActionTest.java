@@ -77,13 +77,6 @@ final class AxisToButtonActionTest {
 		}
 
 		@Test
-		@DisplayName("does not activate button when axis value is below the minimum")
-		void doesNotActivateBelowMin() {
-			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.3f, null);
-			Assertions.assertFalse(buttons[0]);
-		}
-
-		@Test
 		@DisplayName("does not activate before delay elapsed when the zone includes zero")
 		void doesNotActivateBeforeDelayElapsedWhenZoneIncludesZero() {
 			IAxisToDelayableAction.reset();
@@ -93,6 +86,13 @@ final class AxisToButtonActionTest {
 			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.75f, null);
 			Assertions.assertFalse(buttons[0]);
 			IAxisToDelayableAction.reset();
+		}
+
+		@Test
+		@DisplayName("does not activate button when axis value is below the minimum")
+		void doesNotActivateBelowMin() {
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.3f, null);
+			Assertions.assertFalse(buttons[0]);
 		}
 
 		@Test

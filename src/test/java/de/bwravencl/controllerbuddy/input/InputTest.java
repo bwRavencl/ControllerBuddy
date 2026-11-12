@@ -168,16 +168,6 @@ final class InputTest {
 	final class DeInitTests {
 
 		@Test
-		@DisplayName("does not invoke any SDL calls when selectedSdlGamepad is 0 and no gamepads are open")
-		void doesNotCallSdlWhenNoGamepadSelected() {
-			final var input = createInput();
-			try (final var sdlMock = Mockito.mockStatic(SDLGamepad.class)) {
-				input.deInit();
-				sdlMock.verifyNoInteractions();
-			}
-		}
-
-		@Test
 		@DisplayName("does not access the selected gamepad again on a subsequent call")
 		void doesNotAccessSelectedGamepadAgainOnSubsequentCall() throws ReflectiveOperationException {
 			final var input = createInput();
@@ -195,6 +185,16 @@ final class InputTest {
 
 				sdlMock.verifyNoInteractions();
 				sdlPropertiesMock.verifyNoInteractions();
+			}
+		}
+
+		@Test
+		@DisplayName("does not invoke any SDL calls when selectedSdlGamepad is 0 and no gamepads are open")
+		void doesNotCallSdlWhenNoGamepadSelected() {
+			final var input = createInput();
+			try (final var sdlMock = Mockito.mockStatic(SDLGamepad.class)) {
+				input.deInit();
+				sdlMock.verifyNoInteractions();
 			}
 		}
 	}

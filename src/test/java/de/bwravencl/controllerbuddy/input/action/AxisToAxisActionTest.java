@@ -128,6 +128,19 @@ final class AxisToAxisActionTest {
 			Assertions.assertTrue(valueCaptor.getValue() < 0f);
 		}
 
+		@Test
+		@DisplayName("exponent=1 bypasses the power curve and uses linear normalization")
+		void linearExponentUsesLinearNormalization() {
+			action.setExponent(1f);
+			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
+
+			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
+			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
+					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
+			// With exponent=1: value passes through normalize(0.5, 0, 1, 0, 1) = 0.5
+			Assertions.assertEquals(0.5f, valueCaptor.getValue(), 0.01f);
+		}
+
 		@BeforeEach
 		void setUp() {
 			action = new AxisToAxisAction();
@@ -145,19 +158,6 @@ final class AxisToAxisActionTest {
 			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
 					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
 			Assertions.assertEquals(1f, valueCaptor.getValue(), 0.01f);
-		}
-
-		@Test
-		@DisplayName("exponent=1 bypasses the power curve and uses linear normalization")
-		void linearExponentUsesLinearNormalization() {
-			action.setExponent(1f);
-			action.doAction(mockInput, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, 0.5f, null);
-
-			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
-			Mockito.verify(mockInput).setAxis(Mockito.eq(VirtualAxis.X), valueCaptor.capture(), Mockito.eq(false),
-					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
-			// With exponent=1: value passes through normalize(0.5, 0, 1, 0, 1) = 0.5
-			Assertions.assertEquals(0.5f, valueCaptor.getValue(), 0.01f);
 		}
 	}
 

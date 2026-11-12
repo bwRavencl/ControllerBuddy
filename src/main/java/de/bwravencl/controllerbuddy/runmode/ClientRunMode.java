@@ -64,11 +64,11 @@ import org.jspecify.annotations.Nullable;
 /// device.
 public final class ClientRunMode extends OutputRunMode {
 
-	/// Number of retries when attempting to establish the initial connection.
-	private static final int NUM_CONNECTION_RETRIES = 10;
-
 	/// Maximum payload size in bytes of a UDP datagram sent over IPv4.
 	private static final int MAX_UDP_PAYLOAD_SIZE = 65_507;
+
+	/// Number of retries when attempting to establish the initial connection.
+	private static final int NUM_CONNECTION_RETRIES = 10;
 
 	/// Number of retries when waiting to receive a packet from the server.
 	private static final int NUM_RECEIVE_PACKET_RETRIES = 10;

@@ -196,6 +196,27 @@ final class ProfileTest {
 		}
 
 		@Test
+		@DisplayName("retains buttonToModeActions entries that do not reference the removed mode")
+		void retainsUnrelatedButtonToModeActions() {
+			final var profile = createProfile();
+			final var modeToRemove = new Mode(UUID.randomUUID(), null);
+			final var otherMode = new Mode(UUID.randomUUID(), null);
+			profile.getModes().add(modeToRemove);
+			profile.getModes().add(otherMode);
+
+			Mockito.when(mockButtonToModeAction.getMode(mockInput)).thenReturn(otherMode);
+			final var actions = new ArrayList<ButtonToModeAction>();
+			actions.add(mockButtonToModeAction);
+			final var map = new HashMap<Integer, List<ButtonToModeAction>>();
+			map.put(2, actions);
+			profile.setButtonToModeActionsMap(map);
+
+			profile.removeMode(mockInput, modeToRemove);
+
+			Assertions.assertTrue(profile.getButtonToModeActionsMap().containsKey(2));
+		}
+
+		@Test
 		@DisplayName("retains other buttonToModeActions of the same button that do not reference the removed mode")
 		void retainsUnrelatedButtonToModeActionsOfSameButton() {
 			final var profile = createProfile();
@@ -217,27 +238,6 @@ final class ProfileTest {
 			profile.removeMode(mockInput, modeToRemove);
 
 			Assertions.assertEquals(List.of(otherButtonToModeAction), profile.getButtonToModeActionsMap().get(1));
-		}
-
-		@Test
-		@DisplayName("retains buttonToModeActions entries that do not reference the removed mode")
-		void retainsUnrelatedButtonToModeActions() {
-			final var profile = createProfile();
-			final var modeToRemove = new Mode(UUID.randomUUID(), null);
-			final var otherMode = new Mode(UUID.randomUUID(), null);
-			profile.getModes().add(modeToRemove);
-			profile.getModes().add(otherMode);
-
-			Mockito.when(mockButtonToModeAction.getMode(mockInput)).thenReturn(otherMode);
-			final var actions = new ArrayList<ButtonToModeAction>();
-			actions.add(mockButtonToModeAction);
-			final var map = new HashMap<Integer, List<ButtonToModeAction>>();
-			map.put(2, actions);
-			profile.setButtonToModeActionsMap(map);
-
-			profile.removeMode(mockInput, modeToRemove);
-
-			Assertions.assertTrue(profile.getButtonToModeActionsMap().containsKey(2));
 		}
 	}
 

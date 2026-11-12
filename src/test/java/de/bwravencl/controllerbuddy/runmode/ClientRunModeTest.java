@@ -61,6 +61,15 @@ final class ClientRunModeTest {
 	final class RequestStopTests {
 
 		@Test
+		@DisplayName("only clears the run flag when no socket has been created yet")
+		void onlyClearsRunFlagWithoutSocket() {
+			clientRunMode.requestStop();
+
+			Assertions.assertFalse(clientRunMode.run);
+			Assertions.assertFalse(clientRunMode.forceStop);
+		}
+
+		@Test
 		@DisplayName("sets the force stop flag before closing the socket")
 		void setsForceStopBeforeClosingSocket() throws ReflectiveOperationException {
 			final var forceStopWhenClosed = new AtomicBoolean();
@@ -79,15 +88,6 @@ final class ClientRunModeTest {
 			Mockito.verify(mockSocket).close();
 			Assertions.assertTrue(forceStopWhenClosed.get());
 			Assertions.assertFalse(clientRunMode.run);
-		}
-
-		@Test
-		@DisplayName("only clears the run flag when no socket has been created yet")
-		void onlyClearsRunFlagWithoutSocket() {
-			clientRunMode.requestStop();
-
-			Assertions.assertFalse(clientRunMode.run);
-			Assertions.assertFalse(clientRunMode.forceStop);
 		}
 	}
 

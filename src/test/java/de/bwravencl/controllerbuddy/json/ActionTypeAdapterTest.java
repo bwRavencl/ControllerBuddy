@@ -88,19 +88,6 @@ final class ActionTypeAdapterTest {
 		}
 
 		@Test
-		@DisplayName("throws JsonParseException when the class does not implement IAction")
-		void throwsWhenClassDoesNotImplementIAction() {
-			final var adapter = createAdapter();
-			final var wrapper = new JsonObject();
-			wrapper.addProperty("type", String.class.getName());
-			wrapper.add("data", new JsonObject());
-
-			Assertions.assertThrows(JsonParseException.class,
-					() -> adapter.deserialize(wrapper, IAction.class, mockDeserializationContext));
-			Mockito.verifyNoInteractions(mockDeserializationContext);
-		}
-
-		@Test
 		@DisplayName("returns a NullAction and records the class name when the class is not found and typeOfT is IAction")
 		void substitutesNullActionForUnknownClassWhenTypeIsIAction() {
 			final var adapter = createAdapter();
@@ -145,6 +132,19 @@ final class ActionTypeAdapterTest {
 
 			Assertions.assertInstanceOf(NullAction.class, result);
 			Assertions.assertTrue(adapter.getUnknownActionClasses().contains("com.example.NonExistentAction"));
+		}
+
+		@Test
+		@DisplayName("throws JsonParseException when the class does not implement IAction")
+		void throwsWhenClassDoesNotImplementIAction() {
+			final var adapter = createAdapter();
+			final var wrapper = new JsonObject();
+			wrapper.addProperty("type", String.class.getName());
+			wrapper.add("data", new JsonObject());
+
+			Assertions.assertThrows(JsonParseException.class,
+					() -> adapter.deserialize(wrapper, IAction.class, mockDeserializationContext));
+			Mockito.verifyNoInteractions(mockDeserializationContext);
 		}
 
 		@Test
