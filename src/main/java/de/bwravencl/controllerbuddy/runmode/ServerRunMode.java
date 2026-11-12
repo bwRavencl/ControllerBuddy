@@ -20,7 +20,9 @@ package de.bwravencl.controllerbuddy.runmode;
 import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.MainFrame;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,6 +44,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,10 +178,10 @@ public final class ServerRunMode extends RunMode {
 		var pollCycle = 0L;
 		var nextPollTimeNanos = 0L;
 
-		var lastSentAxesHash = 0;
-		var lastSentButtonsHash = 0;
-		var lastSentDownMouseButtonsHash = 0;
-		var lastSentDownKeystrokesHash = 0;
+		var lastSentAxes = Map.<VirtualAxis, Integer>of();
+		var lastSentButtons = new boolean[0];
+		var lastSentDownMouseButtons = Set.<Integer>of();
+		var lastSentDownKeystrokes = Set.<Keystroke>of();
 		var hasLastSent = false;
 
 		try {
@@ -195,10 +198,10 @@ public final class ServerRunMode extends RunMode {
 				case LISTENING -> {
 					counter = 0;
 					pollCycle = 0;
-					lastSentAxesHash = 0;
-					lastSentButtonsHash = 0;
-					lastSentDownMouseButtonsHash = 0;
-					lastSentDownKeystrokesHash = 0;
+					lastSentAxes = Map.of();
+					lastSentButtons = new boolean[0];
+					lastSentDownMouseButtons = Set.of();
+					lastSentDownKeystrokes = Set.of();
 					hasLastSent = false;
 
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
@@ -319,15 +322,10 @@ public final class ServerRunMode extends RunMode {
 					final var currentOffLockKeys = input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
 							.collect(Collectors.toSet());
 
-					final var currentAxesHash = currentAxes.hashCode();
-					final var currentButtonsHash = Arrays.hashCode(currentButtons);
-					final var currentDownMouseButtonsHash = currentDownMouseButtons.hashCode();
-					final var currentDownKeystrokesHash = currentDownKeystrokes.hashCode();
-
-					final var stateChanged = !hasLastSent || currentAxesHash != lastSentAxesHash
-							|| currentButtonsHash != lastSentButtonsHash
-							|| currentDownMouseButtonsHash != lastSentDownMouseButtonsHash
-							|| currentDownKeystrokesHash != lastSentDownKeystrokesHash
+					final var stateChanged = !hasLastSent || !currentAxes.equals(lastSentAxes)
+							|| !Arrays.equals(currentButtons, lastSentButtons)
+							|| !currentDownMouseButtons.equals(lastSentDownMouseButtons)
+							|| !currentDownKeystrokes.equals(lastSentDownKeystrokes)
 							|| !currentDownUpMouseButtons.isEmpty() || !currentDownUpKeystrokes.isEmpty()
 							|| !currentOnLockKeys.isEmpty() || !currentOffLockKeys.isEmpty() || currentCursorDeltaX != 0
 							|| currentCursorDeltaY != 0 || currentScrollClicks != 0;
@@ -369,10 +367,10 @@ public final class ServerRunMode extends RunMode {
 							}
 						}
 
-						lastSentAxesHash = currentAxesHash;
-						lastSentButtonsHash = currentButtonsHash;
-						lastSentDownMouseButtonsHash = currentDownMouseButtonsHash;
-						lastSentDownKeystrokesHash = currentDownKeystrokesHash;
+						lastSentAxes = Map.copyOf(currentAxes);
+						lastSentButtons = currentButtons.clone();
+						lastSentDownMouseButtons = Set.copyOf(currentDownMouseButtons);
+						lastSentDownKeystrokes = Set.copyOf(currentDownKeystrokes);
 						hasLastSent = true;
 					}
 

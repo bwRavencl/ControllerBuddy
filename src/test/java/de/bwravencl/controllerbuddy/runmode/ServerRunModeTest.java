@@ -38,9 +38,11 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -125,6 +127,50 @@ final class ServerRunModeTest {
 			return cipher.doFinal(encryptedBytes);
 		}
 
+		@SuppressWarnings("unchecked")
+		private List<Update> receiveUpdates(final int numUpdates) throws Exception {
+			final var hello = createHello(REQUIRED_NUM_BUTTONS);
+			final var updates = new ArrayList<Update>();
+			try (final var clientSocket = new DatagramSocket()) {
+				clientSocket.setSoTimeout(200);
+				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
+				var connected = false;
+				while (updates.size() < numUpdates && System.currentTimeMillis() < deadline) {
+					if (!connected) {
+						clientSocket
+								.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
+					}
+
+					final var receiveBuf = new byte[65_507];
+					final var packet = new DatagramPacket(receiveBuf, receiveBuf.length);
+					try {
+						clientSocket.receive(packet);
+					} catch (SocketTimeoutException _) {
+						continue;
+					}
+
+					try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(packet)))) {
+						final var messageType = dataInputStream.readInt();
+						if (messageType == ServerRunMode.MessageType.SERVER_HELLO.getId()) {
+							connected = true;
+						} else if (messageType == ServerRunMode.MessageType.UPDATE.getId()) {
+							dataInputStream.readLong();
+							try (final var objectInputStream = new ObjectInputStream(dataInputStream)) {
+								objectInputStream.readObject();
+								final var buttons = (boolean[]) objectInputStream.readObject();
+								objectInputStream.readInt();
+								objectInputStream.readInt();
+								final var downMouseButtons = (Set<Integer>) objectInputStream.readObject();
+								updates.add(new Update(buttons[REQUIRED_NUM_BUTTONS - 1], downMouseButtons));
+							}
+						}
+					}
+				}
+			}
+
+			return updates;
+		}
+
 		private void sendHelloUntilServerStops(final int numButtons) throws Exception {
 			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
 
@@ -169,6 +215,31 @@ final class ServerRunModeTest {
 		}
 
 		@Test
+		@DisplayName("sends a change of the held mouse buttons that keeps their hash code unchanged")
+		void sendsChangeOfDownMouseButtonsWithEqualHashCode() throws Exception {
+			final var downMouseButtons = new HashSet<Integer>();
+			final var pollCount = new AtomicInteger();
+			Mockito.when(mockInput.init()).thenReturn(true);
+			Mockito.when(mockInput.getButtons()).thenReturn(new boolean[REQUIRED_NUM_BUTTONS]);
+			Mockito.when(mockInput.getDownMouseButtons()).thenReturn(downMouseButtons);
+			Mockito.when(mockInput.poll()).thenAnswer(_ -> {
+				downMouseButtons.clear();
+				switch (pollCount.getAndIncrement()) {
+				case 0 -> downMouseButtons.addAll(Set.of(1, 4));
+				case 1 -> downMouseButtons.addAll(Set.of(2, 3));
+				default -> {
+				}
+				}
+				return true;
+			});
+
+			final var updates = receiveUpdates(2);
+
+			Assertions.assertEquals(List.of(Set.of(1, 4), Set.of(2, 3)),
+					updates.stream().map(Update::downMouseButtons).toList());
+		}
+
+		@Test
 		@DisplayName("sends the release of a virtual button that was pressed during a single poll")
 		void sendsReleaseOfButtonPressedDuringSinglePoll() throws Exception {
 			final var buttons = new boolean[REQUIRED_NUM_BUTTONS];
@@ -182,43 +253,9 @@ final class ServerRunModeTest {
 				return true;
 			});
 
-			final var hello = createHello(REQUIRED_NUM_BUTTONS);
-			final var buttonStates = new ArrayList<Boolean>();
-			try (final var clientSocket = new DatagramSocket()) {
-				clientSocket.setSoTimeout(200);
-				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
-				var connected = false;
-				while (buttonStates.size() < 2 && System.currentTimeMillis() < deadline) {
-					if (!connected) {
-						clientSocket
-								.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
-					}
+			final var updates = receiveUpdates(2);
 
-					final var receiveBuf = new byte[65_507];
-					final var packet = new DatagramPacket(receiveBuf, receiveBuf.length);
-					try {
-						clientSocket.receive(packet);
-					} catch (SocketTimeoutException _) {
-						continue;
-					}
-
-					try (final var dataInputStream = new DataInputStream(new ByteArrayInputStream(decrypt(packet)))) {
-						final var messageType = dataInputStream.readInt();
-						if (messageType == ServerRunMode.MessageType.SERVER_HELLO.getId()) {
-							connected = true;
-						} else if (messageType == ServerRunMode.MessageType.UPDATE.getId()) {
-							dataInputStream.readLong();
-							try (final var objectInputStream = new ObjectInputStream(dataInputStream)) {
-								objectInputStream.readObject();
-								buttonStates
-										.add(((boolean[]) objectInputStream.readObject())[REQUIRED_NUM_BUTTONS - 1]);
-							}
-						}
-					}
-				}
-			}
-
-			Assertions.assertEquals(List.of(true, false), buttonStates);
+			Assertions.assertEquals(List.of(true, false), updates.stream().map(Update::buttonPressed).toList());
 		}
 
 		@Test
@@ -274,6 +311,9 @@ final class ServerRunModeTest {
 			Assertions.assertFalse(serverThread.isAlive());
 
 			GuiUtils.skipMessageDialogs = previousSkipMessageDialogs;
+		}
+
+		private record Update(boolean buttonPressed, Set<Integer> downMouseButtons) {
 		}
 	}
 
