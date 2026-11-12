@@ -215,6 +215,25 @@ final class ServerRunModeTest {
 		}
 
 		@Test
+		@DisplayName("resends the unchanged input state so that the client recovers from a lost packet")
+		void resendsUnchangedState() throws Exception {
+			final var buttons = new boolean[REQUIRED_NUM_BUTTONS];
+			final var pollCount = new AtomicInteger();
+			Mockito.when(mockInput.init()).thenReturn(true);
+			Mockito.when(mockInput.getButtons()).thenReturn(buttons);
+			Mockito.when(mockInput.poll()).thenAnswer(_ -> {
+				if (pollCount.getAndIncrement() == 0) {
+					buttons[REQUIRED_NUM_BUTTONS - 1] = true;
+				}
+				return true;
+			});
+
+			final var updates = receiveUpdates(3);
+
+			Assertions.assertEquals(List.of(true, false, false), updates.stream().map(Update::buttonPressed).toList());
+		}
+
+		@Test
 		@DisplayName("sends a change of the held mouse buttons that keeps their hash code unchanged")
 		void sendsChangeOfDownMouseButtonsWithEqualHashCode() throws Exception {
 			final var downMouseButtons = new HashSet<Integer>();

@@ -92,6 +92,10 @@ public final class ServerRunMode extends RunMode {
 	/// Interval in milliseconds between consecutive keep-alive requests.
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
+	/// Number of poll cycles after which the current input state is sent again even
+	/// if it has not changed, so that the client recovers from lost packets.
+	private static final int STATE_RESEND_INTERVAL = 10;
+
 	private static final Logger logger = Logger.getLogger(ServerRunMode.class.getName());
 
 	/// AES-GCM cipher instance used to encrypt outgoing packets.
@@ -183,6 +187,7 @@ public final class ServerRunMode extends RunMode {
 		var lastSentDownMouseButtons = Set.<Integer>of();
 		var lastSentDownKeystrokes = Set.<Keystroke>of();
 		var hasLastSent = false;
+		var lastSentPollCycle = 0L;
 
 		try {
 			serverSocket = new DatagramSocket(port);
@@ -203,6 +208,7 @@ public final class ServerRunMode extends RunMode {
 					lastSentDownMouseButtons = Set.of();
 					lastSentDownKeystrokes = Set.of();
 					hasLastSent = false;
+					lastSentPollCycle = 0;
 
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(100);
@@ -330,7 +336,7 @@ public final class ServerRunMode extends RunMode {
 							|| !currentOnLockKeys.isEmpty() || !currentOffLockKeys.isEmpty() || currentCursorDeltaX != 0
 							|| currentCursorDeltaY != 0 || currentScrollClicks != 0;
 
-					if (stateChanged) {
+					if (stateChanged || pollCycle - lastSentPollCycle >= STATE_RESEND_INTERVAL) {
 						try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 								final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 							dataOutputStream.writeInt(MessageType.UPDATE.getId());
@@ -372,6 +378,7 @@ public final class ServerRunMode extends RunMode {
 						lastSentDownMouseButtons = Set.copyOf(currentDownMouseButtons);
 						lastSentDownKeystrokes = Set.copyOf(currentDownKeystrokes);
 						hasLastSent = true;
+						lastSentPollCycle = pollCycle;
 					}
 
 					Arrays.fill(currentButtons, false);
