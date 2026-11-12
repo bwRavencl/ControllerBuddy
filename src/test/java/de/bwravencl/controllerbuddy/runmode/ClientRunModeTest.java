@@ -90,4 +90,15 @@ final class ClientRunModeTest {
 			Assertions.assertFalse(clientRunMode.forceStop);
 		}
 	}
+
+	@Nested
+	@DisplayName("usesLocalProfile()")
+	final class UsesLocalProfileTests {
+
+		@Test
+		@DisplayName("returns false because the output is determined by the profile of the server")
+		void returnsFalse() {
+			Assertions.assertFalse(clientRunMode.usesLocalProfile());
+		}
+	}
 }

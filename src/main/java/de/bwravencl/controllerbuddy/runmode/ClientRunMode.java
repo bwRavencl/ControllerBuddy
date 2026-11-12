@@ -481,6 +481,11 @@ public final class ClientRunMode extends OutputRunMode {
 		logStop();
 	}
 
+	@Override
+	boolean usesLocalProfile() {
+		return false;
+	}
+
 	/// Represents the connection state of the client run mode.
 	///
 	/// Tracks whether the client is in the process of establishing a connection to

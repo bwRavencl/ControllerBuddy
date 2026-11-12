@@ -21,9 +21,12 @@ import de.bwravencl.controllerbuddy.Main;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.MainFrame;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
+import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import java.awt.EventQueue;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 
 /// Abstract base class for all run modes in the ControllerBuddy application.
@@ -144,6 +147,25 @@ public abstract class RunMode implements Runnable {
 	/// @return the polling period in nanoseconds
 	public final long getPollingPeriodNanos() {
 		return pollingPeriodNanos;
+	}
+
+	/// Returns the number of virtual buttons required by the current profile.
+	///
+	/// Scans all actions in all modes, including the sub-actions of cycle actions,
+	/// for the highest button ID in use.
+	///
+	/// @return the highest button ID in use plus one, or `0` if the profile uses no
+	/// virtual buttons
+	final int getRequiredNumButtons() {
+		return input.getProfile().getModes().stream().flatMap(mode -> mode.getAllActions().stream())
+				.flatMap(action -> action instanceof final ButtonToCycleAction buttonToCycleAction
+						? buttonToCycleAction.getActions().stream()
+						: Stream.of(action))
+				.mapMultiToInt((action, downstream) -> {
+					if (action instanceof final ToButtonAction<?> toButtonAction) {
+						downstream.accept(toButtonAction.getButtonId());
+					}
+				}).max().orElse(-1) + 1;
 	}
 
 	/// Logs an informational message indicating that output has started.

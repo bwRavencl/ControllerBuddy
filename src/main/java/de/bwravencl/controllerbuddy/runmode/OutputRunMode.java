@@ -30,8 +30,6 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Scancode;
-import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
-import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.DeviceType;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
 import java.awt.EventQueue;
@@ -60,7 +58,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.DBusMemberName;
@@ -529,23 +526,13 @@ public abstract class OutputRunMode extends RunMode {
 	/// Returns whether the given number of buttons is enough for the current
 	/// profile.
 	///
-	/// Scans all actions in all modes, including the sub-actions of cycle actions,
-	/// for the highest button ID in use and compares it against the provided count.
-	/// If not enough buttons are available, an error dialog is shown.
+	/// Compares the provided count against [#getRequiredNumButtons]. If not enough
+	/// buttons are available, an error dialog is shown.
 	///
 	/// @param numButtons the number of buttons available on the virtual device
 	/// @return `true` if the device has enough buttons, `false` otherwise
 	private boolean enoughButtons(final int numButtons) {
-		final var maxButtonId = input.getProfile().getModes().stream().flatMap(mode -> mode.getAllActions().stream())
-				.flatMap(action -> action instanceof final ButtonToCycleAction buttonToCycleAction
-						? buttonToCycleAction.getActions().stream()
-						: Stream.of(action))
-				.mapMultiToInt((action, downstream) -> {
-					if (action instanceof final ToButtonAction<?> toButtonAction) {
-						downstream.accept(toButtonAction.getButtonId());
-					}
-				}).max().orElse(-1);
-		final var requiredButtons = maxButtonId + 1;
+		final var requiredButtons = getRequiredNumButtons();
 
 		if (numButtons < requiredButtons) {
 			if (Main.IS_WINDOWS) {
@@ -733,7 +720,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			numButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
-			if (!enoughButtons(numButtons)) {
+			if (usesLocalProfile() && !enoughButtons(numButtons)) {
 				return false;
 			}
 
@@ -741,7 +728,7 @@ public abstract class OutputRunMode extends RunMode {
 					MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
 			numButtons = Event.joystickButtonEvents.length;
-			if (!enoughButtons(numButtons)) {
+			if (usesLocalProfile() && !enoughButtons(numButtons)) {
 				return false;
 			}
 
@@ -949,6 +936,17 @@ public abstract class OutputRunMode extends RunMode {
 				buttons[i] = new DeviceValue();
 			}
 		}
+	}
+
+	/// Returns whether the output is derived from the profile loaded in this
+	/// instance.
+	///
+	/// Only then the button requirements of the profile are checked against the
+	/// virtual device in [#init].
+	///
+	/// @return `true` if the profile loaded in this instance determines the output
+	boolean usesLocalProfile() {
+		return true;
 	}
 
 	/// Writes all changed axis, button, keyboard, mouse, and lock-key values to the
