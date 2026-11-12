@@ -190,6 +190,7 @@ spotless {
     targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
     custom(
         "javadocLineBreaks",
+        @Suppress("serial")
         object : FormatterFunc, Serializable {
           private val docLine = Regex("""^(\s*///) ?(.*)$""")
 

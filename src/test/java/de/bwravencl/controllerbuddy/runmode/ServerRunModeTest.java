@@ -130,7 +130,7 @@ final class ServerRunModeTest {
 		@Test
 		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
 		void proceedsWhenClientHasEnoughButtons() throws Exception {
-			sendHelloUntilServerStops(REQUIRED_NUM_BUTTONS);
+			sendHelloUntilServerStops();
 
 			Mockito.verify(mockInput).init();
 		}
@@ -232,10 +232,10 @@ final class ServerRunModeTest {
 			Assertions.assertEquals(List.of(true, false, false), updates.stream().map(Update::buttonPressed).toList());
 		}
 
-		private void sendHelloUntilServerStops(final int numButtons) throws Exception {
+		private void sendHelloUntilServerStops() throws Exception {
 			Objects.requireNonNull(serverThread, "Field serverThread must not be null");
 
-			final var hello = createHello(numButtons);
+			final var hello = createHello(REQUIRED_NUM_BUTTONS);
 			try (final var clientSocket = new DatagramSocket()) {
 				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
 				while (serverThread.isAlive() && System.currentTimeMillis() < deadline) {

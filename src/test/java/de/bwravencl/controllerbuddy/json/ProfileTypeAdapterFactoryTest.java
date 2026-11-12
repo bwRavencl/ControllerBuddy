@@ -179,6 +179,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("returns null instead of throwing for an empty or blank document")
 		void returnsNullForEmptyDocument() {
 			final var gson = createGson();
+			// noinspection DataFlowIssue
 			Assertions.assertNull(gson.fromJson("", Profile.class));
 			Assertions.assertNull(gson.fromJson("   ", Profile.class));
 		}
