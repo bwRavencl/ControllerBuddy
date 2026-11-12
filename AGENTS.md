@@ -38,7 +38,7 @@ See @README for detailed project overview.
 ```sh
 ./gradlew build --non-interactive                                                             # Build the project
 ./gradlew test --non-interactive                                                              # Run all tests
-./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest --non-interactive' # Single test class
+./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest' --non-interactive # Single test class
 ./gradlew test --tests '*.VersionUtilsTest.returnsEmptyForNull' --non-interactive             # Single test method
 ./gradlew jacocoTestReport                                                                    # Run all tests and generate test coverage report
 ./gradlew spotlessApply                                                                       # Apply code formatting
