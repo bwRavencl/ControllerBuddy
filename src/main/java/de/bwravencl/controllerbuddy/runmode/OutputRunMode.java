@@ -37,6 +37,7 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
@@ -49,6 +50,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -58,7 +60,6 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.DBusMemberName;
@@ -738,28 +739,28 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			try {
-				lockKeyToBrightnessFileChannelMap = LockKey.LOCK_KEYS.stream()
-						.collect(Collectors.toUnmodifiableMap(lockKey -> lockKey, lockKey -> {
-							try (final var filesStream = Files.list(Path.of(SYSFS_LEDS_DIR))) {
-								final var brightnessPath = filesStream.sorted().filter(p -> {
-									final var fileName = p.getFileName();
-									return fileName != null && fileName.toString()
-											.matches(SYSFS_INPUT_DIR_REGEX_PREFIX + lockKey.sysfsLedName());
-								}).findFirst()
-										.orElseThrow(() -> new RuntimeException(
-												"No brightness file for " + lockKey.sysfsLedName() + " LED"))
-										.resolve(SYSFS_BRIGHTNESS_FILENAME);
+				final var brightnessFileChannelMap = new HashMap<LockKey, FileChannel>();
+				lockKeyToBrightnessFileChannelMap = brightnessFileChannelMap;
 
-								if (!Files.isRegularFile(brightnessPath) || !Files.isReadable(brightnessPath)) {
-									throw new IOException("Unable to read: " + brightnessPath);
-								}
+				for (final var lockKey : LockKey.LOCK_KEYS) {
+					final Path brightnessPath;
+					try (final var filesStream = Files.list(Path.of(SYSFS_LEDS_DIR))) {
+						brightnessPath = filesStream.sorted().filter(p -> {
+							final var fileName = p.getFileName();
+							return fileName != null && fileName.toString()
+									.matches(SYSFS_INPUT_DIR_REGEX_PREFIX + lockKey.sysfsLedName());
+						}).findFirst().orElseThrow(
+								() -> new IOException("No brightness file for " + lockKey.sysfsLedName() + " LED"))
+								.resolve(SYSFS_BRIGHTNESS_FILENAME);
+					}
 
-								return FileChannel.open(brightnessPath, StandardOpenOption.READ);
-							} catch (final IOException e) {
-								throw new RuntimeException(e);
-							}
-						}));
-			} catch (final Exception e) {
+					if (!Files.isRegularFile(brightnessPath) || !Files.isReadable(brightnessPath)) {
+						throw new IOException("Unable to read: " + brightnessPath);
+					}
+
+					brightnessFileChannelMap.put(lockKey, FileChannel.open(brightnessPath, StandardOpenOption.READ));
+				}
+			} catch (final IOException | UncheckedIOException e) {
 				logger.log(Level.WARNING, e.getMessage(), e);
 
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
