@@ -123,35 +123,11 @@ jobs:
             echo "archive_filename=$archive_filename"
             echo "tag_name=$tag_name"
           } >> "$GITHUB_OUTPUT"
-      - name: Import GPG Key
-        id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-      - name: Sign Archive
-        id: sign-archive
-        env:
-          ARCHIVE_PATH: ${{ steps.release-variables.outputs.archive_path }}
-          GPG_KEY_ID: ${{ steps.import-gpg.outputs.fingerprint }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-        run: |
-          signature_path="$ARCHIVE_PATH.sig"
-          gpg --batch --yes \
-            --local-user "$GPG_KEY_ID" \
-            --pinentry-mode loopback \
-            --passphrase-fd 0 \
-            --detach-sig \
-            --output "$signature_path" \
-            "$ARCHIVE_PATH" <<< "$GPG_PASSPHRASE"
-          echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
       - name: Upload Artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ steps.release-variables.outputs.archive_filename }}
-          path: |
-            ${{ steps.release-variables.outputs.archive_path }}
-            ${{ steps.sign-archive.outputs.signature_path }}
+          path: ${{ steps.release-variables.outputs.archive_path }}
           if-no-files-found: error
 
   release:
@@ -165,6 +141,20 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+      - name: Checkout Actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          path: repo
+          persist-credentials: false
+          sparse-checkout: .github/actions
+      - name: Sign Archives
+        uses: ./repo/.github/actions/sign-files
+        with:
+          files: |
+            dist/ControllerBuddy-*.tgz
+            dist/ControllerBuddy-*.zip
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
       - name: Release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:

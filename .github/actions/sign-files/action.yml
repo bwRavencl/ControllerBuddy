@@ -1,0 +1,76 @@
+name: Sign Files
+description: Imports a GPG private key, creates a detached signature for each file and verifies every created signature
+
+inputs:
+  files:
+    description: Newline-separated list of files or glob patterns to sign, each pattern must match at least one file
+    required: true
+  gpg-private-key:
+    description: The ASCII-armored GPG private key to sign with
+    required: true
+  passphrase:
+    description: The passphrase of the GPG private key
+    required: true
+
+outputs:
+  signature-files:
+    description: Newline-separated list of the created signature files
+    value: ${{ steps.sign-files.outputs.signature-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: Import GPG Key
+      id: import-gpg
+      uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
+      with:
+        gpg_private_key: ${{ inputs.gpg-private-key }}
+        passphrase: ${{ inputs.passphrase }}
+    - name: Sign Files
+      id: sign-files
+      shell: bash
+      env:
+        FILES: ${{ inputs.files }}
+        GPG_KEY_ID: ${{ steps.import-gpg.outputs.fingerprint }}
+        GPG_PASSPHRASE: ${{ inputs.passphrase }}
+      run: |
+        shopt -s nullglob
+        IFS=$'\n'
+        signature_files=()
+        while IFS= read -r pattern; do
+          pattern=${pattern#"${pattern%%[![:space:]]*}"}
+          pattern=${pattern%"${pattern##*[![:space:]]}"}
+          [ -n "$pattern" ] || continue
+          files=($pattern)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "::error::No files found matching $pattern"
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            signature_file="$file.sig"
+            gpg --batch --yes \
+              --local-user "$GPG_KEY_ID" \
+              --pinentry-mode loopback \
+              --passphrase-fd 0 \
+              --detach-sig \
+              --output "$signature_file" \
+              -- "$file" <<< "$GPG_PASSPHRASE"
+            if ! status=$(gpg --batch --status-fd 1 --verify -- "$signature_file" "$file") \
+              || ! grep -q "^\[GNUPG:\] VALIDSIG .* $GPG_KEY_ID\$" <<< "$status"; then
+              echo "$status"
+              echo "::error::Created signature does not verify against $file"
+              exit 1
+            fi
+            signature_files+=("$signature_file")
+          done
+        done <<< "$FILES"
+        if [ "${#signature_files[@]}" -eq 0 ]; then
+          echo "::error::No files to sign"
+          exit 1
+        fi
+        delimiter="EOF_$(openssl rand -hex 16)"
+        {
+          echo "signature-files<<$delimiter"
+          printf '%s\n' "${signature_files[@]}"
+          echo "$delimiter"
+        } >> "$GITHUB_OUTPUT"
