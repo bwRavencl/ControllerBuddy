@@ -1,8 +1,9 @@
-import com.diffplug.gradle.spotless.SpotlessTask
+import com.diffplug.spotless.FormatterFunc
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
 import com.github.spotbugs.snom.SpotBugsTask
+import java.io.Serializable
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -187,6 +188,71 @@ spotless {
   java {
     target("src/**/java/de/bwravencl/**/*.java")
     targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
+    custom(
+        "javadocLineBreaks",
+        object : FormatterFunc, Serializable {
+          private val docLine = Regex("""^(\s*///) ?(.*)$""")
+
+          private val blockStart = Regex("""^(@\w|[-*+]\s|\d+[.)]\s|#|\||>)""")
+
+          override fun apply(input: String): String {
+            val out = mutableListOf<String>()
+
+            var prevContinuable = false
+            var prevBlank = true
+            var inFence = false
+            var inCode = false
+
+            input.lines().forEach { line ->
+              val match = docLine.matchEntire(line)
+              if (match == null) {
+                out += line
+                prevContinuable = false
+                prevBlank = true
+                inFence = false
+                inCode = false
+                return@forEach
+              }
+
+              val content = match.groupValues[2]
+              val text = content.trim()
+              val indent = content.length - content.trimStart().length
+              val isFence = text.startsWith("```") || text.startsWith("~~~")
+
+              var joinable = false
+              var continuable = false
+              when {
+                inFence -> {
+                  if (isFence) inFence = false
+                  inCode = false
+                }
+                isFence -> {
+                  inFence = true
+                  inCode = false
+                }
+                text.isEmpty() -> Unit
+                indent >= 4 && (prevBlank || inCode) -> inCode = true
+                else -> {
+                  inCode = false
+                  joinable = !blockStart.containsMatchIn(text)
+                  continuable = !text.startsWith("#") && !text.startsWith("|")
+                }
+              }
+
+              if (joinable && prevContinuable) {
+                out[out.lastIndex] = out.last().trimEnd() + " " + text
+              } else {
+                out += line
+              }
+
+              prevContinuable = continuable
+              prevBlank = text.isEmpty()
+            }
+
+            return out.joinToString("\n")
+          }
+        },
+    )
     eclipse("4.33").configFile("spotless.eclipseformat.xml")
     cleanthat()
         .sourceCompatibility(
@@ -719,105 +785,9 @@ tasks.named("spotlessOnlyNewline") { dependsOn("copyGameControllerDB") }
 
 tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
 
-object JavadocLineBreaks {
-  private const val MAX_LINE_LENGTH = 80
-
-  private const val TAB_WIDTH = 4
-
-  private val docLine = Regex("""^(\s*///) ?(.*)$""")
-
-  private val blockStart = Regex("""^(@\w|[-*+]\s|\d+[.)]\s|#|\||>)""")
-
-  fun findViolations(files: Iterable<File>): List<String> =
-      files.sorted().flatMap { process(it, fix = false) }
-
-  fun fix(files: Iterable<File>): Int = files.count { process(it, fix = true).isNotEmpty() }
-
-  private fun process(file: File, fix: Boolean): List<String> {
-    val lines = file.readLines()
-    val out = mutableListOf<String>()
-    val violations = mutableListOf<String>()
-
-    var prevContinuable = false
-    var prevBlank = true
-    var inFence = false
-    var inCode = false
-
-    lines.forEachIndexed { index, line ->
-      val match = docLine.matchEntire(line)
-      if (match == null) {
-        out += line
-        prevContinuable = false
-        prevBlank = true
-        inFence = false
-        inCode = false
-        return@forEachIndexed
-      }
-
-      val content = match.groupValues[2]
-      val text = content.trim()
-      val indent = content.length - content.trimStart().length
-      val isFence = text.startsWith("```") || text.startsWith("~~~")
-
-      var joinable = false
-      var continuable = false
-      when {
-        inFence -> {
-          if (isFence) inFence = false
-          inCode = false
-        }
-        isFence -> {
-          inFence = true
-          inCode = false
-        }
-        text.isEmpty() -> Unit
-        indent >= 4 && (prevBlank || inCode) -> inCode = true
-        else -> {
-          inCode = false
-          joinable = !blockStart.containsMatchIn(text)
-          continuable = !text.startsWith("#") && !text.startsWith("|")
-        }
-      }
-
-      if (joinable && prevContinuable && fix) {
-        out[out.lastIndex] = out.last().trimEnd() + " " + text
-      } else {
-        if (joinable && prevContinuable) {
-          val firstWord = text.substringBefore(' ')
-          val width = out.last().trimEnd().sumOf { if (it == '\t') TAB_WIDTH else 1 }
-          if (width + 1 + firstWord.length <= MAX_LINE_LENGTH) {
-            violations += "${file.path}:${index + 1}: '$firstWord' fits on the previous line"
-          }
-        }
-        out += line
-      }
-
-      prevContinuable = continuable
-      prevBlank = text.isEmpty()
-    }
-
-    if (fix && out != lines) {
-      file.writeText(out.joinToString("\n", postfix = "\n"))
-      return listOf(file.path)
-    }
-    return violations
-  }
-}
-
-val javaSources =
-    fileTree("src") {
-      include("**/*.java")
-      exclude(
-          "main/resources/**",
-          "test/resources/**",
-          file(moduleInfoFile).relativeTo(file("src")).invariantSeparatorsPath,
-          file(constantsFile).relativeTo(file("src")).invariantSeparatorsPath,
-      )
-    }
-
 tasks.register<Javadoc>("checkJavadoc") {
   group = LifecycleBasePlugin.VERIFICATION_GROUP
-  description = "Checks the source code for missing Javadoc comments and unnecessary line breaks"
+  description = "Checks the source code for missing Javadoc comments"
 
   dependsOn("generateModuleInfo", "generateConstants")
 
@@ -825,8 +795,6 @@ tasks.register<Javadoc>("checkJavadoc") {
   val mainSourceSet = sourceSets.main.get()
   source = mainSourceSet.allJava
   classpath = mainSourceSet.compileClasspath
-  val lineBreakSources: FileCollection = javaSources
-  inputs.files(lineBreakSources)
 
   options.jFlags("-Duser.language=${Locale.US.language}", "-Duser.country=${Locale.US.country}")
   options.memberLevel = JavadocMemberLevel.PRIVATE
@@ -886,30 +854,24 @@ tasks.register<Javadoc>("checkJavadoc") {
   }
 
   doLast {
-    val lineBreakList = JavadocLineBreaks.findViolations(lineBreakSources)
-
     val errorsString = sharedState.errorList.size.toString()
     val warningsString = sharedState.warningList.size.toString()
     val ignoredString = sharedState.numIgnored.toString()
-    val lineBreaksString = lineBreakList.size.toString()
     val numbersLength =
         maxOf(
             errorsString.length,
             warningsString.length,
             ignoredString.length,
-            lineBreaksString.length,
         )
 
     val hasErrors = sharedState.errorList.isNotEmpty()
     val hasWarnings = sharedState.warningList.isNotEmpty()
-    val hasLineBreaks = lineBreakList.isNotEmpty()
 
     println(
         buildString {
           appendLine("\nJavadoc Lint Summary:\n")
           appendLine("  Errors:      ${errorsString.padStart(numbersLength)}")
           appendLine("  Warnings:    ${warningsString.padStart(numbersLength)}")
-          appendLine("  Line breaks: ${lineBreaksString.padStart(numbersLength)}")
           appendLine("  Ignored:     ${ignoredString.padStart(numbersLength)}")
 
           if (hasErrors) {
@@ -921,17 +883,12 @@ tasks.register<Javadoc>("checkJavadoc") {
             appendLine("\n  Warning Details:\n")
             sharedState.warningList.forEach { appendLine("    $it") }
           }
-
-          if (hasLineBreaks) {
-            appendLine("\n  Line Break Details (fix with ./gradlew spotlessApply):\n")
-            lineBreakList.forEach { appendLine("    $it") }
-          }
         }
     )
 
-    if (hasErrors || hasWarnings || hasLineBreaks) {
+    if (hasErrors || hasWarnings) {
       throw GradleException(
-          "Found ${sharedState.errorList.size + sharedState.warningList.size + lineBreakList.size} " +
+          "Found ${sharedState.errorList.size + sharedState.warningList.size} " +
               "Javadoc problems."
       )
     }
@@ -939,24 +896,6 @@ tasks.register<Javadoc>("checkJavadoc") {
 }
 
 tasks.named("check") { dependsOn("checkJavadoc") }
-
-val fixJavadocLineBreaks =
-    tasks.register("fixJavadocLineBreaks") {
-      description = "Joins Javadoc paragraph lines so that Spotless can re-wrap them."
-
-      val sources: FileCollection = javaSources
-
-      doLast {
-        val changed = JavadocLineBreaks.fix(sources)
-        logger.lifecycle("Joined Javadoc lines in $changed file(s)")
-      }
-    }
-
-tasks.named("spotlessApply") { dependsOn(fixJavadocLineBreaks) }
-
-tasks.withType<SpotlessTask>().configureEach {
-  mustRunAfter(fixJavadocLineBreaks)
-}
 
 tasks.named<Test>("test") {
   useJUnitPlatform()
