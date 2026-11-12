@@ -242,6 +242,19 @@ public final class ServerRunMode extends RunMode {
 								break;
 							}
 
+							final var requiredNumButtons = getRequiredNumButtons();
+							if (clientNumButtons < requiredNumButtons) {
+								final var clientHostAddress = clientAddress.getHostAddress();
+								logger.warning("Client " + clientHostAddress + " has only " + clientNumButtons
+										+ " buttons, but the current profile requires at least " + requiredNumButtons);
+								EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(mainFrame, mainFrame,
+										MessageFormat.format(
+												Main.strings.getString("TOO_FEW_CLIENT_BUTTONS_DIALOG_TEXT"),
+												clientHostAddress, clientNumButtons, requiredNumButtons),
+										Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE, true));
+								return;
+							}
+
 							key = deriveKey(mainFrame, salt);
 
 							minAxisValue = clientMinAxisValue;

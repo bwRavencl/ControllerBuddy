@@ -17,10 +17,26 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.MainFrame;
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
+import de.bwravencl.controllerbuddy.util.MainLoop;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import org.jspecify.annotations.NullMarked;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -81,6 +97,112 @@ final class ServerRunModeTest {
 			final var key = ServerRunMode.deriveKey(mockMainFrame, salt);
 			Assertions.assertNotNull(key);
 			Assertions.assertEquals("AES", key.getAlgorithm());
+		}
+	}
+
+	@Nested
+	@DisplayName("client hello handling")
+	final class HelloHandlingTests {
+
+		private static final long TIMEOUT_MILLIS = 10_000L;
+
+		@Mock
+		Input mockInput;
+
+		@Mock
+		MainLoop mockMainLoop;
+
+		@Mock
+		Profile mockProfile;
+
+		private boolean previousSkipMessageDialogs;
+
+		private static int findFreePort() throws IOException {
+			try (final var socket = new DatagramSocket(0)) {
+				return socket.getLocalPort();
+			}
+		}
+
+		private static byte[] createHello(final int numButtons) throws IOException {
+			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+					final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+				dataOutputStream.writeInt(ServerRunMode.MessageType.CLIENT_HELLO.getId());
+				dataOutputStream.write(new byte[ServerRunMode.SALT_LENGTH]);
+				dataOutputStream.writeInt(Short.MIN_VALUE);
+				dataOutputStream.writeInt(Short.MAX_VALUE);
+				dataOutputStream.writeInt(numButtons);
+				dataOutputStream.flush();
+
+				return byteArrayOutputStream.toByteArray();
+			}
+		}
+
+		private void runServerAndSendHello(final int numButtons) throws Exception {
+			final var port = findFreePort();
+			Mockito.when(mockMainFrame.getPort()).thenReturn(port);
+
+			final var serverRunMode = new ServerRunMode(mockMainFrame);
+			final var serverThread = new Thread(serverRunMode);
+			serverThread.start();
+
+			final var hello = createHello(numButtons);
+			try (final var clientSocket = new DatagramSocket()) {
+				final var deadline = System.currentTimeMillis() + TIMEOUT_MILLIS;
+				while (serverThread.isAlive() && System.currentTimeMillis() < deadline) {
+					clientSocket.send(new DatagramPacket(hello, hello.length, InetAddress.getLoopbackAddress(), port));
+					serverThread.join(200L);
+				}
+			} finally {
+				serverRunMode.requestStop();
+				serverThread.interrupt();
+				serverThread.join(TIMEOUT_MILLIS);
+			}
+
+			Assertions.assertFalse(serverThread.isAlive());
+		}
+
+		@BeforeEach
+		void setUp() {
+			previousSkipMessageDialogs = GuiUtils.skipMessageDialogs;
+			GuiUtils.skipMessageDialogs = true;
+
+			final var action = new ButtonToButtonAction();
+			action.setButtonId(40);
+			final var mode = new Mode();
+			mode.getButtonToActionsMap().put(0, List.of(action));
+
+			Mockito.when(mockMainFrame.getInput()).thenReturn(mockInput);
+			Mockito.when(mockMainFrame.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+			Mockito.when(mockMainFrame.getTimeout()).thenReturn(ServerRunMode.DEFAULT_TIMEOUT);
+			Mockito.when(mockMainFrame.getRandom()).thenReturn(new Random(0L));
+			Mockito.when(mockMainFrame.getMainLoop()).thenReturn(mockMainLoop);
+			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+		}
+
+		@Test
+		@DisplayName("proceeds to initialize the input when the client has enough buttons for the profile")
+		void proceedsWhenClientHasEnoughButtons() throws Exception {
+			Mockito.when(mockMainFrame.getPassword()).thenReturn("test-password");
+
+			runServerAndSendHello(41);
+
+			Mockito.verify(mockInput).init();
+		}
+
+		@Test
+		@DisplayName("stops without initializing the input when the client has fewer buttons than the profile requires")
+		void stopsWhenClientHasTooFewButtons() throws Exception {
+			runServerAndSendHello(40);
+
+			Mockito.verify(mockInput, Mockito.never()).init();
+			Mockito.verify(mockInput, Mockito.never()).initButtons();
+		}
+
+		@AfterEach
+		void tearDown() {
+			GuiUtils.skipMessageDialogs = previousSkipMessageDialogs;
 		}
 	}
 
