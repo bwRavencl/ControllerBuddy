@@ -552,10 +552,6 @@ tasks.register("generateConstants") {
             /// build.
             public final class Constants {
 
-            	/// Prevents instantiation.
-            	private Constants() {
-            	}
-
             	/// The application name.
             	public static final String APPLICATION_NAME = "$applicationName";
 
@@ -570,6 +566,10 @@ tasks.register("generateConstants") {
 
             	static {
             		LICENSES_HTML = "${licensesHtml.replace("\"", "\\\"")}";
+            	}
+
+            	/// Prevents instantiation.
+            	private Constants() {
             	}
             }
 
