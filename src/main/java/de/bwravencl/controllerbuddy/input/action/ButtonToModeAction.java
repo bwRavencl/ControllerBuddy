@@ -281,6 +281,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	@Override
 	public void reset(final Input input) {
 		BUTTON_TO_MODE_ACTION_STACK.clear();
+		up = true;
 
 		if (targetsOnScreenKeyboardMode()) {
 			input.getMain().setOnScreenKeyboardVisible(false);

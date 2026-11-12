@@ -3818,6 +3818,25 @@ final class InputPipelineTest {
 		}
 
 		@Test
+		@DisplayName("toggle mode switch held during a reset activates the mode on the next press")
+		void toggleModeSwitchHeldDuringResetActivatesOnNextPress() {
+			final var profile = setUpMultiModeProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, true,
+					SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, VirtualAxis.X, VirtualAxis.Y);
+
+			final var buttonsWithModeSwitch = noButtons();
+			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			pollWithState(noAxes(), buttonsWithModeSwitch);
+
+			input.reset();
+			input.initButtons();
+			input.init();
+
+			pollWithState(noAxes(), buttonsWithModeSwitch);
+
+			Assertions.assertEquals(profile.getModes().get(1), profile.getActiveMode());
+		}
+
+		@Test
 		@DisplayName("toggle mode switch persists after button release")
 		void toggleModeSwitchPersists() {
 			setUpMultiModeProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, true, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
