@@ -1113,7 +1113,7 @@ tasks.named<Zip>("distZip") {
 }
 
 tasks.named<Sync>("installDist") {
-  dependsOn("jpackage")
+  dependsOn("customizeLoggingProperties")
 
   from(tmpDir)
   into(layout.buildDirectory.dir("install"))
