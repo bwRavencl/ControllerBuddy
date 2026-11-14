@@ -36,7 +36,8 @@ import org.jspecify.annotations.Nullable;
 /// normalization to translate raw axis values into the configured virtual axis
 /// range.
 @Action(icon = "🕹", title = "TO_AXIS_ACTION_TITLE", description = "TO_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
-public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
+public class AxisToAxisAction extends ToAxisAction<Float>
+		implements IAxisToRawValueAction, IInitializationAction<Float> {
 
 	/// Default dead zone threshold below which axis values are treated as zero.
 	private static final float DEFAULT_DEAD_ZONE = 0f;
@@ -52,9 +53,6 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 
 	/// Default minimum output value for the virtual axis.
 	private static final float DEFAULT_MIN_VALUE = -1f;
-
-	/// Default setting for whether to use the raw axis value.
-	private static final boolean DEFAULT_USE_RAW_VALUE = false;
 
 	/// The dead zone threshold below which axis input values are treated as zero.
 	@ActionProperty(icon = "∅", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
@@ -153,21 +151,6 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		return minValue;
 	}
 
-	/// Handles the use of the raw axis value if configured to do so, returning
-	/// either the raw value or the provided value.
-	///
-	/// @param component the axis component index
-	/// @param value the current axis value
-	/// @param controllerState the current gamepad state
-	/// @return the axis value
-	float handleUseRawValue(final int component, final Float value, final ControllerState controllerState) {
-		if (useRawValue) {
-			return controllerState.getRawAxes()[component];
-		}
-
-		return value;
-	}
-
 	@Override
 	public final void init(final Input input) {
 		if (!input.isSkipAxisInitialization()) {
@@ -175,9 +158,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		}
 	}
 
-	/// Returns whether the raw axis value is used without transformations.
-	///
-	/// @return `true` if the raw value is used
+	@Override
 	public final boolean isUseRawValue() {
 		return useRawValue;
 	}
@@ -217,9 +198,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 		this.minValue = minValue;
 	}
 
-	/// Sets whether the raw axis value is used without transformations.
-	///
-	/// @param useRawValue `true` to use the raw value
+	@Override
 	public final void setUseRawValue(final boolean useRawValue) {
 		this.useRawValue = useRawValue;
 	}

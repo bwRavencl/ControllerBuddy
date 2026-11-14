@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import org.jspecify.annotations.Nullable;
@@ -31,13 +32,17 @@ import org.jspecify.annotations.Nullable;
 /// The axis value is transformed using a configurable dead zone and exponent
 /// curve, then applied as a cursor delta scaled by sensitivity and rate.
 @Action(icon = "➚", title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 25)
-public final class AxisToCursorAction extends ToCursorAction<Float> implements IAxisToAction {
+public final class AxisToCursorAction extends ToCursorAction<Float> implements IAxisToRawValueAction {
 
 	/// Default dead zone threshold below which axis input is ignored.
 	private static final float DEFAULT_DEAD_ZONE = 0.1f;
 
 	/// Default exponent applied to the input response curve.
 	private static final float DEFAULT_EXPONENT = 2f;
+
+	/// Whether to use the raw axis value without applying any transformations.
+	@ActionProperty(icon = "○", title = "USE_RAW_VALUE_TITLE", description = "USE_RAW_VALUE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 14)
+	boolean useRawValue = DEFAULT_USE_RAW_VALUE;
 
 	/// Dead zone threshold below which axis input is ignored.
 	@ActionProperty(icon = "∅", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
@@ -48,8 +53,12 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	private float exponent = DEFAULT_EXPONENT;
 
 	@Override
-	public void doAction(final Input input, final int component, final Float value,
+	public void doAction(final Input input, final int component, Float value,
 			final @Nullable ControllerState controllerState) {
+		if (controllerState != null) {
+			value = handleUseRawValue(component, value, controllerState);
+		}
+
 		final var absValue = Math.abs(value);
 
 		if (!input.isAxisSuspended(component) && absValue > deadZone) {
@@ -77,6 +86,11 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 		return exponent;
 	}
 
+	@Override
+	public final boolean isUseRawValue() {
+		return useRawValue;
+	}
+
 	/// Sets the dead zone threshold below which input is ignored.
 	///
 	/// @param deadZone the dead zone value
@@ -89,5 +103,10 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	/// @param exponent the exponent value
 	public void setExponent(final float exponent) {
 		this.exponent = exponent;
+	}
+
+	@Override
+	public final void setUseRawValue(final boolean useRawValue) {
+		this.useRawValue = useRawValue;
 	}
 }
