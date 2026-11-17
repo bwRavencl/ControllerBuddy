@@ -19,8 +19,8 @@ runs:
       id: download-jbr
       shell: bash
       env:
-        JAVA_VERSION: 25.0.4.1
-        JBR_BUILD: 635.79
+        JAVA_VERSION: 25.0.5.0.3
+        JBR_BUILD: 700.17
       run: |
         case "$RUNNER_OS" in
           Linux)   jdk_os=linux ;;
