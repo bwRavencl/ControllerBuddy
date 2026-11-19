@@ -24,8 +24,20 @@ jobs:
       - name: Check for JBR Update and Open PR
         shell: bash
         env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
+          base_branch=$(git rev-parse --abbrev-ref HEAD)
+
+          if [[ "$base_branch" == 'HEAD' ]]
+          then
+            echo '::error::This workflow must run on a branch, not a tag or detached HEAD.'
+            exit 1
+          fi
+
           latest_tag=$(gh api --paginate 'repos/JetBrains/JetBrainsRuntime/releases?per_page=100' \
             --jq '.[] | select(.prerelease | not) | .tag_name | select(startswith("jbr-release-"))' \
             | sort -V | tail -n 1)
@@ -85,27 +97,25 @@ jobs:
           ])
           EOF
 
-          if git diff --exit-code
+          if git diff --quiet
           then
             echo "No changes to commit."
             exit 0
           fi
 
-          branch_name="update-jbr-$jbr_version"
+          branch="update-jbr-$jbr_version"
 
-          if git ls-remote --exit-code --heads origin "$branch_name" > /dev/null
+          if [[ -n "$(gh pr list --head "$branch" --state all --json number --jq '.[].number')" ]]
           then
-            echo "Branch $branch_name already exists, skipping."
+            echo "A pull request for $branch already exists (open, closed or merged), skipping."
             exit 0
           fi
 
-          git checkout -b "$branch_name"
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git config user.name 'github-actions[bot]'
+          git checkout -b "$branch"
           git commit -a -m "chore: update JBR to $jbr_version"
-          git push origin "$branch_name"
+          git push -f origin "$branch"
 
           gh pr create \
             --fill \
-            --base master \
-            --head "$branch_name"
+            --base "$base_branch" \
+            --head "$branch"
