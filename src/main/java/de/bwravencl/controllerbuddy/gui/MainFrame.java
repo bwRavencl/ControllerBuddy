@@ -2253,7 +2253,7 @@ public final class MainFrame extends JFrame {
 			final var selectElement = htmlDocument.createElementNS(XHTML_NAMESPACE_URI, "select");
 			selectElement.setAttribute("onchange",
 					"Array.from(document.getElementsByClassName('svg-div')).forEach(e=>e.style.display=(e.id===this.value?'block':'none'))");
-			selectElement.setAttribute("style", "font-size:1rem;vertical-align:text-bottom");
+			selectElement.setAttribute("style", "font-size:1rem");
 			labelElement.appendChild(selectElement);
 
 			final var usedSymbols = new HashSet<String>();
