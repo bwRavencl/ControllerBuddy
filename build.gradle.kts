@@ -257,7 +257,7 @@ spotless {
     eclipse("4.33").configFile("spotless.eclipseformat.xml")
     cleanthat()
         .sourceCompatibility(
-            project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString()
+            project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString(),
         )
         .addMutators(listOf("SafeButNotConsensual", "SafeButControversial"))
         .excludeMutator("AvoidInlineConditionals")
@@ -287,7 +287,7 @@ spotless {
 
 
         """
-            .trimIndent()
+            .trimIndent(),
     )
     endWithNewline()
   }
@@ -502,7 +502,7 @@ val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
                     License(
                         "zlib License",
                         "https://libsdl.org/license.php",
-                    )
+                    ),
                 )
                 .toMutableList(),
         ),
@@ -513,7 +513,7 @@ val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
                     License(
                         "zlib License",
                         "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE",
-                    )
+                    ),
                 )
                 .toMutableList(),
         ),
@@ -828,7 +828,7 @@ tasks.register<Javadoc>("checkJavadoc") {
         currentProblem != null -> {
           if (
               currentProblem!!.endsWith(
-                  "warning: use of default constructor, which does not provide a comment"
+                  "warning: use of default constructor, which does not provide a comment",
               ) ||
                   (currentProblem!!.endsWith("warning: no comment") &&
                       ignoredFields.any { line.contains(it) })
@@ -884,13 +884,13 @@ tasks.register<Javadoc>("checkJavadoc") {
             appendLine("\n  Warning Details:\n")
             sharedState.warningList.forEach { appendLine("    $it") }
           }
-        }
+        },
     )
 
     if (hasErrors || hasWarnings) {
       throw GradleException(
           "Found ${sharedState.errorList.size + sharedState.warningList.size} " +
-              "Javadoc problems."
+              "Javadoc problems.",
       )
     }
   }
@@ -992,7 +992,7 @@ tasks.register("customizeLoggingProperties") {
                 os.isMacOsX -> "$runtimeDir/Contents/Home/conf"
                 os.isLinux -> "$runtimeDir/conf"
                 else -> throw GradleException("Unsupported operating system ${os.displayName}")
-              }
+              },
           )
   val loggingPropertiesFile = confDir.file("logging.properties")
   description =
