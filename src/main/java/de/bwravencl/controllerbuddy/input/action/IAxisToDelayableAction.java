@@ -99,7 +99,7 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 	/// @param value the current axis value
 	/// @return the original value if the delay has elapsed, or `Float.NaN` to
 	/// suppress
-	default Float handleDelay(final Input input, final int component, final Float value) {
+	default float handleDelay(final Input input, final int component, final float value) {
 		if (!isDelayed()) {
 			return value;
 		}
