@@ -44,7 +44,7 @@ jobs:
 
           if [[ -z "$latest_tag" ]]
           then
-            echo "::error::No JBR release found."
+            echo '::error::No JBR release found.'
             exit 1
           fi
 
@@ -99,7 +99,7 @@ jobs:
 
           if git diff --quiet
           then
-            echo "No changes to commit."
+            echo 'No changes to commit.'
             exit 0
           fi
 
