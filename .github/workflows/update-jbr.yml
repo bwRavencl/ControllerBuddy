@@ -103,7 +103,7 @@ jobs:
             exit 0
           fi
 
-          branch="update-jbr-$jbr_version"
+          branch="github-actions/jbr-$jbr_version"
 
           if [[ -n "$(gh pr list --head "$branch" --state all --json number --jq '.[].number')" ]]
           then
@@ -112,7 +112,7 @@ jobs:
           fi
 
           git checkout -b "$branch"
-          git commit -a -m "chore: update JBR to $jbr_version"
+          git commit -a -m "chore: bump JBR to $jbr_version"
           git push -f origin "$branch"
 
           gh pr create \
