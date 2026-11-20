@@ -87,7 +87,7 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	}
 
 	@Override
-	public final boolean isUseRawValue() {
+	public boolean isUseRawValue() {
 		return useRawValue;
 	}
 
@@ -106,7 +106,7 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	}
 
 	@Override
-	public final void setUseRawValue(final boolean useRawValue) {
+	public void setUseRawValue(final boolean useRawValue) {
 		this.useRawValue = useRawValue;
 	}
 }
