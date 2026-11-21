@@ -55,6 +55,11 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	@Override
 	public void doAction(final Input input, final int component, Float value,
 			final @Nullable ControllerState controllerState) {
+		if (input.isCursorBlocked()) {
+			remainingD = 0f;
+			return;
+		}
+
 		if (controllerState != null) {
 			value = handleUseRawValue(component, value, controllerState);
 		}

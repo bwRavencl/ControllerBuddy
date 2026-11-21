@@ -38,13 +38,10 @@ public final class ButtonToCursorAction extends ToCursorAction<Boolean> implemen
 	private long delay = DEFAULT_DELAY;
 
 	@Override
-	public void doAction(final Input input, final int component, Boolean value,
+	public void doAction(final Input input, final int component, final Boolean value,
 			final @Nullable ControllerState controllerState) {
-		value = handleDelay(input, component, value);
-
-		if (!value) {
+		if (input.isCursorBlocked() || !handleDelay(input, component, value)) {
 			remainingD = 0f;
-
 			return;
 		}
 

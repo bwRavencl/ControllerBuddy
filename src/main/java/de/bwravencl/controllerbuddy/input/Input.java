@@ -127,6 +127,10 @@ public final class Input {
 	/// next poll.
 	private boolean clearOnNextPoll;
 
+	/// Whether the mouse cursor is currently blocked from movement, preventing any
+	/// cursor delta from being reported.
+	private boolean cursorBlocked;
+
 	/// Horizontal mouse cursor movement delta, written by actions and read by the
 	/// output run mode.
 	private volatile int cursorDeltaX;
@@ -285,6 +289,10 @@ public final class Input {
 	///
 	/// @return the cursor delta along the X axis
 	public int getCursorDeltaX() {
+		if (cursorBlocked) {
+			return 0;
+		}
+
 		return cursorDeltaX;
 	}
 
@@ -292,6 +300,10 @@ public final class Input {
 	///
 	/// @return the cursor delta along the Y axis
 	public int getCursorDeltaY() {
+		if (cursorBlocked) {
+			return 0;
+		}
+
 		return cursorDeltaY;
 	}
 
@@ -446,6 +458,13 @@ public final class Input {
 	/// @return `true` if the axis is suspended
 	public boolean isAxisSuspended(final int axis) {
 		return axisToSuspensionInfoMap.containsKey(axis);
+	}
+
+	/// Returns whether the mouse cursor is currently blocked from movement.
+	///
+	/// @return `true` if the cursor is blocked
+	public boolean isCursorBlocked() {
+		return cursorBlocked;
 	}
 
 	/// Returns whether this input instance has been initialized.
@@ -763,6 +782,7 @@ public final class Input {
 		offLockKeys.clear();
 		cursorDeltaX = 0;
 		cursorDeltaY = 0;
+		cursorBlocked = false;
 		scrollClicks = 0;
 
 		resetLastHotSwapPollNanoTime();
@@ -839,6 +859,19 @@ public final class Input {
 					|| (prevValue < detentValue && value >= detentValue))) {
 				scheduledRumbleEffect = RumbleEffect.LIGHT;
 			}
+		}
+	}
+
+	/// Sets whether cursor movement should be blocked, preventing any cursor
+	/// movement from being reported.
+	///
+	/// @param blocked `true` to block cursor movement, `false` to allow it
+	public void setCursorBlocked(final boolean blocked) {
+		cursorBlocked = blocked;
+
+		if (blocked) {
+			cursorDeltaX = 0;
+			cursorDeltaY = 0;
 		}
 	}
 
