@@ -133,11 +133,11 @@ public final class Input {
 
 	/// Horizontal mouse cursor movement delta, written by actions and read by the
 	/// output run mode.
-	private volatile int cursorDeltaX;
+	private int cursorDeltaX;
 
 	/// Vertical mouse cursor movement delta, written by actions and read by the
 	/// output run mode.
-	private volatile int cursorDeltaY;
+	private int cursorDeltaY;
 
 	/// Whether haptic feedback (rumble) is enabled on the selected controller.
 	private boolean hapticFeedback;
