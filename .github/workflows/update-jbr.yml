@@ -32,7 +32,7 @@ jobs:
         run: |
           base_branch=$(git rev-parse --abbrev-ref HEAD)
 
-          if [[ "$base_branch" == 'HEAD' ]]
+          if [[ $base_branch == HEAD ]]
           then
             echo '::error::This workflow must run on a branch, not a tag or detached HEAD.'
             exit 1
@@ -42,7 +42,7 @@ jobs:
             --jq '.[] | select(.prerelease | not) | .tag_name | select(startswith("jbr-release-"))' \
             | sort -V | tail -n 1)
 
-          if [[ -z "$latest_tag" ]]
+          if [[ -z $latest_tag ]]
           then
             echo '::error::No JBR release found.'
             exit 1
@@ -50,7 +50,7 @@ jobs:
 
           echo "Latest tag: $latest_tag"
 
-          if [[ ! "$latest_tag" =~ ^jbr-release-(([0-9]+)(\.[0-9]+)*)b([0-9]+(\.[0-9]+)*)$ ]]
+          if [[ ! $latest_tag =~ ^jbr-release-(([0-9]+)(\.[0-9]+)*)b([0-9]+(\.[0-9]+)*)$ ]]
           then
             echo "::error::Unexpected tag format: $latest_tag"
             exit 1
@@ -59,7 +59,7 @@ jobs:
           java_version=${BASH_REMATCH[1]}
           java_major=${BASH_REMATCH[2]}
           jbr_build=${BASH_REMATCH[4]}
-          jbr_version="${java_version}b${jbr_build}"
+          jbr_version=${java_version}b${jbr_build}
 
           python3 - "$java_version" "$jbr_build" "$java_major" << 'EOF'
           import re
@@ -103,9 +103,9 @@ jobs:
             exit 0
           fi
 
-          branch="github-actions/jbr-$jbr_version"
+          branch=github-actions/jbr-$jbr_version
 
-          if [[ -n "$(gh pr list --head "$branch" --state all --json number --jq '.[].number')" ]]
+          if [[ -n $(gh pr list --head "$branch" --state all --json number --jq '.[].number') ]]
           then
             echo "A pull request for $branch already exists (open, closed or merged), skipping."
             exit 0
