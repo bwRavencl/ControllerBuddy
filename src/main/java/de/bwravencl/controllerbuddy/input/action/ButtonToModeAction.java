@@ -220,7 +220,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 			}
 		} else if (toggle) {
 			if (up) {
-				if (BUTTON_TO_MODE_ACTION_STACK.peek() == this) {
+				if (BUTTON_TO_MODE_ACTION_STACK.contains(this)) {
 					deactivateMode(input, profile);
 				} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 					activateMode(input, profile);
